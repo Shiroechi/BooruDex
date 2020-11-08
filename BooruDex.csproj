@@ -2,9 +2,22 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Shiroechi</Authors>
+    <PackageProjectUrl>https://github.com/Shiroechi/BooruDex</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Shiroechi/BooruDex</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Imageboard Booru</PackageTags>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>true</Optimize>
+    <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Litdex.Security.RNG" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
