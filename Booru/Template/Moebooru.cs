@@ -176,6 +176,89 @@ namespace BooruDex.Booru.Template
 
 		#region Public Method
 
+		#region Artist
+
+		/// <summary>
+		/// Get a list of artists.
+		/// </summary>
+		/// <param name="name">The name (or a fragment of the name) of the artist.</param>
+		/// <param name="page">The page number.</param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="AuthenticationException"></exception>
+		/// <exception cref="HttpRequestException"></exception>
+		/// <exception cref="HttpResponseException"></exception>
+		public async Task<Artist[]> ArtistListAsync(string name, uint page = 0)
+		{
+			if (name == null || name.Trim() == "")
+			{
+				throw new ArgumentNullException(nameof(name), "Artist name can't null or empty");
+			}
+
+			var url = this.CreateBaseApiCall("artist") +
+				$"page={ page }&name={ name }";
+
+			var jsonArray = JsonConvert.DeserializeObject<JArray>(
+				await GetJsonAsync(url));
+
+			return jsonArray.Select(ReadArtist).ToArray();
+		}
+
+		#endregion Artist
+
+		#region Pool
+
+		/// <summary>
+		/// Search a pool.
+		/// </summary>
+		/// <param name="title">The title of pool.</param>
+		/// <param name="page">Tha page number.</param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="AuthenticationException"></exception>
+		/// <exception cref="HttpRequestException"></exception>
+		/// <exception cref="HttpResponseException"></exception>
+		public async Task<Pool[]> PoolList(string title, uint page = 0)
+		{
+			if (title == null || title.Trim() == "")
+			{
+				throw new ArgumentNullException(nameof(title), "Title can't null or empty.");
+				;
+			}
+
+			var url = this.CreateBaseApiCall("pool") +
+				$"query={ title }&page={ page }";
+
+			var jsonArray = JsonConvert.DeserializeObject<JArray>(
+				await this.GetJsonAsync(url));
+
+			return jsonArray.Select(this.ReadPool).ToArray();
+		}
+
+		/// <summary>
+		/// Get list of post inside the pool.
+		/// </summary>
+		/// <param name="poolId">The <see cref="Pool"/> id.</param>
+		/// <param name="page">The page number.</param>
+		/// <returns></returns>
+		/// <exception cref="AuthenticationException"></exception>
+		/// <exception cref="HttpRequestException"></exception>
+		/// <exception cref="HttpResponseException"></exception>
+		public async Task<Post[]> PoolPostList(uint poolId, uint page = 0)
+		{
+			var url = this.CreateBaseApiCall("pool/show") +
+				$"id={ poolId }&page={ page }";
+
+			var obj = JsonConvert.DeserializeObject<JObject>(
+				await this.GetJsonAsync(url));
+			var jsonArray = JsonConvert.DeserializeObject<JArray>(
+				obj["posts"].ToString());
+
+			return jsonArray.Select(this.ReadPost).ToArray();
+		}
+
+		#endregion Pool
+
 		#region Post
 
 		/// <summary>
@@ -350,36 +433,6 @@ namespace BooruDex.Booru.Template
 
 		#endregion Tag
 
-		#region Artist
-
-		/// <summary>
-		/// Get a list of artists.
-		/// </summary>
-		/// <param name="name">The name (or a fragment of the name) of the artist.</param>
-		/// <param name="page">The page number.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		public async Task<Artist[]> ArtistListAsync(string name, uint page = 0)
-		{
-			if (name == null || name.Trim() == "")
-			{
-				throw new ArgumentNullException(nameof(name), "Artist name can't null or empty");
-			}
-
-			var url = this.CreateBaseApiCall("artist") +
-				$"name={ name }&page={ page }";
-
-			var jsonArray = JsonConvert.DeserializeObject<JArray>(
-				await GetJsonAsync(url));
-
-			return jsonArray.Select(ReadArtist).ToArray();
-		}
-
-		#endregion Artist
-
 		#region Wiki
 
 		/// <summary>
@@ -408,58 +461,6 @@ namespace BooruDex.Booru.Template
 		}
 
 		#endregion Wiki
-
-		#region Pool
-
-		/// <summary>
-		/// Search a pool.
-		/// </summary>
-		/// <param name="title">The title of pool.</param>
-		/// <param name="page">Tha page number.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		public async Task<Pool[]> PoolList(string title, uint page = 0)
-		{
-			if (title == null || title.Trim() == "")
-			{
-				throw new ArgumentNullException(nameof(title), "Title can't null or empty."); ;
-			}
-			
-			var url = this.CreateBaseApiCall("pool") +
-				$"query={ title }&page={ page }";
-
-			var jsonArray = JsonConvert.DeserializeObject<JArray>(
-				await this.GetJsonAsync(url));
-
-			return jsonArray.Select(this.ReadPool).ToArray();
-		}
-
-		/// <summary>
-		/// Get list of post inside the pool.
-		/// </summary>
-		/// <param name="poolId">The <see cref="Pool"/> id.</param>
-		/// <param name="page">The page number.</param>
-		/// <returns></returns>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		public async Task<Post[]> PoolPostList(uint poolId, uint page = 0)
-		{
-			var url = this.CreateBaseApiCall("pool/show") +
-				$"id={ poolId }&page={ page }";
-
-			var obj = JsonConvert.DeserializeObject<JObject>(
-				await this.GetJsonAsync(url));
-			var jsonArray = JsonConvert.DeserializeObject<JArray>(
-				obj["posts"].ToString());
-
-			return jsonArray.Select(this.ReadPost).ToArray();
-		}
-
-		#endregion Pool
 
 		#endregion Public Method
 	}
