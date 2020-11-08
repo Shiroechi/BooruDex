@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net.Http;
 using System.Security.Authentication;
-using System.Security.Principal;
 using System.Threading.Tasks;
 
 using BooruDex.Exceptions;
