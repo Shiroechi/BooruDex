@@ -77,6 +77,34 @@ namespace BooruDex.Booru.Template
 		#region Protected Method
 
 		/// <summary>
+		/// Read <see cref="Artist"/> json search result.
+		/// </summary>
+		/// <param name="json">Json object.</param>
+		/// <returns></returns>
+		protected Artist ReadArtist(object json)
+		{
+			var item = (JObject)json;
+			return new Artist(
+				item["id"].Value<uint>(),
+				item["name"].Value<string>());
+		}
+
+		/// <summary>
+		/// Read <see cref="Pool"/> json search result.
+		/// </summary>
+		/// <param name="json">Json object.</param>
+		/// <returns></returns>
+		protected Pool ReadPool(object json)
+		{
+			var item = (JObject)json;
+			return new Pool(
+				item["id"].Value<uint>(),
+				item["name"].Value<string>(),
+				item["post_count"].Value<uint>(),
+				item["description"].Value<string>());
+		}
+
+		/// <summary>
 		/// Read <see cref="Post"/> json search result.
 		/// </summary>
 		/// <param name="json">Json object.</param>
@@ -117,6 +145,17 @@ namespace BooruDex.Booru.Template
 		}
 
 		/// <summary>
+		/// Read related tag json search result.
+		/// </summary>
+		/// <param name="json"></param>
+		/// <returns></returns>
+		protected string ReadRelatedTag(object json)
+		{
+			var item = (JArray)json;
+			return item[0].Value<string>();
+		}
+
+		/// <summary>
 		/// Read <see cref="Wiki"/> json search result.
 		/// </summary>
 		/// <param name="json">Json object.</param>
@@ -131,45 +170,6 @@ namespace BooruDex.Booru.Template
 				item["updated_at"].Value<DateTime>(),
 				item["body"].Value<string>()
 				);
-		}
-
-		/// <summary>
-		/// Read <see cref="Artist"/> json search result.
-		/// </summary>
-		/// <param name="json">Json object.</param>
-		/// <returns></returns>
-		protected Artist ReadArtist(object json)
-		{
-			var item = (JObject)json;
-			return new Artist(
-				item["id"].Value<uint>(), 
-				item["name"].Value<string>());
-		}
-
-		/// <summary>
-		/// Read <see cref="Pool"/> json search result.
-		/// </summary>
-		/// <param name="json">Json object.</param>
-		/// <returns></returns>
-		protected Pool ReadPool(object json)
-		{
-			var item = (JObject)json;
-			return new Pool(
-				item["id"].Value<uint>(),
-				item["name"].Value<string>(), 
-				item["post_count"].Value<uint>(), 
-				item["description"].Value<string>());
-		}
-
-		/// <summary>
-		/// Read related tag json search result.
-		/// </summary>
-		/// <param name="json"></param>
-		/// <returns></returns>
-		protected string ReadRelatedTag(object json)
-		{
-			var item = (JArray)json;
-			return item[0].Value<string>();
 		}
 
 		#endregion Protected Method
@@ -222,12 +222,11 @@ namespace BooruDex.Booru.Template
 		{
 			if (title == null || title.Trim() == "")
 			{
-				throw new ArgumentNullException(nameof(title), "Title can't null or empty.");
-				;
+				throw new ArgumentNullException(nameof(title), "Title can't null or empty.");;
 			}
 
 			var url = this.CreateBaseApiCall("pool") +
-				$"query={ title }&page={ page }";
+				$"page={ page }&query={ title }";
 
 			var jsonArray = JsonConvert.DeserializeObject<JArray>(
 				await this.GetJsonAsync(url));
@@ -247,10 +246,11 @@ namespace BooruDex.Booru.Template
 		public async Task<Post[]> PoolPostList(uint poolId, uint page = 0)
 		{
 			var url = this.CreateBaseApiCall("pool/show") +
-				$"id={ poolId }&page={ page }";
+				$"page={ page }&id={ poolId }";
 
 			var obj = JsonConvert.DeserializeObject<JObject>(
 				await this.GetJsonAsync(url));
+		
 			var jsonArray = JsonConvert.DeserializeObject<JArray>(
 				obj["posts"].ToString());
 
@@ -277,7 +277,7 @@ namespace BooruDex.Booru.Template
 		{
 			if (tags != null && tags.Length > this._TagsLimit)
 			{
-				throw new ArgumentException($"Tag can't more than {this._TagsLimit} tag.");
+				throw new ArgumentException($"Tag can't more than { this._TagsLimit } tag.");
 			}
 
 			if (limit <= 0)
@@ -286,7 +286,7 @@ namespace BooruDex.Booru.Template
 			}
 			else if (limit > this._PostLimit)
 			{
-				limit = 100;
+				limit = this._PostLimit;
 			}
 
 			string url = "";
@@ -305,6 +305,7 @@ namespace BooruDex.Booru.Template
 
 			var jsonArray = JsonConvert.DeserializeObject<JArray>(
 				await this.GetJsonAsync(url));
+			
 			try
 			{
 				return jsonArray.Select(this.ReadPost).ToArray();
@@ -330,7 +331,7 @@ namespace BooruDex.Booru.Template
 			var post = await this.GetRandomPostAsync(
 					this._PostLimit,
 					tags);
-			Console.WriteLine(post.Length);
+		
 			return post[this._RNG.NextInt(0, this._PostLimit) - 1];
 		}
 
