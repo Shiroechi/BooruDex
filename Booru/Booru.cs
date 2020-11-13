@@ -95,7 +95,7 @@ namespace BooruDex.Booru
 		/// </summary>
 		/// <param name="domain">URL of booru based sites.</param>
 		/// <param name="httpClient">Client for sending and receive http response.</param>
-		public Booru(string domain, HttpClient httpClient) : this(domain, null, new JSF32())
+		public Booru(string domain, HttpClient httpClient = null) : this(domain, httpClient, new JSF32())
 		{
 			
 		}
@@ -144,7 +144,7 @@ namespace BooruDex.Booru
 					
 					if (!this._HttpClient.DefaultRequestHeaders.Contains("User-Agent"))
 					{
-						this._HttpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 Unknown");
+						this._HttpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
 					}
 				}
 			}
@@ -240,7 +240,7 @@ namespace BooruDex.Booru
 					}
 					else
 					{
-						throw new HttpResponseException("Unexpected error occured");
+						throw new HttpResponseException("Unexpected error occured.");
 					}
 				}
 			}
@@ -292,12 +292,168 @@ namespace BooruDex.Booru
 		/// <returns></returns>
 		public bool Authenticate(string username, string password)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException($"Method { nameof(Authenticate) } is not implemented yet.");
 			this._Username = username;
 			this._Password = this._PasswordSalt.Replace("{}", password);
 
 			return false;
 		}
+
+		#region Artist
+
+		/// <summary>
+		/// Get a list of artists.
+		/// </summary>
+		/// <param name="name">The name (or a fragment of the name) of the artist.</param>
+		/// <param name="page">The page number.</param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="AuthenticationException"></exception>
+		/// <exception cref="HttpRequestException"></exception>
+		/// <exception cref="HttpResponseException"></exception>
+		public virtual async Task<Artist[]> ArtistListAsync(string name, uint page = 0)
+		{
+			throw new NotImplementedException($"Method { nameof(ArtistListAsync) } is not implemented yet.");
+		}
+
+		#endregion Artist
+
+		#region Pool
+
+		/// <summary>
+		/// Search a pool.
+		/// </summary>
+		/// <param name="title">The title of pool.</param>
+		/// <param name="page">Tha page number.</param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="AuthenticationException"></exception>
+		/// <exception cref="HttpRequestException"></exception>
+		/// <exception cref="HttpResponseException"></exception>
+		public virtual async Task<Pool[]> PoolList(string title, uint page = 0)
+		{
+			throw new NotImplementedException($"Method { nameof(PoolList) } is not implemented yet.");
+		}
+
+		/// <summary>
+		/// Get list of post inside the pool.
+		/// </summary>
+		/// <param name="poolId">The <see cref="Pool"/> id.</param>
+		/// <param name="page">The page number.</param>
+		/// <returns></returns>
+		/// <exception cref="AuthenticationException"></exception>
+		/// <exception cref="HttpRequestException"></exception>
+		/// <exception cref="HttpResponseException"></exception>
+		public virtual async Task<Post[]> PoolPostList(uint poolId, uint page = 0)
+		{
+			throw new NotImplementedException($"Method { nameof(PoolPostList) } is not implemented yet.");
+		}
+
+		#endregion Pool
+
+		#region Post
+
+		/// <summary>
+		/// Get a list of <see cref="Post"/>.
+		/// </summary>
+		/// <param name="limit">How many <see cref="Post"/> to retrieve.</param>
+		/// <param name="page">The page number.</param>
+		/// <param name="tags">The tags to search for.</param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentException"></exception>
+		/// <exception cref="AuthenticationException"></exception>
+		/// <exception cref="HttpRequestException"></exception>
+		/// <exception cref="HttpResponseException"></exception>
+		/// <exception cref="SearchNotFoundException"></exception>
+		public virtual async Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
+		{
+			throw new NotImplementedException($"Method { nameof(PostListAsync) } is not implemented yet.");
+		}
+
+		/// <summary>
+		/// Search a single random post from booru with the given tags.
+		/// </summary>
+		/// <param name="tags"><see cref="Tag"/> to search.</param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentException"></exception>
+		/// <exception cref="AuthenticationException"></exception>
+		/// <exception cref="HttpRequestException"></exception>
+		/// <exception cref="HttpResponseException"></exception>
+		/// <exception cref="SearchNotFoundException"></exception>
+		public virtual async Task<Post> GetRandomPostAsync(string[] tags = null)
+		{
+			throw new NotImplementedException($"Method { nameof(GetRandomPostAsync) } is not implemented yet.");
+		}
+
+		/// <summary>
+		/// Search some post from booru with the given tags.
+		/// </summary>
+		/// <param name="tags"><see cref="Tag"/> to search.</param>
+		/// <param name="limit">How many post to retrieve.</param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentException"></exception>
+		/// <exception cref="AuthenticationException"></exception>
+		/// <exception cref="HttpRequestException"></exception>
+		/// <exception cref="HttpResponseException"></exception>
+		public virtual async Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
+		{
+			throw new NotImplementedException($"Method { nameof(GetRandomPostAsync) } is not implemented yet.");
+		}
+
+		#endregion Post
+
+		#region Tag
+
+		/// <summary>
+		/// Get a list of tag that contains 
+		/// </summary>
+		/// <param name="name">The tag names to query.</param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="AuthenticationException"></exception>
+		/// <exception cref="HttpRequestException"></exception>
+		/// <exception cref="HttpResponseException"></exception>
+		public virtual async Task<Tag[]> TagListAsync(string name)
+		{
+			throw new NotImplementedException($"Method { nameof(TagListAsync) } is not implemented yet.");
+		}
+
+		/// <summary>
+		/// Get a list of related tags.
+		/// </summary>
+		/// <param name="name">The tag names to query.</param>
+		/// <param name="type">Restrict results to tag type (can be general, artist, copyright, or character).</param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentException"></exception>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="AuthenticationException"></exception>
+		/// <exception cref="HttpRequestException"></exception>
+		/// <exception cref="HttpResponseException"></exception>
+		public virtual async Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
+		{
+			throw new NotImplementedException($"Method { nameof(TagRelatedAsync) } is not implemented yet.");
+		}
+
+		#endregion Tag
+
+		#region Wiki
+
+		/// <summary>
+		/// Search a wiki content.
+		/// </summary>
+		/// <param name="title">Wiki title.</param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="AuthenticationException"></exception>
+		/// <exception cref="HttpRequestException"></exception>
+		/// <exception cref="HttpResponseException"></exception>
+		public virtual async Task<Wiki[]> WikiListAsync(string title)
+		{
+			throw new NotImplementedException($"Method { nameof(WikiListAsync) } is not implemented yet.");
+		}
+
+		#endregion Wiki
 
 		#endregion Public Method
 	}

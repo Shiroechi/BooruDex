@@ -45,7 +45,6 @@ namespace BooruDex.Booru.Template
 			this._PageLimit = 10;
 			this.IsSafe = false;
 			this._ApiVersion = "1.13.0+update.3";
-			this._PasswordSalt = "choujin-steiner--{}--";
 		}
 
 		/// <summary>
@@ -58,32 +57,32 @@ namespace BooruDex.Booru.Template
 
 		#endregion Constructor & Destructor
 
-		#region Overrride Method
+		#region Protected Overrride Method
 
 		protected override string CreateBaseApiCall(string query)
 		{
 			if (query.Contains("/"))
 			{
-				return $"{this._BaseUrl.AbsoluteUri}{query}.json?";
+				return $"{ this._BaseUrl.AbsoluteUri }{ query }.json?";
 			}
 			else
 			{
-				return $"{this._BaseUrl.AbsoluteUri}{query}/index.json?";
+				return $"{ this._BaseUrl.AbsoluteUri }{ query }/index.json?";
 			}
 		}
 
-		#endregion Overrride Method
+		#endregion Protected Overrride Method
 
-		#region Protected Method
+		#region Protected Virtual Method
 
 		/// <summary>
 		/// Read <see cref="Artist"/> json search result.
 		/// </summary>
 		/// <param name="json">Json object.</param>
 		/// <returns></returns>
-		protected Artist ReadArtist(object json)
+		protected virtual Artist ReadArtist(JToken json)
 		{
-			var item = (JObject)json;
+			var item = json;
 			return new Artist(
 				item["id"].Value<uint>(),
 				item["name"].Value<string>());
@@ -94,9 +93,9 @@ namespace BooruDex.Booru.Template
 		/// </summary>
 		/// <param name="json">Json object.</param>
 		/// <returns></returns>
-		protected Pool ReadPool(object json)
+		protected virtual Pool ReadPool(JToken json)
 		{
-			var item = (JObject)json;
+			var item = json;
 			return new Pool(
 				item["id"].Value<uint>(),
 				item["name"].Value<string>(),
@@ -109,9 +108,9 @@ namespace BooruDex.Booru.Template
 		/// </summary>
 		/// <param name="json">Json object.</param>
 		/// <returns></returns>
-		protected Post ReadPost(object json)
+		protected virtual Post ReadPost(JToken json)
 		{
-			var item = (JObject)json;
+			var item = json;
 			return new Post(
 				item["id"].Value<uint>(),
 				new Uri(this._BaseUrl + "post/show/" + item["id"].Value<int>()),
@@ -133,9 +132,9 @@ namespace BooruDex.Booru.Template
 		/// </summary>
 		/// <param name="json">Json object.</param>
 		/// <returns></returns>
-		protected Tag ReadTag(object json)
+		protected virtual Tag ReadTag(JToken json)
 		{
-			var item = (JObject)json;
+			var item = json;
 			return new Tag(
 				item["id"].Value<uint>(),
 				item["name"].Value<string>(),
@@ -149,10 +148,12 @@ namespace BooruDex.Booru.Template
 		/// </summary>
 		/// <param name="json"></param>
 		/// <returns></returns>
-		protected string ReadRelatedTag(object json)
+		protected virtual TagRelated ReadRelatedTag(JToken json)
 		{
 			var item = (JArray)json;
-			return item[0].Value<string>();
+			return new TagRelated(
+				item[0].Value<string>(),
+				item[1].Value<uint>());
 		}
 
 		/// <summary>
@@ -160,9 +161,9 @@ namespace BooruDex.Booru.Template
 		/// </summary>
 		/// <param name="json">Json object.</param>
 		/// <returns></returns>
-		protected Wiki ReadWiki(object json)
+		protected virtual Wiki ReadWiki(JToken json)
 		{
-			var item = (JObject)json;
+			var item = json;
 			return new Wiki(
 				item["id"].Value<uint>(),
 				item["title"].Value<string>(),
@@ -172,7 +173,7 @@ namespace BooruDex.Booru.Template
 				);
 		}
 
-		#endregion Protected Method
+		#endregion Protected Virtual Method
 
 		#region Public Method
 
@@ -188,7 +189,7 @@ namespace BooruDex.Booru.Template
 		/// <exception cref="AuthenticationException"></exception>
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
-		public async Task<Artist[]> ArtistListAsync(string name, uint page = 0)
+		public override async Task<Artist[]> ArtistListAsync(string name, uint page = 0)
 		{
 			if (name == null || name.Trim() == "")
 			{
@@ -218,7 +219,7 @@ namespace BooruDex.Booru.Template
 		/// <exception cref="AuthenticationException"></exception>
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
-		public async Task<Pool[]> PoolList(string title, uint page = 0)
+		public override async Task<Pool[]> PoolList(string title, uint page = 0)
 		{
 			if (title == null || title.Trim() == "")
 			{
@@ -243,7 +244,7 @@ namespace BooruDex.Booru.Template
 		/// <exception cref="AuthenticationException"></exception>
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
-		public async Task<Post[]> PoolPostList(uint poolId, uint page = 0)
+		public override async Task<Post[]> PoolPostList(uint poolId, uint page = 0)
 		{
 			var url = this.CreateBaseApiCall("pool/show") +
 				$"page={ page }&id={ poolId }";
@@ -273,9 +274,11 @@ namespace BooruDex.Booru.Template
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
 		/// <exception cref="SearchNotFoundException"></exception>
-		public async Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
+		public override async Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
 		{
-			if (tags != null && tags.Length > this._TagsLimit)
+			if ((this._TagsLimit != 0) && 
+				(tags != null) && 
+				(tags.Length > this._TagsLimit))
 			{
 				throw new ArgumentException($"Tag can't more than { this._TagsLimit } tag.");
 			}
@@ -326,13 +329,18 @@ namespace BooruDex.Booru.Template
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
 		/// <exception cref="SearchNotFoundException"></exception>
-		public async Task<Post> GetRandomPostAsync(string[] tags = null)
+		public override async Task<Post> GetRandomPostAsync(string[] tags = null)
 		{
 			var post = await this.GetRandomPostAsync(
 					this._PostLimit,
 					tags);
-		
-			return post[this._RNG.NextInt(0, this._PostLimit) - 1];
+
+			if (post.Length == 0)
+			{
+				throw new SearchNotFoundException("No post found.");
+			}
+
+			return post[this._RNG.NextInt(0, (uint)(post.Length - 1))];
 		}
 
 		/// <summary>
@@ -346,22 +354,8 @@ namespace BooruDex.Booru.Template
 		/// <exception cref="AuthenticationException"></exception>
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
-		public async Task<Post[]> GetRandomPostAsync(uint limit , string[] tags = null)
+		public override async Task<Post[]> GetRandomPostAsync(uint limit , string[] tags = null)
 		{
-			if (tags != null && tags.Length > this._TagsLimit)
-			{
-				throw new ArgumentException($"Tag can't more than {this._TagsLimit} tag.");
-			}
-
-			if (limit <= 0)
-			{
-				limit = 1;
-			}
-			else if (limit > this._PostLimit)
-			{
-				limit = 100;
-			}
-
 			return await this.PostListAsync(
 				limit,
 				tags,
@@ -381,7 +375,7 @@ namespace BooruDex.Booru.Template
 		/// <exception cref="AuthenticationException"></exception>
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
-		public async Task<Tag[]> TagListAsync(string name)
+		public override async Task<Tag[]> TagListAsync(string name)
 		{
 			if (name == null || name.Length <= 0)
 			{
@@ -408,26 +402,31 @@ namespace BooruDex.Booru.Template
 		/// <exception cref="AuthenticationException"></exception>
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
-		public async Task<string[]> TagRelatedAsync(string name, TagType type = TagType.General)
+		public override async Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
 		{
 			if (name == null || name.Length <= 0)
 			{
 				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
 			}
 
-			if (type != TagType.Artist ||
-				type != TagType.General ||
-				type != TagType.Copyright ||
-				type != TagType.Character)
-			{
-				throw new ArgumentException("Tag type is invalid.");
-			}
-
 			var url = this.CreateBaseApiCall("tag/related") +
-				$"name={ name }&type={ type }";
+				$"tags={ name }&type={ type }";
 
-			var jsonArray = JsonConvert.DeserializeObject<JArray>(
+			var obj = JsonConvert.DeserializeObject<JObject>(
 				await GetJsonAsync(url));
+
+			JArray jsonArray;
+
+			if (obj.ContainsKey(name))
+			{
+				jsonArray = JsonConvert.DeserializeObject<JArray>(
+				obj[name].ToString());
+			}
+			else
+			{
+				jsonArray = JsonConvert.DeserializeObject<JArray>(
+				obj["useless_tags"].ToString());
+			}
 
 			return jsonArray.Select(this.ReadRelatedTag).ToArray();
 		}
@@ -445,7 +444,7 @@ namespace BooruDex.Booru.Template
 		/// <exception cref="AuthenticationException"></exception>
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
-		public async Task<Wiki[]> WikiListAsync(string title)
+		public override async Task<Wiki[]> WikiListAsync(string title)
 		{
 			if (title == null || title.Trim() == "")
 			{
