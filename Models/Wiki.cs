@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BooruDex.Models
 {
-    /// <summary>
-    /// Represent Wiki entry. 
-    /// </summary>
+	/// <summary>
+	/// Represent Wiki entry. 
+	/// </summary>
 	public struct Wiki
 	{
         /// <summary>
