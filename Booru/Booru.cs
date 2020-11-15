@@ -264,19 +264,16 @@ namespace BooruDex.Booru
 		/// <returns></returns>
 		protected Rating ConvertRating(string rating)
 		{
-			switch (rating)
+			switch (rating.ToString()[0])
 			{
-				case "e":
-				case "E":
+				case 'e':
 					return Rating.Explicit;
-				case "q":
-				case "Q":
+				case 'q':
 					return Rating.Questionable;
-				case "s":
-				case "S":
+				case 's':
 					return Rating.Safe;
 				default:
-					return Rating.None;
+					return Rating.Questionable;
 			}
 		}
 
