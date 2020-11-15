@@ -29,7 +29,7 @@
 		/// Meta tags generally describe things beyond the content of the image itself. 
 		/// Examples include translated, copyright request, duplicate, image sample, and bad id.
 		/// </summary>
-		Metadata,
+		Metadata = 7,
 		/// <summary>
 		/// There's something wrong with the post.
 		/// </summary>
@@ -42,6 +42,10 @@
 		/// These are used ONLY for official artwork (produced or published by...)
 		/// unless otherwise stated in the wiki (eg. Nintendo is an exception).
 		/// </summary>
-		Circle = 5
+		Circle = 5,
+		/// <summary>
+		/// Tag not recognizable.
+		/// </summary>
+		Undefined = 8
 	}
 }
