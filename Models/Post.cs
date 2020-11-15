@@ -27,9 +27,9 @@ namespace BooruDex.Models
 		/// <param name="md5">The MD5 hash of the file.</param>
 		public Post(
 			uint id, 
-			Uri postUrl, 
-			Uri fileUrl, 
-			Uri previewUrl, 
+			string postUrl,
+			string fileUrl,
+			string previewUrl, 
 			Rating rating, 
 			string tags, 
 			uint size, 
@@ -40,9 +40,9 @@ namespace BooruDex.Models
 			string source)
 		{
 			this.ID = id;
-			this.FileUrl = fileUrl;
-			this.PreviewUrl = previewUrl;
-			this.PostUrl = postUrl;
+			this.FileUrl = new Uri(fileUrl);
+			this.PreviewUrl = new Uri(previewUrl);
+			this.PostUrl = new Uri(postUrl + this.ID);
 			this.Rating = rating;
 			this.Tags = tags;
 			this.Size = size;
@@ -50,7 +50,7 @@ namespace BooruDex.Models
 			this.Width = width;
 			this.PreviewHeight = previewHeight;
 			this.PreviewWidth = previewWidth;
-			this.Source = source;
+			this.Source = source == null? null : new Uri(source);
 		}
 
 		/// <summary>
@@ -114,6 +114,6 @@ namespace BooruDex.Models
 		/// <summary>
 		/// Gets the original source of the file.
 		/// </summary>
-		public string Source { private set; get; }
+		public Uri Source { private set; get; }
 	}
 }
