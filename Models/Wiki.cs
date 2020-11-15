@@ -15,12 +15,10 @@ namespace BooruDex.Models
         /// <param name="creation">The date when the wiki entry was created.</param>
         /// <param name="lastUpdate">The date of the latest update to the wiki entry.</param>
         /// <param name="body">The wiki description.</param>
-        public Wiki(uint id, string title, DateTime creation, DateTime lastUpdate, string body)
+        public Wiki(uint id, string title, string body)
         {
             ID = id;
             Title = title;
-            Creation = creation;
-            LastUpdate = lastUpdate;
             Body = body;
         }
 
@@ -33,16 +31,6 @@ namespace BooruDex.Models
         /// Gets the name of the described tag.
         /// </summary>
         public string Title { private set; get; }
-
-        /// <summary>
-        /// Gets the date when the wiki entry was created.
-        /// </summary>
-        public DateTime Creation { private set; get; }
-
-        /// <summary>
-        /// Gets the date of the latest update to the wiki entry.
-        /// </summary>
-        public DateTime LastUpdate { private set; get; }
 
         /// <summary>
         /// Gets the tag description.
