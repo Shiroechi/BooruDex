@@ -33,5 +33,9 @@
 		/// </summary>
 		public string Description { private set; get; }
 
+		public override string ToString()
+		{
+			return this.Name;
+		}
 	}
 }
