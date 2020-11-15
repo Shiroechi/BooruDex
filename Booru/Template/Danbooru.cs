@@ -107,9 +107,9 @@ namespace BooruDex.Booru.Template
 			var item = json;
 			return new Post(
 				item["id"].Value<uint>(),
-				new Uri(this._BaseUrl + "posts/" + item["id"].Value<int>()),
-				new Uri(item["file_url"].Value<string>()),
-				new Uri(item["preview_file_url"].Value<string>()),
+				this._BaseUrl + "posts/",
+				item["file_url"].Value<string>(),
+				item["preview_file_url"].Value<string>(),
 				this.ConvertRating(item["rating"].Value<string>()),
 				item["tag_string"].Value<string>(),
 				item["file_size"].Value<uint>(),
@@ -161,8 +161,6 @@ namespace BooruDex.Booru.Template
 			return new Wiki(
 				item["id"].Value<uint>(),
 				item["title"].Value<string>(),
-				item["created_at"].Value<DateTime>(),
-				item["updated_at"].Value<DateTime>(),
 				item["body"].Value<string>()
 				);
 		}

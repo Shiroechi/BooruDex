@@ -79,9 +79,9 @@ namespace BooruDex.Booru.Template
 			var item = (JObject)json;
 			return new Post(
 				item["id"].Value<uint>(),
-				new Uri(this._BaseUrl + "index.php?page=post&s=view&id=" + item["id"].Value<int>()),
-				new Uri(item["file_url"].Value<string>()),
-				null,
+				this._BaseUrl + "index.php?page=post&s=view&id=",
+				item["file_url"].Value<string>(),
+				this._BaseUrl + "thumbnails/" + item["directory"].Value<string>() + "/thumbnail_" + item["hash"].Value<string>() + ".jpg",
 				this.ConvertRating(item["rating"].Value<string>()),
 				item["tags"].Value<string>(),
 				0,
@@ -104,9 +104,37 @@ namespace BooruDex.Booru.Template
 			return new Tag(
 				item["id"].Value<uint>(),
 				item["tag"].Value<string>(),
-				TagType.General,
+				this.ToTagType(item["type"].Value<string>()),
 				item["count"].Value<uint>()
 				);
+		}
+
+		/// <summary>
+		/// Convert sting tag type to <see cref="TagType"/>.
+		/// </summary>
+		/// <param name="tagTypeName">Tag type name.</param>
+		/// <returns>
+		/// <see cref="TagType"/> based on the name or 
+		/// <see cref="TagType.Undefined"/> if tag type is not recognizable.
+		/// </returns>
+		protected virtual TagType ToTagType(string tagTypeName)
+		{
+			StringComparer comparer = StringComparer.OrdinalIgnoreCase;
+
+			if (comparer.Equals(tagTypeName, "tag"))
+			{
+				return TagType.General;
+			}
+
+			foreach (TagType type in Enum.GetValues(typeof(TagType)))
+			{
+				if (comparer.Equals(tagTypeName, type.ToString()))
+				{
+					return type;
+				}
+			}
+
+			return TagType.Undefined;
 		}
 
 		#endregion Protected Virtual Method

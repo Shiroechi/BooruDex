@@ -77,11 +77,12 @@ namespace BooruDex.Booru.Template
 		protected virtual Post ReadPost(object json)
 		{
 			var item = (JObject)json;
+			var imageName = item["image"].Value<string>().Substring(0, item["image"].Value<string>().IndexOf("."));
 			return new Post(
 				item["id"].Value<uint>(),
-				new Uri(this._BaseUrl + "index.php?page=post&s=view&id=" + item["id"].Value<int>()),
-				new Uri(this._BaseUrl + "/images/3136/" + item["image"].Value<string>()),
-				null,
+				this._BaseUrl + "index.php?page=post&s=view&id=",
+				this._BaseUrl + "/images/" + item["directory"].Value<string>() + "/" + item["image"].Value<string>(),
+				this._BaseUrl + "/thumbnails/" + item["directory"].Value<string>() + "/thumbnails_" + imageName + ".jpg",
 				this.ConvertRating(item["rating"].Value<string>()),
 				item["tags"].Value<string>(),
 				0,
@@ -89,7 +90,7 @@ namespace BooruDex.Booru.Template
 				item["width"].Value<int>(),
 				0,
 				0,
-				""
+				null
 				);
 		}
 
