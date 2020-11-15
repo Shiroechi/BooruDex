@@ -26,5 +26,9 @@
 		/// </summary>
 		public string Name { private set; get; }
 
+		public override string ToString()
+		{
+			return this.Name;
+		}
 	}
 }
