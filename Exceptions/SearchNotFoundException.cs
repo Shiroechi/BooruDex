@@ -7,10 +7,6 @@ namespace BooruDex.Exceptions
 	/// </summary>
 	public class SearchNotFoundException : Exception
 	{
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="msg"></param>
 		public SearchNotFoundException(string msg) : base(msg)
 		{
 
