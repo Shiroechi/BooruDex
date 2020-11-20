@@ -50,7 +50,7 @@ namespace BooruDex.Models
 			this.Width = width;
 			this.PreviewHeight = previewHeight;
 			this.PreviewWidth = previewWidth;
-			this.Source = source == null || source == "" ? null : new Uri(source);
+			this.Source = source;
 		}
 
 		/// <summary>
@@ -114,6 +114,6 @@ namespace BooruDex.Models
 		/// <summary>
 		/// Gets the original source of the file.
 		/// </summary>
-		public Uri Source { private set; get; }
+		public string Source { private set; get; }
 	}
 }
