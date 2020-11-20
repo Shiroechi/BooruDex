@@ -11,5 +11,10 @@ namespace BooruDex.Exceptions
 		{
 
 		}
+
+		public SearchNotFoundException(string msg, Exception e) : base(msg, e)
+		{
+
+		}
 	}
 }
