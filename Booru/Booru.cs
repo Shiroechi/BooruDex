@@ -446,10 +446,19 @@ namespace BooruDex.Booru
 		/// <param name="name">The name (or a fragment of the name) of the artist.</param>
 		/// <param name="page">The page number.</param>
 		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty.
+		/// </exception>
 		public virtual Task<Artist[]> ArtistListAsync(string name, uint page = 0)
 		{
 			throw new NotImplementedException($"Method { nameof(ArtistListAsync) } is not implemented yet.");
