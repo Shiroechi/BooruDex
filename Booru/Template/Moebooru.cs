@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Authentication;
@@ -71,29 +73,31 @@ namespace BooruDex.Booru.Template
 			}
 		}
 
-		#endregion Protected Overrride Method
-
-		#region Protected Virtual Method
-
-		/// <summary>
-		/// Read <see cref="Artist"/> json search result.
-		/// </summary>
-		/// <param name="json">Json object.</param>
-		/// <returns></returns>
-		protected virtual Artist ReadArtist(JToken json)
+		/// <inheritdoc/>
+		protected override Artist ReadArtist(JToken json)
 		{
-			var item = json;
+			var item = (JObject)json;
+			var array = JsonConvert.DeserializeObject<JArray>(
+				item["urls"].ToString());
+
+			List<string> urls = new List<string>();
+
+			if (array.Count != 0)
+			{
+				for (var i = 0; i < array.Count; i++)
+				{
+					urls.Add(array[i].Value<string>());
+				}
+			}
+
 			return new Artist(
 				item["id"].Value<uint>(),
-				item["name"].Value<string>());
+				item["name"].Value<string>(),
+				urls);
 		}
 
-		/// <summary>
-		/// Read <see cref="Pool"/> json search result.
-		/// </summary>
-		/// <param name="json">Json object.</param>
-		/// <returns></returns>
-		protected virtual Pool ReadPool(JToken json)
+		/// <inheritdoc/>
+		protected override Pool ReadPool(JToken json)
 		{
 			var item = json;
 			return new Pool(
@@ -103,12 +107,8 @@ namespace BooruDex.Booru.Template
 				item["description"].Value<string>());
 		}
 
-		/// <summary>
-		/// Read <see cref="Post"/> json search result.
-		/// </summary>
-		/// <param name="json">Json object.</param>
-		/// <returns></returns>
-		protected virtual Post ReadPost(JToken json)
+		/// <inheritdoc/>
+		protected override Post ReadPost(JToken json)
 		{
 			var item = json;
 			return new Post(
@@ -127,12 +127,8 @@ namespace BooruDex.Booru.Template
 				);
 		}
 
-		/// <summary>
-		/// Read <see cref="Tag"/> json search result.
-		/// </summary>
-		/// <param name="json">Json object.</param>
-		/// <returns></returns>
-		protected virtual Tag ReadTag(JToken json)
+		/// <inheritdoc/>
+		protected override Tag ReadTag(JToken json)
 		{
 			var item = json;
 			return new Tag(
@@ -143,12 +139,8 @@ namespace BooruDex.Booru.Template
 				);
 		}
 
-		/// <summary>
-		/// Read related tag json search result.
-		/// </summary>
-		/// <param name="json"></param>
-		/// <returns></returns>
-		protected virtual TagRelated ReadRelatedTag(JToken json)
+		/// <inheritdoc/>
+		protected override TagRelated ReadTagRelated(JToken json)
 		{
 			var item = (JArray)json;
 			return new TagRelated(
@@ -156,12 +148,8 @@ namespace BooruDex.Booru.Template
 				item[1].Value<uint>());
 		}
 
-		/// <summary>
-		/// Read <see cref="Wiki"/> json search result.
-		/// </summary>
-		/// <param name="json">Json object.</param>
-		/// <returns></returns>
-		protected virtual Wiki ReadWiki(JToken json)
+		/// <inheritdoc/>
+		protected override Wiki ReadWiki(JToken json)
 		{
 			var item = json;
 			return new Wiki(
@@ -171,22 +159,13 @@ namespace BooruDex.Booru.Template
 				);
 		}
 
-		#endregion Protected Virtual Method
+		#endregion Protected Overrride Method
 
 		#region Public Method
 
 		#region Artist
 
-		/// <summary>
-		/// Get a list of artists.
-		/// </summary>
-		/// <param name="name">The name (or a fragment of the name) of the artist.</param>
-		/// <param name="page">The page number.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
+		/// <inheritdoc/>
 		public override async Task<Artist[]> ArtistListAsync(string name, uint page = 0)
 		{
 			if (name == null || name.Trim() == "")
@@ -197,8 +176,12 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("artist") +
 				$"page={ page }&name={ name }";
 
-			var jsonArray = JsonConvert.DeserializeObject<JArray>(
-				await GetJsonAsync(url));
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"Can't find Artist with name { name } at page { page }.");
+			}
 
 			return jsonArray.Select(ReadArtist).ToArray();
 		}
@@ -227,8 +210,7 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("pool") +
 				$"page={ page }&query={ title }";
 
-			var jsonArray = JsonConvert.DeserializeObject<JArray>(
-				await this.GetJsonAsync(url));
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
 
 			return jsonArray.Select(this.ReadPool).ToArray();
 		}
@@ -247,9 +229,8 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("pool/show") +
 				$"page={ page }&id={ poolId }";
 
-			var obj = JsonConvert.DeserializeObject<JObject>(
-				await this.GetJsonAsync(url));
-		
+			var obj = await this.GetJsonResponseAsync<JObject>(url);
+
 			var jsonArray = JsonConvert.DeserializeObject<JArray>(
 				obj["posts"].ToString());
 
@@ -304,9 +285,8 @@ namespace BooruDex.Booru.Template
 					$"limit={ limit }&page={ page }&tags={ tagString }";
 			}
 
-			var jsonArray = JsonConvert.DeserializeObject<JArray>(
-				await this.GetJsonAsync(url));
-			
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+
 			try
 			{
 				return jsonArray.Select(this.ReadPost).ToArray();
@@ -383,9 +363,8 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("tag") +
 				$"limit=0&order=name&name={ name }";
 
-			var jsonArray = JsonConvert.DeserializeObject<JArray>(
-				await GetJsonAsync(url));
-			
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+
 			return jsonArray.Select(ReadTag).ToArray();
 		}
 
@@ -410,8 +389,7 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("tag/related") +
 				$"tags={ name }&type={ type }";
 
-			var obj = JsonConvert.DeserializeObject<JObject>(
-				await GetJsonAsync(url));
+			var obj = await this.GetJsonResponseAsync<JObject>(url);
 
 			JArray jsonArray;
 
@@ -426,7 +404,7 @@ namespace BooruDex.Booru.Template
 				obj["useless_tags"].ToString());
 			}
 
-			return jsonArray.Select(this.ReadRelatedTag).ToArray();
+			return jsonArray.Select(this.ReadTagRelated).ToArray();
 		}
 
 		#endregion Tag
@@ -452,8 +430,7 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("wiki") +
 				$"order=title&query={ title }";
 
-			var array = JsonConvert.DeserializeObject<JArray>(
-				await GetJsonAsync(url));
+			var array = await this.GetJsonResponseAsync<JArray>(url);
 
 			return array.Select(this.ReadWiki).ToArray();
 		}
