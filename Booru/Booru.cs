@@ -445,7 +445,8 @@ namespace BooruDex.Booru
 		/// </summary>
 		/// <param name="name">The name (or a fragment of the name) of the artist.</param>
 		/// <param name="page">The page number.</param>
-		/// <returns></returns>
+		/// <param name="sort">Sort the search result by <see cref="Artist"/> name. Default <see langword="false"/>.</param>
+		/// <returns>Array of <see cref="Artist"/>.</returns>
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
@@ -459,7 +460,7 @@ namespace BooruDex.Booru
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty.
 		/// </exception>
-		public virtual Task<Artist[]> ArtistListAsync(string name, uint page = 0)
+		public virtual Task<Artist[]> ArtistListAsync(string name, uint page = 0, bool sort = false)
 		{
 			throw new NotImplementedException($"Method { nameof(ArtistListAsync) } is not implemented yet.");
 		}

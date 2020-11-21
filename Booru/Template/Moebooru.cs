@@ -166,7 +166,7 @@ namespace BooruDex.Booru.Template
 		#region Artist
 
 		/// <inheritdoc/>
-		public override async Task<Artist[]> ArtistListAsync(string name, uint page = 0)
+		public override async Task<Artist[]> ArtistListAsync(string name, uint page = 0, bool sort = false)
 		{
 			if (name == null || name.Trim() == "")
 			{
@@ -175,6 +175,11 @@ namespace BooruDex.Booru.Template
 
 			var url = this.CreateBaseApiCall("artist") +
 				$"page={ page }&name={ name }";
+
+			if (sort)
+			{
+				url += "&order=name";
+			}
 
 			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
 
