@@ -12,6 +12,7 @@ using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace BooruDex.Booru
 {
@@ -338,6 +339,84 @@ namespace BooruDex.Booru
 				default:
 					return Rating.Questionable;
 			}
+		}
+
+		/// <summary>
+		/// Read <see cref="Artist"/> JSON search result.
+		/// </summary>
+		/// <param name="json">JSON object.</param>
+		/// <returns><see cref="Artist"/> object.</returns>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		protected virtual Artist ReadArtist(JToken json)
+		{
+			throw new NotImplementedException($"Method { nameof(ReadArtist) } is not implemented yet.");
+		}
+
+		/// <summary>
+		/// Read <see cref="Pool"/> JSON search result.
+		/// </summary>
+		/// <param name="json">JSON object.</param>
+		/// <returns><see cref="Pool"/> object.</returns>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		protected virtual Pool ReadPool(JToken json)
+		{
+			throw new NotImplementedException($"Method { nameof(ReadPool) } is not implemented yet.");
+		}
+
+		/// <summary>
+		/// Read <see cref="Post"/> JSON search result.
+		/// </summary>
+		/// <param name="json">JSON object.</param>
+		/// <returns><see cref="Post"/> object.</returns>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		protected virtual Post ReadPost(JToken json)
+		{
+			throw new NotImplementedException($"Method { nameof(ReadPost) } is not implemented yet.");
+		}
+
+		/// <summary>
+		/// Read <see cref="Tag"/> JSON search result.
+		/// </summary>
+		/// <param name="json">JSON object.</param>
+		/// <returns><see cref="Tag"/> object.</returns>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		protected virtual Tag ReadTag(JToken json)
+		{
+			throw new NotImplementedException($"Method { nameof(ReadTag) } is not implemented yet.");
+		}
+
+		/// <summary>
+		/// Read <see cref="TagRelated"/> JSON search result.
+		/// </summary>
+		/// <param name="json">JSON object.</param>
+		/// <returns><see cref="TagRelated"/> object.</returns>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		protected virtual TagRelated ReadTagRelated(JToken json)
+		{
+			throw new NotImplementedException($"Method { nameof(ReadTagRelated) } is not implemented yet.");
+		}
+
+		/// <summary>
+		/// Read <see cref="Wiki"/> JSON search result.
+		/// </summary>
+		/// <param name="json">JSON object.</param>
+		/// <returns><see cref="Wiki"/> object.</returns>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		protected virtual Wiki ReadWiki(JToken json)
+		{
+			throw new NotImplementedException($"Method { nameof(ReadWiki) } is not implemented yet.");
 		}
 
 		#endregion Protected Method
