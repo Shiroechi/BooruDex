@@ -141,11 +141,7 @@ namespace BooruDex.Booru
 				else
 				{
 					this._HttpClient = value;
-					
-					if (!this._HttpClient.DefaultRequestHeaders.Contains("User-Agent"))
-					{
-						this._HttpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
-					}
+					this.AddHttpHeader();
 				}
 			}
 			get
@@ -153,6 +149,7 @@ namespace BooruDex.Booru
 				if (this._HttpClient == null)
 				{
 					this._HttpClient = _LazyHttpClient.Value;
+					this.AddHttpHeader();
 				}
 				return this._HttpClient;
 			}
@@ -207,9 +204,23 @@ namespace BooruDex.Booru
 		private static readonly Lazy<HttpClient> _LazyHttpClient = new Lazy<HttpClient>(() =>
 		{
 			var http = new HttpClient();
-			http.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 Unknown");
 			return http;
 		});
+
+		public void AddHttpHeader()
+		{
+			if (this._HttpClient == null)
+			{
+				return; 
+			}
+
+			if (this._HttpClient.DefaultRequestHeaders.UserAgent.Count == 0)
+			{
+				this.HttpClient.DefaultRequestHeaders.Add(
+					"User-Agent",
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36");
+			}
+		}
 
 		#endregion Private Method
 
