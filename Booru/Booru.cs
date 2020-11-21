@@ -441,7 +441,7 @@ namespace BooruDex.Booru
 		#region Artist
 
 		/// <summary>
-		/// Get a list of artists.
+		/// Search <see cref="Artist"/> by name.
 		/// </summary>
 		/// <param name="name">The name (or a fragment of the name) of the artist.</param>
 		/// <param name="page">The page number.</param>
