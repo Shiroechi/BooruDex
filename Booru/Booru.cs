@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Security.Authentication;
@@ -9,6 +10,8 @@ using BooruDex.Models;
 
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
+
+using Newtonsoft.Json;
 
 namespace BooruDex.Booru
 {
@@ -227,38 +230,87 @@ namespace BooruDex.Booru
 		#region Protected Method
 
 		/// <summary>
-		/// Download reponse from url.
+		/// Get JSON response from url.
 		/// </summary>
+		/// <typeparam name="T">The type of the object to deserialize.</typeparam>
 		/// <param name="url"></param>
-		/// <returns></returns>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		protected async Task<string> GetJsonAsync(string url)
+		/// <returns>The instance of <typeparamref name="T"/> being deserialized.</returns>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="TaskCanceledException">
+		///		The request failed due timeout.
+		/// </exception>
+		protected async Task<T> GetJsonResponseAsync<T>(string url)
 		{
 			try
 			{
-				using (var response = await this.HttpClient.GetAsync(url))
+				using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+				using (var response = await this._HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+				using (var stream = await response.Content.ReadAsStreamAsync())
 				{
-					if (response.StatusCode == HttpStatusCode.OK)
+					if (response.IsSuccessStatusCode)
 					{
-						response.EnsureSuccessStatusCode();
-						return await response.Content.ReadAsStringAsync();
+						return this.DeserializeJsonFromStream<T>(stream);
 					}
-					else if (response.StatusCode == HttpStatusCode.Forbidden || response.StatusCode == HttpStatusCode.Unauthorized)
-					{
-						throw new AuthenticationException("Authentication is required.");
-					}
-					else
-					{
-						throw new HttpResponseException("Unexpected error occured.");
-					}
+
+					throw new HttpResponseException(
+						$"Unexpected error occured.\n" +
+						$"Status code = { response.StatusCode }\n" +
+						$"Content = { await this.DeserializeStringFromStreamAsync(stream) }.");
 				}
 			}
 			catch (HttpRequestException e)
 			{
 				throw e;
 			}
+			catch (TaskCanceledException e)
+			{
+				throw e;
+			}
+		}
+
+		/// <summary>
+		/// Deserializes the JSON structure into an instance of the specified type.
+		/// </summary>
+		/// <typeparam name="T">The type of the object to deserialize.</typeparam>
+		/// <param name="stream"></param>
+		/// <returns>The instance of <typeparamref name="T"/> being deserialized.</returns>
+		protected T DeserializeJsonFromStream<T>(Stream stream)
+		{
+			if (stream == null || stream.CanRead == false)
+			{
+				return default(T);
+			}
+
+			using (var sr = new StreamReader(stream))
+			using (JsonReader reader = new JsonTextReader(sr))
+			{
+				JsonSerializer serializer = new JsonSerializer();
+				return serializer.Deserialize<T>(reader);
+			}
+		}
+
+		/// <summary>
+		/// Deserializes response into string.
+		/// </summary>
+		/// <param name="stream"></param>
+		/// <returns><see cref="string"/> content.</returns>
+		protected async Task<string> DeserializeStringFromStreamAsync(Stream stream)
+		{
+			if (stream != null)
+			{
+				using (var sr = new StreamReader(stream))
+				{
+					return await sr.ReadToEndAsync();
+				}
+			}
+
+			return null;
 		}
 
 		/// <summary>
