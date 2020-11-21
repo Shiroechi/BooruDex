@@ -261,8 +261,8 @@ namespace BooruDex.Booru
 
 					throw new HttpResponseException(
 						$"Unexpected error occured.\n" +
-						$"Status code = { response.StatusCode }\n" +
-						$"Content = { await this.DeserializeStringFromStreamAsync(stream) }.");
+						$"Status code = { (int)response.StatusCode }\n" +
+						$"Reason = { response.ReasonPhrase }.");
 				}
 			}
 			catch (HttpRequestException e)
@@ -447,6 +447,9 @@ namespace BooruDex.Booru
 		/// <param name="page">The page number.</param>
 		/// <param name="sort">Sort the search result by <see cref="Artist"/> name. Default <see langword="false"/>.</param>
 		/// <returns>Array of <see cref="Artist"/>.</returns>
+		/// <exception cref="ArgumentNullException">
+		///		One or more parameter is null or empty.
+		/// </exception>
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
@@ -470,30 +473,54 @@ namespace BooruDex.Booru
 		#region Pool
 
 		/// <summary>
-		/// Search a pool.
+		/// Search <see cref="Pool"/> by title.
 		/// </summary>
-		/// <param name="title">The title of pool.</param>
-		/// <param name="page">Tha page number.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
+		/// <param name="title">The title of <see cref="Pool"/>.</param>
+		/// <param name="page">The page number.</param>
+		/// <returns>Array of <see cref="Pool"/>.</returns>
+		/// <exception cref="ArgumentNullException">
+		///		One or more parameter is null or empty.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty.
+		/// </exception>
 		public virtual Task<Pool[]> PoolList(string title, uint page = 0)
 		{
 			throw new NotImplementedException($"Method { nameof(PoolList) } is not implemented yet.");
 		}
 
 		/// <summary>
-		/// Get list of post inside the pool.
+		/// Get all <see cref="Post"/> inside the <see cref="Pool"/>.
 		/// </summary>
 		/// <param name="poolId">The <see cref="Pool"/> id.</param>
-		/// <param name="page">The page number.</param>
-		/// <returns></returns>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		public virtual Task<Post[]> PoolPostList(uint poolId, uint page = 0)
+		/// <returns>Array of <see cref="Post"/> from <see cref="Pool"/>.</returns>
+		/// <exception cref="ArgumentNullException">
+		///		One or more parameter is null or empty.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty.
+		/// </exception>
+		public virtual Task<Post[]> PoolPostList(uint poolId)
 		{
 			throw new NotImplementedException($"Method { nameof(PoolPostList) } is not implemented yet.");
 		}
