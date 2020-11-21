@@ -308,7 +308,7 @@ namespace BooruDex.Booru
 		/// <exception cref="AuthenticationException"></exception>
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
-		public virtual async Task<Artist[]> ArtistListAsync(string name, uint page = 0)
+		public virtual Task<Artist[]> ArtistListAsync(string name, uint page = 0)
 		{
 			throw new NotImplementedException($"Method { nameof(ArtistListAsync) } is not implemented yet.");
 		}
@@ -327,7 +327,7 @@ namespace BooruDex.Booru
 		/// <exception cref="AuthenticationException"></exception>
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
-		public virtual async Task<Pool[]> PoolList(string title, uint page = 0)
+		public virtual Task<Pool[]> PoolList(string title, uint page = 0)
 		{
 			throw new NotImplementedException($"Method { nameof(PoolList) } is not implemented yet.");
 		}
@@ -341,7 +341,7 @@ namespace BooruDex.Booru
 		/// <exception cref="AuthenticationException"></exception>
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
-		public virtual async Task<Post[]> PoolPostList(uint poolId, uint page = 0)
+		public virtual Task<Post[]> PoolPostList(uint poolId, uint page = 0)
 		{
 			throw new NotImplementedException($"Method { nameof(PoolPostList) } is not implemented yet.");
 		}
@@ -362,7 +362,7 @@ namespace BooruDex.Booru
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
 		/// <exception cref="SearchNotFoundException"></exception>
-		public virtual async Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
+		public virtual Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
 		{
 			throw new NotImplementedException($"Method { nameof(PostListAsync) } is not implemented yet.");
 		}
@@ -377,7 +377,7 @@ namespace BooruDex.Booru
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
 		/// <exception cref="SearchNotFoundException"></exception>
-		public virtual async Task<Post> GetRandomPostAsync(string[] tags = null)
+		public virtual Task<Post> GetRandomPostAsync(string[] tags = null)
 		{
 			throw new NotImplementedException($"Method { nameof(GetRandomPostAsync) } is not implemented yet.");
 		}
@@ -393,7 +393,7 @@ namespace BooruDex.Booru
 		/// <exception cref="AuthenticationException"></exception>
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
-		public virtual async Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
+		public virtual Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
 		{
 			throw new NotImplementedException($"Method { nameof(GetRandomPostAsync) } is not implemented yet.");
 		}
@@ -411,7 +411,7 @@ namespace BooruDex.Booru
 		/// <exception cref="AuthenticationException"></exception>
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
-		public virtual async Task<Tag[]> TagListAsync(string name)
+		public virtual Task<Tag[]> TagListAsync(string name)
 		{
 			throw new NotImplementedException($"Method { nameof(TagListAsync) } is not implemented yet.");
 		}
@@ -427,7 +427,7 @@ namespace BooruDex.Booru
 		/// <exception cref="AuthenticationException"></exception>
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
-		public virtual async Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
+		public virtual Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
 		{
 			throw new NotImplementedException($"Method { nameof(TagRelatedAsync) } is not implemented yet.");
 		}
@@ -445,7 +445,7 @@ namespace BooruDex.Booru
 		/// <exception cref="AuthenticationException"></exception>
 		/// <exception cref="HttpRequestException"></exception>
 		/// <exception cref="HttpResponseException"></exception>
-		public virtual async Task<Wiki[]> WikiListAsync(string title)
+		public virtual Task<Wiki[]> WikiListAsync(string title)
 		{
 			throw new NotImplementedException($"Method { nameof(WikiListAsync) } is not implemented yet.");
 		}
