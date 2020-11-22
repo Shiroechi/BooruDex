@@ -195,16 +195,7 @@ namespace BooruDex.Booru.Template
 
 		#region Pool
 
-		/// <summary>
-		/// Search a pool.
-		/// </summary>
-		/// <param name="title">The title of pool.</param>
-		/// <param name="page">Tha page number.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
+		/// <inheritdoc/>
 		public override async Task<Pool[]> PoolList(string title, uint page = 0)
 		{
 			if (title == null || title.Trim() == "")
@@ -217,19 +208,60 @@ namespace BooruDex.Booru.Template
 
 			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
 
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"Can't find Pool with title { title } at page { page }.");
+			}
+
 			return jsonArray.Select(this.ReadPool).ToArray();
 		}
 
+		/// <inheritdoc/>
+		public override async Task<Post[]> PoolPostList(uint poolId)
+		{
+			var url = this.CreateBaseApiCall("pool/show") +
+				$"id={ poolId }";
+
+			try
+			{
+				var obj = await this.GetJsonResponseAsync<JObject>(url);
+
+				var jsonArray = JsonConvert.DeserializeObject<JArray>(
+						obj["posts"].ToString());
+
+				return jsonArray.Select(this.ReadPost).ToArray();
+			}
+			catch (JsonReaderException e)
+			{
+				// if pool not found, it will return pool page 
+				// like yande.re/pool, not empty JSON.
+				throw new SearchNotFoundException($"Can't find Pool with id { poolId }.");
+			}
+		}
+
 		/// <summary>
-		/// Get list of post inside the pool.
+		/// Get partial <see cref="Post"/> inside the <see cref="Pool"/>.
 		/// </summary>
 		/// <param name="poolId">The <see cref="Pool"/> id.</param>
 		/// <param name="page">The page number.</param>
-		/// <returns></returns>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		public override async Task<Post[]> PoolPostList(uint poolId, uint page = 0)
+		/// <returns>Array of <see cref="Post"/> from <see cref="Pool"/>.</returns>
+		/// <exception cref="ArgumentNullException">
+		///		One or more parameter is null or empty.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty.
+		/// </exception>
+		protected virtual async Task<Post[]> PoolPostList(uint poolId, uint page)
 		{
 			var url = this.CreateBaseApiCall("pool/show") +
 				$"page={ page }&id={ poolId }";
@@ -238,6 +270,11 @@ namespace BooruDex.Booru.Template
 
 			var jsonArray = JsonConvert.DeserializeObject<JArray>(
 				obj["posts"].ToString());
+
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"Can't find post in pool id { poolId } at page { page }.");
+			}
 
 			return jsonArray.Select(this.ReadPost).ToArray();
 		}
