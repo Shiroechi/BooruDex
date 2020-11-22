@@ -60,17 +60,26 @@ namespace BooruDex.Booru.Template
 		#region Protected Overrride Method
 
 		/// <inheritdoc/>
-		protected override string CreateBaseApiCall(string query)
+		protected override string CreateBaseApiCall(string query, bool json = true)
 		{
 			if (query.Contains("/"))
 			{
-				return $"{ this._BaseUrl.AbsoluteUri }{ query }.json?";
+				if (json)
+				{
+					return $"{ this._BaseUrl.AbsoluteUri }{ query }.json?";
+				}
+				return $"{ this._BaseUrl.AbsoluteUri }{ query }.xml?";
 			}
 			else
 			{
-				return $"{ this._BaseUrl.AbsoluteUri }{ query }/index.json?";
+				if (json)
+				{
+					return $"{ this._BaseUrl.AbsoluteUri }{ query }/index.json?";
+				}
+				return $"{ this._BaseUrl.AbsoluteUri }{ query }/index.xml?";
 			}
 		}
+
 
 		/// <inheritdoc/>
 		protected override Artist ReadArtist(JToken json)
