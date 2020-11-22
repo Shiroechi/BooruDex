@@ -404,15 +404,7 @@ namespace BooruDex.Booru.Template
 
 		#region Tag
 
-		/// <summary>
-		/// Get a list of tag that contains 
-		/// </summary>
-		/// <param name="name">The tag names to query.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
+		/// <inheritdoc/>
 		public override async Task<Tag[]> TagListAsync(string name)
 		{
 			if (name == null || name.Trim() == "")
@@ -428,17 +420,7 @@ namespace BooruDex.Booru.Template
 			return jsonArray.Select(ReadTag).ToArray();
 		}
 
-		/// <summary>
-		/// Get a list of related tags.
-		/// </summary>
-		/// <param name="name">The tag names to query.</param>
-		/// <param name="type">Restrict results to tag type (can be general, artist, copyright, or character).</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
+		/// <inheritdoc/>
 		public override async Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
 		{
 			if (name == null || name.Length <= 0)
@@ -471,15 +453,7 @@ namespace BooruDex.Booru.Template
 
 		#region Wiki
 
-		/// <summary>
-		/// Search a wiki content.
-		/// </summary>
-		/// <param name="title">Wiki title.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
+		/// <inheritdoc/>
 		public override async Task<Wiki[]> WikiListAsync(string title)
 		{
 			if (title == null || title.Trim() == "")
