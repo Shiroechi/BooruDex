@@ -479,7 +479,7 @@ namespace BooruDex.Booru
 		/// <param name="page">The page number.</param>
 		/// <returns>Array of <see cref="Pool"/>.</returns>
 		/// <exception cref="ArgumentNullException">
-		///		One or more parameter is null or empty.
+		///		The <see cref="Pool"/> title or name can't null or empty.
 		/// </exception>
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
@@ -530,48 +530,87 @@ namespace BooruDex.Booru
 		#region Post
 
 		/// <summary>
-		/// Get a list of <see cref="Post"/>.
+		/// Get a list of the latest <see cref="Post"/>.
 		/// </summary>
 		/// <param name="limit">How many <see cref="Post"/> to retrieve.</param>
 		/// <param name="page">The page number.</param>
 		/// <param name="tags">The tags to search for.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		/// <exception cref="SearchNotFoundException"></exception>
+		/// <returns>
+		///		Array of <see cref="Post"/>.
+		/// </returns>
+		/// <exception cref="ArgumentOutOfRangeException">
+		///		The provided <see cref="Tag"/> is more than the limit.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No post is found.
+		/// </exception>
 		public virtual Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
 		{
 			throw new NotImplementedException($"Method { nameof(PostListAsync) } is not implemented yet.");
 		}
 
 		/// <summary>
-		/// Search a single random post from booru with the given tags.
+		/// Get a single random <see cref="Post"/> with the given tags.
 		/// </summary>
 		/// <param name="tags"><see cref="Tag"/> to search.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		/// <exception cref="SearchNotFoundException"></exception>
+		/// <returns>
+		///		A random <see cref="Post"/>.
+		/// </returns>
+		/// <exception cref="ArgumentOutOfRangeException">
+		///		The provided <see cref="Tag"/> is more than the limit.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No post is found.
+		/// </exception>
 		public virtual Task<Post> GetRandomPostAsync(string[] tags = null)
 		{
 			throw new NotImplementedException($"Method { nameof(GetRandomPostAsync) } is not implemented yet.");
 		}
 
 		/// <summary>
-		/// Search some post from booru with the given tags.
+		/// Get multiple random <see cref="Post"/> with the given tags.
 		/// </summary>
 		/// <param name="tags"><see cref="Tag"/> to search.</param>
 		/// <param name="limit">How many post to retrieve.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
+		/// <returns>
+		///		Array of <see cref="Post"/>.
+		/// </returns>
+		/// <exception cref="ArgumentOutOfRangeException">
+		///		The provided <see cref="Tag"/> is more than the limit.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No post is found.
+		/// </exception>
 		public virtual Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
 		{
 			throw new NotImplementedException($"Method { nameof(GetRandomPostAsync) } is not implemented yet.");
