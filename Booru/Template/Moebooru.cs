@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Authentication;
 using System.Threading.Tasks;
 
 using BooruDex.Exceptions;
@@ -349,26 +347,33 @@ namespace BooruDex.Booru.Template
 
 			while(true)
 			{
-				var post = await this.PostListAsync(
+				try
+				{
+					var post = await this.PostListAsync(
 						1,
 						tags,
 						this._RNG.NextInt(0, this._PostLimit - limit));
 
-				if (post.Length == 0 && limit < this._PostLimit - 10)
+					if (post.Length == 0 && limit < this._PostLimit - 10)
+					{
+						limit += 10;
+						continue;
+					}
+					else if (post.Length == 0 && limit >= (this._PostLimit - 10))
+					{
+						limit += 1;
+						continue;
+					}
+					else if (post.Length == 0 && limit == this._PostLimit)
+					{
+						throw new SearchNotFoundException($"No post found with tags { string.Join(" ", tags) }.");
+					}
+					return post[0];
+				}
+				catch
 				{
-					limit += 10;
 					continue;
 				}
-				else if (post.Length == 0 && limit >= (this._PostLimit - 10))
-				{
-					limit += 1;
-					continue;
-				}
-				else if (post.Length == 0 && limit == this._PostLimit)
-				{
-					throw new SearchNotFoundException($"No post found with tags { string.Join(" ", tags) }.");
-				}
-				return post[0];
 			}
 		}
 
@@ -390,7 +395,7 @@ namespace BooruDex.Booru.Template
 
 					post.Add(temp);
 				}
-				catch
+				catch (Exception e)
 				{
 					// the number of posts with requested tag on 
 					// the website is less than the requested
