@@ -682,14 +682,28 @@ namespace BooruDex.Booru
 		#region Wiki
 
 		/// <summary>
-		/// Search a wiki content.
+		/// Search for <see cref="Wiki"/> by title.
 		/// </summary>
-		/// <param name="title">Wiki title.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
+		/// <param name="title"><see cref="Wiki"/> title.</param>
+		/// <returns>
+		///		Array of <see cref="Wiki"/> with title similiar or alike with the provided name.
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		///		The provided <see cref="Wiki"/> title is null or empty string.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No <see cref="Wiki"/> is found.
+		/// </exception>
 		public virtual Task<Wiki[]> WikiListAsync(string title)
 		{
 			throw new NotImplementedException($"Method { nameof(WikiListAsync) } is not implemented yet.");
