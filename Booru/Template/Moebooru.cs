@@ -283,25 +283,14 @@ namespace BooruDex.Booru.Template
 
 		#region Post
 
-		/// <summary>
-		/// Get a list of <see cref="Post"/>.
-		/// </summary>
-		/// <param name="limit">How many <see cref="Post"/> to retrieve.</param>
-		/// <param name="page">The page number.</param>
-		/// <param name="tags">The tags to search for.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		/// <exception cref="SearchNotFoundException"></exception>
+		/// <inheritdoc/>
 		public override async Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
 		{
 			if ((this._TagsLimit != 0) && 
 				(tags != null) && 
 				(tags.Length > this._TagsLimit))
 			{
-				throw new ArgumentException($"Tag can't more than { this._TagsLimit } tag.");
+				throw new ArgumentOutOfRangeException($"Tag can't more than { this._TagsLimit } tag.");
 			}
 
 			if (limit <= 0)
@@ -329,57 +318,85 @@ namespace BooruDex.Booru.Template
 
 			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
 
+			if (jsonArray.Count == 0)
+			{
+				if (tags == null || tags.Length <= 0)
+				{
+					throw new SearchNotFoundException($"No Post found with empty tags at page { page }.");
+				}
+				else
+				{
+					throw new SearchNotFoundException($"No Post found with tags { string.Join(", ", tags) } at page { page }.");
+				}
+			}
+
 			try
 			{
 				return jsonArray.Select(this.ReadPost).ToArray();
 			}
-			catch
+			catch (Exception e)
 			{
-				throw new SearchNotFoundException("No post found.");
+				Console.WriteLine(e);
+				throw new SearchNotFoundException("Something happen when deserialize Post data.", e);
 			}
 		}
 
-		/// <summary>
-		/// Search a single random post from booru with the given tags.
-		/// </summary>
-		/// <param name="tags"><see cref="Tag"/> to search.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		/// <exception cref="SearchNotFoundException"></exception>
+		/// <inheritdoc/>
 		public override async Task<Post> GetRandomPostAsync(string[] tags = null)
 		{
-			var post = await this.GetRandomPostAsync(
-					this._PostLimit,
-					tags);
+			uint limit = 0;
 
-			if (post.Length == 0)
+			while(true)
 			{
-				throw new SearchNotFoundException("No post found.");
-			}
+				var post = await this.PostListAsync(
+						1,
+						tags,
+						this._RNG.NextInt(0, this._PostLimit - limit));
 
-			return post[this._RNG.NextInt(0, (uint)(post.Length - 1))];
+				if (post.Length == 0 && limit < this._PostLimit - 10)
+				{
+					limit += 10;
+					continue;
+				}
+				else if (post.Length == 0 && limit >= (this._PostLimit - 10))
+				{
+					limit += 1;
+					continue;
+				}
+				else if (post.Length == 0 && limit == this._PostLimit)
+				{
+					throw new SearchNotFoundException($"No post found with tags { string.Join(" ", tags) }.");
+				}
+				return post[0];
+			}
 		}
 
-		/// <summary>
-		/// Search some post from booru with the given tags.
-		/// </summary>
-		/// <param name="tags"><see cref="Tag"/> to search.</param>
-		/// <param name="limit">How many post to retrieve.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		public override async Task<Post[]> GetRandomPostAsync(uint limit , string[] tags = null)
+		/// <inheritdoc/>
+		public async override Task<Post[]> GetRandomPostAsync(uint limit , string[] tags = null)
 		{
-			return await this.PostListAsync(
-				limit,
-				tags,
-				this._RNG.NextInt(0, this._PageLimit));
+			var post = new List<Post>();
+
+			while (post.Count < limit)
+			{
+				try
+				{
+					var temp = await this.GetRandomPostAsync(tags);
+
+					if (post.Contains(temp))
+					{
+						continue;
+					}
+
+					post.Add(temp);
+				}
+				catch
+				{
+					// the number of posts with requested tag on 
+					// the website is less than the requested
+					return post.ToArray();
+				}
+			}
+			return post.ToArray();
 		}
 
 		#endregion Post
