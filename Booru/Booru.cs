@@ -461,7 +461,7 @@ namespace BooruDex.Booru
 		///     failure, server certificate validation or timeout.
 		/// </exception>
 		/// <exception cref="SearchNotFoundException">
-		///		The search result is empty.
+		///		The search result is empty. No <see cref="Artist"/> is found.
 		/// </exception>
 		public virtual Task<Artist[]> ArtistListAsync(string name, uint page = 0, bool sort = false)
 		{
@@ -492,7 +492,7 @@ namespace BooruDex.Booru
 		///     failure, server certificate validation or timeout.
 		/// </exception>
 		/// <exception cref="SearchNotFoundException">
-		///		The search result is empty.
+		///		The search result is empty. No <see cref="Pool"/> is found.
 		/// </exception>
 		public virtual Task<Pool[]> PoolList(string title, uint page = 0)
 		{
@@ -518,7 +518,7 @@ namespace BooruDex.Booru
 		///     failure, server certificate validation or timeout.
 		/// </exception>
 		/// <exception cref="SearchNotFoundException">
-		///		The search result is empty.
+		///		The search result is empty. No <see cref="Post"/> is found.
 		/// </exception>
 		public virtual Task<Post[]> PoolPostList(uint poolId)
 		{
@@ -552,7 +552,7 @@ namespace BooruDex.Booru
 		///     failure, server certificate validation or timeout.
 		/// </exception>
 		/// <exception cref="SearchNotFoundException">
-		///		The search result is empty. No post is found.
+		///		The search result is empty. No <see cref="Post"/> is found.
 		/// </exception>
 		public virtual Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
 		{
@@ -580,7 +580,7 @@ namespace BooruDex.Booru
 		///     failure, server certificate validation or timeout.
 		/// </exception>
 		/// <exception cref="SearchNotFoundException">
-		///		The search result is empty. No post is found.
+		///		The search result is empty. No <see cref="Post"/> is found.
 		/// </exception>
 		public virtual Task<Post> GetRandomPostAsync(string[] tags = null)
 		{
@@ -609,7 +609,7 @@ namespace BooruDex.Booru
 		///     failure, server certificate validation or timeout.
 		/// </exception>
 		/// <exception cref="SearchNotFoundException">
-		///		The search result is empty. No post is found.
+		///		The search result is empty. No <see cref="Post"/> is found.
 		/// </exception>
 		public virtual Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
 		{
@@ -621,30 +621,57 @@ namespace BooruDex.Booru
 		#region Tag
 
 		/// <summary>
-		/// Get a list of tag that contains 
+		/// Search for <see cref="Tag"/> with similiar or alike name.
 		/// </summary>
-		/// <param name="name">The tag names to query.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
+		/// <param name="name">The <see cref="Tag"/> name.</param>
+		/// <returns>
+		///		Array of <see cref="Tag"/> that with similiar name.
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		///		The provided <see cref="Tag"/> name is null or empty string.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No <see cref="Tag"/> is found.
+		/// </exception>
 		public virtual Task<Tag[]> TagListAsync(string name)
 		{
 			throw new NotImplementedException($"Method { nameof(TagListAsync) } is not implemented yet.");
 		}
 
 		/// <summary>
-		/// Get a list of related tags.
+		/// Search for related <see cref="Tag"/>.	
 		/// </summary>
-		/// <param name="name">The tag names to query.</param>
-		/// <param name="type">Restrict results to tag type (can be general, artist, copyright, or character).</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
+		/// <param name="name">The <see cref="Tag"/> name.</param>
+		/// <param name="type">Restrict results to search by <see cref="TagType"/> (can be general, artist, copyright, or character).</param>
+		/// <returns>
+		///		Array of <see cref="TagRelated"/> with provided <see cref="Tag"/> name.
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		///		The provided <see cref="Tag"/> name is null or empty string.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No <see cref="TagRelated"/> is found.
+		/// </exception>
 		public virtual Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
 		{
 			throw new NotImplementedException($"Method { nameof(TagRelatedAsync) } is not implemented yet.");
