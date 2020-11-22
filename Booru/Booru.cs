@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Security.Authentication;
 using System.Threading.Tasks;
 
 using BooruDex.Exceptions;
@@ -318,8 +317,9 @@ namespace BooruDex.Booru
 		/// Create base API call url. 
 		/// </summary>
 		/// <param name="query">Categories.</param>
+		/// <param name="json">Create JSON API or not. <see langword="true"/> for JSON.</param>
 		/// <returns></returns>
-		protected abstract string CreateBaseApiCall(string query);
+		protected abstract string CreateBaseApiCall(string query, bool json = true);
 
 		/// <summary>
 		/// Convert string rating to <see cref="Rating"/>.
