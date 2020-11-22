@@ -275,6 +275,50 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
+		/// Get <see cref="string"/> response from url.
+		/// </summary>
+		/// <param name="url"></param>
+		/// <returns><see cref="string"/> response.</returns>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="TaskCanceledException">
+		///		The request failed due timeout.
+		/// </exception>
+		protected async Task<string> GetStringResponseAsync(string url)
+		{
+			try
+			{
+				using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+				using (var response = await this._HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+				using (var stream = await response.Content.ReadAsStreamAsync())
+				{
+					if (response.IsSuccessStatusCode)
+					{
+						return await this.DeserializeStringFromStreamAsync(stream);
+					}
+
+					throw new HttpResponseException(
+						$"Unexpected error occured.\n" +
+						$"Status code = { (int)response.StatusCode }\n" +
+						$"Reason = { response.ReasonPhrase }.");
+				}
+			}
+			catch (HttpRequestException e)
+			{
+				throw e;
+			}
+			catch (TaskCanceledException e)
+			{
+				throw e;
+			}
+		}
+
+		/// <summary>
 		/// Deserializes the JSON structure into an instance of the specified type.
 		/// </summary>
 		/// <typeparam name="T">The type of the object to deserialize.</typeparam>
@@ -300,13 +344,13 @@ namespace BooruDex.Booru
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <returns><see cref="string"/> content.</returns>
-		protected async Task<string> DeserializeStringFromStreamAsync(Stream stream)
+		protected Task<string> DeserializeStringFromStreamAsync(Stream stream)
 		{
 			if (stream != null)
 			{
 				using (var sr = new StreamReader(stream))
 				{
-					return await sr.ReadToEndAsync();
+					return sr.ReadToEndAsync();
 				}
 			}
 
