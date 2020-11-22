@@ -61,6 +61,7 @@ namespace BooruDex.Booru.Template
 
 		#region Protected Overrride Method
 
+		/// <inheritdoc/>
 		protected override string CreateBaseApiCall(string query)
 		{
 			if (query.Contains("/"))
@@ -414,7 +415,7 @@ namespace BooruDex.Booru.Template
 		/// <exception cref="HttpResponseException"></exception>
 		public override async Task<Tag[]> TagListAsync(string name)
 		{
-			if (name == null || name.Length <= 0)
+			if (name == null || name.Trim() == "")
 			{
 				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
 			}
