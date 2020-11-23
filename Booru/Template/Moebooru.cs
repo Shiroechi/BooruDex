@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Xml;
 
 using BooruDex.Exceptions;
 using BooruDex.Models;
@@ -350,38 +351,49 @@ namespace BooruDex.Booru.Template
 		/// <inheritdoc/>
 		public override async Task<Post> GetRandomPostAsync(string[] tags = null)
 		{
-			uint limit = 0;
+			string url;
 
-			while(true)
+			if (tags == null)
 			{
-				try
-				{
-					var post = await this.PostListAsync(
-						1,
-						tags,
-						this._RNG.NextInt(0, this._PostLimit - limit));
-
-					if (post.Length == 0 && limit < this._PostLimit - 10)
-					{
-						limit += 10;
-						continue;
-					}
-					else if (post.Length == 0 && limit >= (this._PostLimit - 10))
-					{
-						limit += 1;
-						continue;
-					}
-					else if (post.Length == 0 && limit == this._PostLimit)
-					{
-						throw new SearchNotFoundException($"No post found with tags { string.Join(" ", tags) }.");
-					}
-					return post[0];
-				}
-				catch
-				{
-					continue;
-				}
+				url = this.CreateBaseApiCall("post", false) +
+					$"limit={ 1 }&page={ 0 }";
 			}
+			else
+			{
+				url = this.CreateBaseApiCall("post", false) +
+					$"limit={ 1 }&page={ 0 }&tags={ string.Join(" ", tags) }";
+			}
+
+			// get Post count int XML response.
+
+			var xml = new XmlDocument();
+			xml.LoadXml(await this.GetStringResponseAsync(url));
+			var postCount = int.Parse(xml.ChildNodes.Item(1).Attributes[0].InnerXml);
+
+			if (postCount == 0)
+			{
+				throw new SearchNotFoundException($"No post found with tags { string.Join(" ", tags) }.");
+			}
+
+			// get post with random the page number, each page 
+			// limited only with 1 post.
+
+			var pageNumber = this._RNG.NextInt(1, (uint)postCount);
+
+			if (tags == null)
+			{
+				url = this.CreateBaseApiCall("post") +
+					$"limit={ 1 }&page={ pageNumber }";
+			}
+			else
+			{
+				url = this.CreateBaseApiCall("post") +
+					$"limit={ 1 }&page={ pageNumber }&tags={ string.Join(" ", tags) }";
+			}
+
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+
+			return jsonArray.Select(this.ReadPost).ToArray()[0];
 		}
 
 		/// <inheritdoc/>
