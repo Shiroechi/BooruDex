@@ -413,6 +413,15 @@ namespace BooruDex.Booru.Template
 				throw new ArgumentOutOfRangeException($"Tag can't more than { this._TagsLimit } tag.");
 			}
 
+			if (limit <= 0)
+			{
+				limit = 1;
+			}
+			else if (limit > this._PostLimit)
+			{
+				limit = this._PostLimit;
+			}
+
 			string url;
 
 			if (tags == null)
