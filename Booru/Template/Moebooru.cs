@@ -399,29 +399,60 @@ namespace BooruDex.Booru.Template
 		/// <inheritdoc/>
 		public async override Task<Post[]> GetRandomPostAsync(uint limit , string[] tags = null)
 		{
-			var post = new List<Post>();
+			string url;
 
-			while (post.Count < limit)
+			if (tags == null)
 			{
-				try
-				{
-					var temp = await this.GetRandomPostAsync(tags);
-
-					if (post.Contains(temp))
-					{
-						continue;
-					}
-
-					post.Add(temp);
-				}
-				catch (Exception e)
-				{
-					// the number of posts with requested tag on 
-					// the website is less than the requested
-					return post.ToArray();
-				}
+				url = this.CreateBaseApiCall("post", false) +
+					$"limit={ 1 }&page={ 0 }";
 			}
-			return post.ToArray();
+			else
+			{
+				url = this.CreateBaseApiCall("post", false) +
+					$"limit={ 1 }&page={ 0 }&tags={ string.Join(" ", tags) }";
+			}
+
+			// get Post count int XML response.
+
+			var xml = new XmlDocument();
+			xml.LoadXml(await this.GetStringResponseAsync(url));
+			var postCount = int.Parse(xml.ChildNodes.Item(1).Attributes[0].InnerXml);
+
+			if (postCount == 0)
+			{
+				throw new SearchNotFoundException($"No post found with tags { string.Join(" ", tags) }.");
+			}
+			else if (postCount < limit)
+			{
+				throw new SearchNotFoundException($"The site only have { postCount } post with tags { string.Join(", ", tags) }.");
+			}
+
+			var maxPageNumber = (uint)Math.Floor(postCount / limit * 1.0);
+
+			if (maxPageNumber == 1)
+			{
+				// get all post
+				return await this.PostListAsync(limit, tags);
+			}
+			else
+			{
+				// maxPageNumber - 1, to ensure the leftovers post
+				// in last page not included.
+				if (tags == null)
+				{
+					url = this.CreateBaseApiCall("post") +
+						$"limit={ limit }&page={ this._RNG.NextInt(1, maxPageNumber - 1) }";
+				}
+				else
+				{
+					url = this.CreateBaseApiCall("post") +
+						$"limit={ limit }&page={ this._RNG.NextInt(1, maxPageNumber - 1) }&tags={ string.Join(" ", tags) }";
+				}
+
+				var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+
+				return jsonArray.Select(this.ReadPost).ToArray();
+			}
 		}
 
 		#endregion Post
