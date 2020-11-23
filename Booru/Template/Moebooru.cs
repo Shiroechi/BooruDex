@@ -80,7 +80,6 @@ namespace BooruDex.Booru.Template
 			}
 		}
 
-
 		/// <inheritdoc/>
 		protected override Artist ReadArtist(JToken json)
 		{
@@ -319,9 +318,8 @@ namespace BooruDex.Booru.Template
 			}
 			else
 			{
-				string tagString = string.Join(" ", tags);
 				url = this.CreateBaseApiCall("post") +
-					$"limit={ limit }&page={ page }&tags={ tagString }";
+					$"limit={ limit }&page={ page }&tags={ string.Join(" ", tags) }";
 			}
 
 			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
