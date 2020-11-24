@@ -544,9 +544,14 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("wiki") +
 				$"order=title&query={ title }";
 
-			var array = await this.GetJsonResponseAsync<JArray>(url);
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
 
-			return array.Select(this.ReadWiki).ToArray();
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"No Wiki found with title \"{ title }\"");
+			}
+
+			return jsonArray.Select(this.ReadWiki).ToArray();
 		}
 
 		#endregion Wiki
