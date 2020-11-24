@@ -210,7 +210,7 @@ namespace BooruDex.Booru.Template
 
 			if (jsonArray.Count == 0)
 			{
-				throw new SearchNotFoundException($"Can't find Artist with name { name } at page { page }.");
+				throw new SearchNotFoundException($"Can't find Artist with name \"{ name }\" at page { page }.");
 			}
 
 			return jsonArray.Select(ReadArtist).ToArray();
@@ -235,7 +235,7 @@ namespace BooruDex.Booru.Template
 
 			if (jsonArray.Count == 0)
 			{
-				throw new SearchNotFoundException($"Can't find Pool with title { title } at page { page }.");
+				throw new SearchNotFoundException($"Can't find Pool with title \"{ title }\" at page { page }.");
 			}
 
 			return jsonArray.Select(this.ReadPool).ToArray();
@@ -259,7 +259,7 @@ namespace BooruDex.Booru.Template
 			catch (JsonReaderException e)
 			{
 				// if pool not found, it will return pool page 
-				// like yande.re/pool, not empty JSON.
+				// like yande.re/pool, not a empty JSON.
 				throw new SearchNotFoundException($"Can't find Pool with id { poolId }.");
 			}
 		}
@@ -489,7 +489,7 @@ namespace BooruDex.Booru.Template
 
 			if (jsonArray.Count == 0)
 			{
-				throw new SearchNotFoundException($"Can't find Tags with name { name }.");
+				throw new SearchNotFoundException($"Can't find Tags with name \"{ name }\".");
 			}
 
 			return jsonArray.Select(ReadTag).ToArray();
@@ -523,7 +523,7 @@ namespace BooruDex.Booru.Template
 
 			if (jsonArray.Count == 0)
 			{
-				throw new SearchNotFoundException($"Can't find related Tags with Tag name { name }.");
+				throw new SearchNotFoundException($"Can't find related Tags with Tag name \"{ name }\".");
 			}
 
 			return jsonArray.Select(this.ReadTagRelated).ToArray();
