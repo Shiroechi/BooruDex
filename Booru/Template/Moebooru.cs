@@ -387,20 +387,9 @@ namespace BooruDex.Booru.Template
 
 			var pageNumber = this._RNG.NextInt(1, (uint)postCount);
 
-			if (tags == null)
-			{
-				url = this.CreateBaseApiCall("post") +
-					$"limit={ 1 }&page={ pageNumber }";
-			}
-			else
-			{
-				url = this.CreateBaseApiCall("post") +
-					$"limit={ 1 }&page={ pageNumber }&tags={ string.Join(" ", tags) }";
-			}
-
-			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
-
-			return jsonArray.Select(this.ReadPost).ToArray()[0];
+			var post = await this.PostListAsync(1, tags, pageNumber);
+			
+			return post[0];
 		}
 
 		/// <inheritdoc/>
