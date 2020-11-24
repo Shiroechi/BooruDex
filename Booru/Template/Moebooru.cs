@@ -28,7 +28,7 @@ namespace BooruDex.Booru.Template
 		/// </summary>
 		/// <param name="domain">URL of booru based sites.</param>
 		/// <param name="httpClient">Client for sending and receive http response.</param>
-		public Moebooru(string domain, HttpClient httpClient = null) : this(domain, httpClient, new JSF32())
+		public Moebooru(string domain, HttpClient httpClient = null) : this(domain, httpClient, new SplitMix64())
 		{
 
 		}
