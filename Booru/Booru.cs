@@ -730,7 +730,7 @@ namespace BooruDex.Booru
 		/// </summary>
 		/// <param name="title"><see cref="Wiki"/> title.</param>
 		/// <returns>
-		///		Array of <see cref="Wiki"/> with title similiar or alike with the provided name.
+		///		Array of <see cref="Wiki"/>.
 		/// </returns>
 		/// <exception cref="ArgumentNullException">
 		///		The provided <see cref="Wiki"/> title is null or empty string.
