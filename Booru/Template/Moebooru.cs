@@ -463,20 +463,10 @@ namespace BooruDex.Booru.Template
 			{
 				// maxPageNumber - 1, to ensure the leftovers post
 				// in last page not included.
-				if (tags == null)
-				{
-					url = this.CreateBaseApiCall("post") +
-						$"limit={ limit }&page={ this._RNG.NextInt(1, maxPageNumber - 1) }";
-				}
-				else
-				{
-					url = this.CreateBaseApiCall("post") +
-						$"limit={ limit }&page={ this._RNG.NextInt(1, maxPageNumber - 1) }&tags={ string.Join(" ", tags) }";
-				}
 
-				var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+				maxPageNumber -= 1;
 
-				return jsonArray.Select(this.ReadPost).ToArray();
+				return await this.PostListAsync(limit, tags, this._RNG.NextInt(1, maxPageNumber));
 			}
 		}
 
