@@ -498,7 +498,7 @@ namespace BooruDex.Booru.Template
 		/// <inheritdoc/>
 		public override async Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
 		{
-			if (name == null || name.Length <= 0)
+			if (name == null || name.Trim() == "")
 			{
 				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
 			}
