@@ -58,6 +58,23 @@ namespace BooruDex.Booru.Template
 
 		#endregion Constructor & Destructor
 
+		#region Protected Method
+
+		/// <summary>
+		/// Get max number of <see cref="Post"/> with 
+		/// the given <see cref="Tag"/> the site have.
+		/// </summary>
+		/// <param name="url">Url of the requested <see cref="Post"/>.</param>
+		/// <returns>Number of <see cref="Post"/>.</returns>
+		protected async Task<uint> GetPostCount(string url)
+		{
+			var xml = new XmlDocument();
+			xml.LoadXml(await this.GetStringResponseAsync(url));
+			return uint.Parse(xml.ChildNodes.Item(1).Attributes[0].InnerXml);
+		}
+
+		#endregion Protected Method
+
 		#region Protected Overrride Method
 
 		/// <inheritdoc/>
@@ -371,11 +388,9 @@ namespace BooruDex.Booru.Template
 					$"limit={ 1 }&page={ 0 }&tags={ string.Join(" ", tags) }";
 			}
 
-			// get Post count int XML response.
+			// get Post count in XML response.
 
-			var xml = new XmlDocument();
-			xml.LoadXml(await this.GetStringResponseAsync(url));
-			var postCount = int.Parse(xml.ChildNodes.Item(1).Attributes[0].InnerXml);
+			var postCount = await this.GetPostCount(url); 
 
 			if (postCount == 0)
 			{
@@ -426,9 +441,7 @@ namespace BooruDex.Booru.Template
 
 			// get Post count int XML response.
 
-			var xml = new XmlDocument();
-			xml.LoadXml(await this.GetStringResponseAsync(url));
-			var postCount = int.Parse(xml.ChildNodes.Item(1).Attributes[0].InnerXml);
+			var postCount = await this.GetPostCount(url);
 
 			if (postCount == 0)
 			{
