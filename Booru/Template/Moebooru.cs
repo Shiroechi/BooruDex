@@ -495,6 +495,11 @@ namespace BooruDex.Booru.Template
 
 			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
 
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"Can't find Tags with name { name }.");
+			}
+
 			return jsonArray.Select(ReadTag).ToArray();
 		}
 
@@ -522,6 +527,11 @@ namespace BooruDex.Booru.Template
 			{
 				jsonArray = JsonConvert.DeserializeObject<JArray>(
 				obj["useless_tags"].ToString());
+			}
+
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"Can't find related Tags with Tag name { name }.");
 			}
 
 			return jsonArray.Select(this.ReadTagRelated).ToArray();
