@@ -220,7 +220,7 @@ namespace BooruDex.Booru.Template
 		{
 			if (title == null || title.Trim() == "")
 			{
-				throw new ArgumentNullException(nameof(title), "Title can't null or empty.");;
+				throw new ArgumentNullException(nameof(title), "Title can't null or empty.");
 			}
 
 			var url = this.CreateBaseApiCall("pool") +
