@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Text;
 
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
@@ -47,6 +48,23 @@ namespace BooruDex.Booru.Template
 		}
 
 		#endregion Constructor & Destructor
+
+		#region Protected Overrride Method
+
+		/// <inheritdoc/>
+		protected override string CreateBaseApiCall(string query, bool json = true)
+		{
+			var sb = new StringBuilder($"{ this._BaseUrl.AbsoluteUri }index.php?page=dapi&s={ query }&q=index");
+			
+			if (json)
+			{
+				sb.Append("&json=1");
+			}
+
+			return sb.ToString();
+		}
+
+		#endregion Protected Overrride Method
 
 	}
 }
