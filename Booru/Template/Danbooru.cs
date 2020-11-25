@@ -231,6 +231,161 @@ namespace BooruDex.Booru.Template
 
 		#endregion Pool
 
+		#region Post
+
+		/// <summary>
+		/// Show a detailed information of the <see cref="Post"/>.
+		/// </summary>
+		/// <param name="postId">Id of the <see cref="Post"/>.</param>
+		/// <returns><see cref="Post"/>.</returns>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No <see cref="Post"/> is found.
+		/// </exception>
+		public virtual async Task<Post> PostShowAsync(uint postId)
+		{
+			var url = this.CreateBaseApiCall($"posts/{ postId }");
+
+			var obj = await this.GetJsonResponseAsync<JObject>(url);
+
+			// if Post is not found, it return JSON response
+			// containing error message
+
+			if (obj.ContainsKey("success"))
+			{
+				throw new SearchNotFoundException($"Post with id { postId } is not found.");
+			}
+
+			return this.ReadPost(obj);
+		}
+
+		/// <inheritdoc/>
+		public override async Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
+		{
+			if ((this._TagsLimit != 0) &&
+				(tags != null) &&
+				(tags.Length > this._TagsLimit))
+			{
+				throw new ArgumentException($"Tag can't more than { this._TagsLimit } tag.");
+			}
+
+			if (limit <= 0)
+			{
+				limit = 1;
+			}
+			else if (limit > this._PostLimit)
+			{
+				limit = this._PostLimit;
+			}
+
+			string url = "";
+
+			if (tags == null)
+			{
+				url = this.CreateBaseApiCall("posts") +
+					$"limit={ limit }&page={ page }";
+			}
+			else
+			{
+				url = this.CreateBaseApiCall("posts") +
+					$"limit={ limit }&page={ page }&tags={ string.Join(" ", tags) }";
+			}
+
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+
+			if (jsonArray.Count == 0)
+			{
+				if (tags == null || tags.Length <= 0)
+				{
+					throw new SearchNotFoundException($"No Post found with empty tags at page { page }.");
+				}
+				else
+				{
+					throw new SearchNotFoundException($"No Post found with tags { string.Join(", ", tags) } at page { page }.");
+				}
+			}
+
+			try
+			{
+				return jsonArray.Select(this.ReadPost).ToArray();
+			}
+			catch (Exception e)
+			{
+				throw new SearchNotFoundException("Something happen when deserialize Post data.", e);
+			}
+		}
+
+		/// <inheritdoc/>
+		public override async Task<Post> GetRandomPostAsync(string[] tags = null)
+		{
+			return (await this.GetRandomPostAsync(
+					1,
+					tags))[0];
+		}
+
+		/// <inheritdoc/>
+		public override async Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
+		{
+			if ((this._TagsLimit != 0) &&
+				(tags != null) &&
+				(tags.Length > this._TagsLimit))
+			{
+				throw new ArgumentException($"Tag can't more than { this._TagsLimit } tag.");
+			}
+
+			if (limit <= 0)
+			{
+				limit = 1;
+			}
+			else if (limit > this._PostLimit)
+			{
+				limit = this._PostLimit;
+			}
+
+			string url = "";
+
+			if (tags == null)
+			{
+				url = this.CreateBaseApiCall("posts") +
+					$"limit={ limit }&random=true";
+			}
+			else
+			{
+				url = this.CreateBaseApiCall("posts") +
+					$"limit={ limit }&tags={ string.Join(" ", tags) }&random=true";
+			}
+
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+
+			if (jsonArray.Count == 0)
+			{
+				if (tags == null || tags.Length <= 0)
+				{
+					throw new SearchNotFoundException($"No Post found with empty tags.");
+				}
+				else
+				{
+					throw new SearchNotFoundException($"No Post found with tags { string.Join(", ", tags) }.");
+				}
+			}
+
+			try
+			{
+				return jsonArray.Select(this.ReadPost).ToArray();
+			}
+			catch (Exception e)
+			{
+				throw new SearchNotFoundException("Something happen when deserialize Post data.", e);
+			}
+		}
+
+		#endregion Post
 
 		#endregion Public Method
 	}
