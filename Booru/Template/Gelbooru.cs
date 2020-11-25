@@ -161,7 +161,7 @@ namespace BooruDex.Booru.Template
 				(tags != null) &&
 				(tags.Length > this._TagsLimit))
 			{
-				throw new ArgumentException($"Tag can't more than { this._TagsLimit } tag.");
+				throw new ArgumentOutOfRangeException($"Tag can't more than { this._TagsLimit } tag.");
 			}
 
 			if (limit <= 0)
