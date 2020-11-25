@@ -101,9 +101,8 @@ namespace BooruDex.Booru.Template
 		/// <inheritdoc/>
 		protected override Artist ReadArtist(JToken json)
 		{
-			var item = (JObject)json;
 			var array = JsonConvert.DeserializeObject<JArray>(
-				item["urls"].ToString());
+				json["urls"].ToString());
 
 			List<string> urls = new List<string>();
 
@@ -116,51 +115,48 @@ namespace BooruDex.Booru.Template
 			}
 
 			return new Artist(
-				item["id"].Value<uint>(),
-				item["name"].Value<string>(),
+				json["id"].Value<uint>(),
+				json["name"].Value<string>(),
 				urls);
 		}
 
 		/// <inheritdoc/>
 		protected override Pool ReadPool(JToken json)
 		{
-			var item = json;
 			return new Pool(
-				item["id"].Value<uint>(),
-				item["name"].Value<string>(),
-				item["post_count"].Value<uint>(),
-				item["description"].Value<string>());
+				json["id"].Value<uint>(),
+				json["name"].Value<string>(),
+				json["post_count"].Value<uint>(),
+				json["description"].Value<string>());
 		}
 
 		/// <inheritdoc/>
 		protected override Post ReadPost(JToken json)
 		{
-			var item = json;
 			return new Post(
-				item["id"].Value<uint>(),
+				json["id"].Value<uint>(),
 				this._BaseUrl + "post/show/",
-				item["file_url"].Value<string>(),
-				item["preview_url"].Value<string>(),
-				this.ConvertRating(item["rating"].Value<string>()),
-				item["tags"].Value<string>(),
-				item["file_size"].Value<uint>(),
-				item["height"].Value<int>(),
-				item["width"].Value<int>(),
-				item["preview_height"].Value<int>(),
-				item["preview_width"].Value<int>(),
-				item["source"].Value<string>()
+				json["file_url"].Value<string>(),
+				json["preview_url"].Value<string>(),
+				this.ConvertRating(json["rating"].Value<string>()),
+				json["tags"].Value<string>(),
+				json["file_size"].Value<uint>(),
+				json["height"].Value<int>(),
+				json["width"].Value<int>(),
+				json["preview_height"].Value<int>(),
+				json["preview_width"].Value<int>(),
+				json["source"].Value<string>()
 				);
 		}
 
 		/// <inheritdoc/>
 		protected override Tag ReadTag(JToken json)
 		{
-			var item = json;
 			return new Tag(
-				item["id"].Value<uint>(),
-				item["name"].Value<string>(),
-				(TagType)item["type"].Value<int>(),
-				item["count"].Value<uint>()
+				json["id"].Value<uint>(),
+				json["name"].Value<string>(),
+				(TagType)json["type"].Value<int>(),
+				json["count"].Value<uint>()
 				);
 		}
 
@@ -176,11 +172,10 @@ namespace BooruDex.Booru.Template
 		/// <inheritdoc/>
 		protected override Wiki ReadWiki(JToken json)
 		{
-			var item = json;
 			return new Wiki(
-				item["id"].Value<uint>(),
-				item["title"].Value<string>(),
-				item["body"].Value<string>()
+				json["id"].Value<uint>(),
+				json["title"].Value<string>(),
+				json["body"].Value<string>()
 				);
 		}
 
