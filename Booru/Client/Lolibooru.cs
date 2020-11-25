@@ -25,6 +25,7 @@ namespace BooruDex.Booru.Client
 
 		#region Protected Override Method
 
+		/// <inheritdoc/>
 		protected override Tag ReadTag(JToken json)
 		{
 			var item = json;

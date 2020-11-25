@@ -9,9 +9,6 @@ namespace BooruDex.Booru.Client
 	/// </summary>
 	public class Behoimi : Moebooru
 	{
-		// for post in pool, have to loop to get all post
-		// if post count more than 24
-
 		#region Constructor & Destructor
 
 		/// <summary>

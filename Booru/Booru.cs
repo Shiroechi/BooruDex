@@ -1,7 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Security.Authentication;
 using System.Threading.Tasks;
 
 using BooruDex.Exceptions;
@@ -9,6 +9,9 @@ using BooruDex.Models;
 
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace BooruDex.Booru
 {
@@ -85,7 +88,7 @@ namespace BooruDex.Booru
 		/// Base object for booru client.
 		/// </summary>
 		/// <param name="domain">URL of booru based sites.</param>
-		public Booru(string domain) : this(domain, null, new JSF32())
+		public Booru(string domain) : this(domain, null, new SplitMix64())
 		{
 			
 		}
@@ -95,7 +98,7 @@ namespace BooruDex.Booru
 		/// </summary>
 		/// <param name="domain">URL of booru based sites.</param>
 		/// <param name="httpClient">Client for sending and receive http response.</param>
-		public Booru(string domain, HttpClient httpClient = null) : this(domain, httpClient, new JSF32())
+		public Booru(string domain, HttpClient httpClient = null) : this(domain, httpClient, new SplitMix64())
 		{
 			
 		}
@@ -110,7 +113,7 @@ namespace BooruDex.Booru
 		{
 			this._BaseUrl = new Uri(domain, UriKind.Absolute);
 			this.HttpClient = httpClient;
-			this._RNG = rng;
+			this._RNG = rng is null ? new SplitMix64() : rng;
 			this._Authentication = false;
 			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 		}
@@ -141,11 +144,7 @@ namespace BooruDex.Booru
 				else
 				{
 					this._HttpClient = value;
-					
-					if (!this._HttpClient.DefaultRequestHeaders.Contains("User-Agent"))
-					{
-						this._HttpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36");
-					}
+					this.AddHttpHeader();
 				}
 			}
 			get
@@ -153,6 +152,7 @@ namespace BooruDex.Booru
 				if (this._HttpClient == null)
 				{
 					this._HttpClient = _LazyHttpClient.Value;
+					this.AddHttpHeader();
 				}
 				return this._HttpClient;
 			}
@@ -207,55 +207,163 @@ namespace BooruDex.Booru
 		private static readonly Lazy<HttpClient> _LazyHttpClient = new Lazy<HttpClient>(() =>
 		{
 			var http = new HttpClient();
-			http.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 Unknown");
 			return http;
 		});
+
+		public void AddHttpHeader()
+		{
+			if (this._HttpClient == null)
+			{
+				return; 
+			}
+
+			if (this._HttpClient.DefaultRequestHeaders.UserAgent.Count == 0)
+			{
+				this.HttpClient.DefaultRequestHeaders.Add(
+					"User-Agent",
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36");
+			}
+		}
 
 		#endregion Private Method
 
 		#region Protected Method
 
 		/// <summary>
-		/// Download reponse from url.
+		/// Get JSON response from url.
 		/// </summary>
+		/// <typeparam name="T">The type of the object to deserialize.</typeparam>
 		/// <param name="url"></param>
-		/// <returns></returns>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		protected async Task<string> GetJsonAsync(string url)
+		/// <returns>The instance of <typeparamref name="T"/> being deserialized.</returns>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="TaskCanceledException">
+		///		The request failed due timeout.
+		/// </exception>
+		protected async Task<T> GetJsonResponseAsync<T>(string url)
 		{
 			try
 			{
-				using (var response = await this.HttpClient.GetAsync(url))
+				using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+				using (var response = await this._HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+				using (var stream = await response.Content.ReadAsStreamAsync())
 				{
-					if (response.StatusCode == HttpStatusCode.OK)
+					if (response.IsSuccessStatusCode)
 					{
-						response.EnsureSuccessStatusCode();
-						return await response.Content.ReadAsStringAsync();
+						return this.DeserializeJsonFromStream<T>(stream);
 					}
-					else if (response.StatusCode == HttpStatusCode.Forbidden || response.StatusCode == HttpStatusCode.Unauthorized)
-					{
-						throw new AuthenticationException("Authentication is required.");
-					}
-					else
-					{
-						throw new HttpResponseException("Unexpected error occured.");
-					}
+
+					throw new HttpResponseException(
+						$"Unexpected error occured.\n" +
+						$"Status code = { (int)response.StatusCode }\n" +
+						$"Reason = { response.ReasonPhrase }.");
 				}
 			}
 			catch (HttpRequestException e)
 			{
 				throw e;
 			}
+			catch (TaskCanceledException e)
+			{
+				throw e;
+			}
+		}
+
+		/// <summary>
+		/// Get <see cref="string"/> response from url.
+		/// </summary>
+		/// <param name="url"></param>
+		/// <returns><see cref="string"/> response.</returns>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="TaskCanceledException">
+		///		The request failed due timeout.
+		/// </exception>
+		protected async Task<string> GetStringResponseAsync(string url)
+		{
+			try
+			{
+				using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+				using (var response = await this._HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+				using (var stream = await response.Content.ReadAsStreamAsync())
+				{
+					if (response.IsSuccessStatusCode)
+					{
+						return await this.DeserializeStringFromStreamAsync(stream);
+					}
+
+					throw new HttpResponseException(
+						$"Unexpected error occured.\n" +
+						$"Status code = { (int)response.StatusCode }\n" +
+						$"Reason = { response.ReasonPhrase }.");
+				}
+			}
+			catch (HttpRequestException e)
+			{
+				throw e;
+			}
+			catch (TaskCanceledException e)
+			{
+				throw e;
+			}
+		}
+
+		/// <summary>
+		/// Deserializes the JSON structure into an instance of the specified type.
+		/// </summary>
+		/// <typeparam name="T">The type of the object to deserialize.</typeparam>
+		/// <param name="stream"></param>
+		/// <returns>The instance of <typeparamref name="T"/> being deserialized.</returns>
+		protected T DeserializeJsonFromStream<T>(Stream stream)
+		{
+			if (stream == null || stream.CanRead == false)
+			{
+				return default(T);
+			}
+
+			using (var sr = new StreamReader(stream))
+			using (JsonReader reader = new JsonTextReader(sr))
+			{
+				JsonSerializer serializer = new JsonSerializer();
+				return serializer.Deserialize<T>(reader);
+			}
+		}
+
+		/// <summary>
+		/// Deserializes response into string.
+		/// </summary>
+		/// <param name="stream"></param>
+		/// <returns><see cref="string"/> content.</returns>
+		protected Task<string> DeserializeStringFromStreamAsync(Stream stream)
+		{
+			if (stream != null)
+			{
+				using (var sr = new StreamReader(stream))
+				{
+					return sr.ReadToEndAsync();
+				}
+			}
+
+			return null;
 		}
 
 		/// <summary>
 		/// Create base API call url. 
 		/// </summary>
 		/// <param name="query">Categories.</param>
+		/// <param name="json">Create JSON API or not. <see langword="true"/> for JSON.</param>
 		/// <returns></returns>
-		protected abstract string CreateBaseApiCall(string query);
+		protected abstract string CreateBaseApiCall(string query, bool json = true);
 
 		/// <summary>
 		/// Convert string rating to <see cref="Rating"/>.
@@ -275,6 +383,84 @@ namespace BooruDex.Booru
 				default:
 					return Rating.Questionable;
 			}
+		}
+
+		/// <summary>
+		/// Read <see cref="Artist"/> JSON search result.
+		/// </summary>
+		/// <param name="json">JSON object.</param>
+		/// <returns><see cref="Artist"/> object.</returns>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		protected virtual Artist ReadArtist(JToken json)
+		{
+			throw new NotImplementedException($"Method { nameof(ReadArtist) } is not implemented yet.");
+		}
+
+		/// <summary>
+		/// Read <see cref="Pool"/> JSON search result.
+		/// </summary>
+		/// <param name="json">JSON object.</param>
+		/// <returns><see cref="Pool"/> object.</returns>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		protected virtual Pool ReadPool(JToken json)
+		{
+			throw new NotImplementedException($"Method { nameof(ReadPool) } is not implemented yet.");
+		}
+
+		/// <summary>
+		/// Read <see cref="Post"/> JSON search result.
+		/// </summary>
+		/// <param name="json">JSON object.</param>
+		/// <returns><see cref="Post"/> object.</returns>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		protected virtual Post ReadPost(JToken json)
+		{
+			throw new NotImplementedException($"Method { nameof(ReadPost) } is not implemented yet.");
+		}
+
+		/// <summary>
+		/// Read <see cref="Tag"/> JSON search result.
+		/// </summary>
+		/// <param name="json">JSON object.</param>
+		/// <returns><see cref="Tag"/> object.</returns>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		protected virtual Tag ReadTag(JToken json)
+		{
+			throw new NotImplementedException($"Method { nameof(ReadTag) } is not implemented yet.");
+		}
+
+		/// <summary>
+		/// Read <see cref="TagRelated"/> JSON search result.
+		/// </summary>
+		/// <param name="json">JSON object.</param>
+		/// <returns><see cref="TagRelated"/> object.</returns>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		protected virtual TagRelated ReadTagRelated(JToken json)
+		{
+			throw new NotImplementedException($"Method { nameof(ReadTagRelated) } is not implemented yet.");
+		}
+
+		/// <summary>
+		/// Read <see cref="Wiki"/> JSON search result.
+		/// </summary>
+		/// <param name="json">JSON object.</param>
+		/// <returns><see cref="Wiki"/> object.</returns>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		protected virtual Wiki ReadWiki(JToken json)
+		{
+			throw new NotImplementedException($"Method { nameof(ReadWiki) } is not implemented yet.");
 		}
 
 		#endregion Protected Method
@@ -299,16 +485,29 @@ namespace BooruDex.Booru
 		#region Artist
 
 		/// <summary>
-		/// Get a list of artists.
+		/// Search <see cref="Artist"/> by name.
 		/// </summary>
 		/// <param name="name">The name (or a fragment of the name) of the artist.</param>
 		/// <param name="page">The page number.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		public virtual async Task<Artist[]> ArtistListAsync(string name, uint page = 0)
+		/// <param name="sort">Sort the search result by <see cref="Artist"/> name. Default <see langword="false"/>.</param>
+		/// <returns>Array of <see cref="Artist"/>.</returns>
+		/// <exception cref="ArgumentNullException">
+		///		One or more parameter is null or empty.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No <see cref="Artist"/> is found.
+		/// </exception>
+		public virtual Task<Artist[]> ArtistListAsync(string name, uint page = 0, bool sort = false)
 		{
 			throw new NotImplementedException($"Method { nameof(ArtistListAsync) } is not implemented yet.");
 		}
@@ -318,30 +517,54 @@ namespace BooruDex.Booru
 		#region Pool
 
 		/// <summary>
-		/// Search a pool.
+		/// Search <see cref="Pool"/> by title.
 		/// </summary>
-		/// <param name="title">The title of pool.</param>
-		/// <param name="page">Tha page number.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		public virtual async Task<Pool[]> PoolList(string title, uint page = 0)
+		/// <param name="title">The title of <see cref="Pool"/>.</param>
+		/// <param name="page">The page number.</param>
+		/// <returns>Array of <see cref="Pool"/>.</returns>
+		/// <exception cref="ArgumentNullException">
+		///		The <see cref="Pool"/> title or name can't null or empty.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No <see cref="Pool"/> is found.
+		/// </exception>
+		public virtual Task<Pool[]> PoolList(string title, uint page = 0)
 		{
 			throw new NotImplementedException($"Method { nameof(PoolList) } is not implemented yet.");
 		}
 
 		/// <summary>
-		/// Get list of post inside the pool.
+		/// Get all <see cref="Post"/> inside the <see cref="Pool"/>.
 		/// </summary>
 		/// <param name="poolId">The <see cref="Pool"/> id.</param>
-		/// <param name="page">The page number.</param>
-		/// <returns></returns>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		public virtual async Task<Post[]> PoolPostList(uint poolId, uint page = 0)
+		/// <returns>Array of <see cref="Post"/> from <see cref="Pool"/>.</returns>
+		/// <exception cref="ArgumentNullException">
+		///		One or more parameter is null or empty.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No <see cref="Post"/> is found.
+		/// </exception>
+		public virtual Task<Post[]> PoolPostList(uint poolId)
 		{
 			throw new NotImplementedException($"Method { nameof(PoolPostList) } is not implemented yet.");
 		}
@@ -351,49 +574,88 @@ namespace BooruDex.Booru
 		#region Post
 
 		/// <summary>
-		/// Get a list of <see cref="Post"/>.
+		/// Get a list of the latest <see cref="Post"/>.
 		/// </summary>
 		/// <param name="limit">How many <see cref="Post"/> to retrieve.</param>
 		/// <param name="page">The page number.</param>
 		/// <param name="tags">The tags to search for.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		/// <exception cref="SearchNotFoundException"></exception>
-		public virtual async Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
+		/// <returns>
+		///		Array of <see cref="Post"/>.
+		/// </returns>
+		/// <exception cref="ArgumentOutOfRangeException">
+		///		The provided <see cref="Tag"/> is more than the limit.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No <see cref="Post"/> is found.
+		/// </exception>
+		public virtual Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
 		{
 			throw new NotImplementedException($"Method { nameof(PostListAsync) } is not implemented yet.");
 		}
 
 		/// <summary>
-		/// Search a single random post from booru with the given tags.
+		/// Get a single random <see cref="Post"/> with the given tags.
 		/// </summary>
 		/// <param name="tags"><see cref="Tag"/> to search.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		/// <exception cref="SearchNotFoundException"></exception>
-		public virtual async Task<Post> GetRandomPostAsync(string[] tags = null)
+		/// <returns>
+		///		A random <see cref="Post"/>.
+		/// </returns>
+		/// <exception cref="ArgumentOutOfRangeException">
+		///		The provided <see cref="Tag"/> is more than the limit.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No <see cref="Post"/> is found.
+		/// </exception>
+		public virtual Task<Post> GetRandomPostAsync(string[] tags = null)
 		{
 			throw new NotImplementedException($"Method { nameof(GetRandomPostAsync) } is not implemented yet.");
 		}
 
 		/// <summary>
-		/// Search some post from booru with the given tags.
+		/// Get multiple random <see cref="Post"/> with the given tags.
 		/// </summary>
 		/// <param name="tags"><see cref="Tag"/> to search.</param>
 		/// <param name="limit">How many post to retrieve.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		public virtual async Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
+		/// <returns>
+		///		Array of <see cref="Post"/>.
+		/// </returns>
+		/// <exception cref="ArgumentOutOfRangeException">
+		///		The provided <see cref="Tag"/> is more than the limit.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No <see cref="Post"/> is found.
+		/// </exception>
+		public virtual Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
 		{
 			throw new NotImplementedException($"Method { nameof(GetRandomPostAsync) } is not implemented yet.");
 		}
@@ -403,31 +665,58 @@ namespace BooruDex.Booru
 		#region Tag
 
 		/// <summary>
-		/// Get a list of tag that contains 
+		/// Search for <see cref="Tag"/> with the name is similiar or alike.
 		/// </summary>
-		/// <param name="name">The tag names to query.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		public virtual async Task<Tag[]> TagListAsync(string name)
+		/// <param name="name">The <see cref="Tag"/> name.</param>
+		/// <returns>
+		///		Array of <see cref="Tag"/>.
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		///		The provided <see cref="Tag"/> name is null or empty string.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No <see cref="Tag"/> is found.
+		/// </exception>
+		public virtual Task<Tag[]> TagListAsync(string name)
 		{
 			throw new NotImplementedException($"Method { nameof(TagListAsync) } is not implemented yet.");
 		}
 
 		/// <summary>
-		/// Get a list of related tags.
+		/// Search for <see cref="Tag"/> that related with other <see cref="Tag"/>.	
 		/// </summary>
-		/// <param name="name">The tag names to query.</param>
-		/// <param name="type">Restrict results to tag type (can be general, artist, copyright, or character).</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		public virtual async Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
+		/// <param name="name">The <see cref="Tag"/> name.</param>
+		/// <param name="type">Restrict results to search by <see cref="TagType"/> (can be general, artist, copyright, or character).</param>
+		/// <returns>
+		///		Array of <see cref="TagRelated"/>.
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		///		The provided <see cref="Tag"/> name is null or empty string.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No <see cref="TagRelated"/> is found.
+		/// </exception>
+		public virtual Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
 		{
 			throw new NotImplementedException($"Method { nameof(TagRelatedAsync) } is not implemented yet.");
 		}
@@ -437,15 +726,29 @@ namespace BooruDex.Booru
 		#region Wiki
 
 		/// <summary>
-		/// Search a wiki content.
+		/// Search for <see cref="Wiki"/> by title.
 		/// </summary>
-		/// <param name="title">Wiki title.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		public virtual async Task<Wiki[]> WikiListAsync(string title)
+		/// <param name="title"><see cref="Wiki"/> title.</param>
+		/// <returns>
+		///		Array of <see cref="Wiki"/>.
+		/// </returns>
+		/// <exception cref="ArgumentNullException">
+		///		The provided <see cref="Wiki"/> title is null or empty string.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No <see cref="Wiki"/> is found.
+		/// </exception>
+		public virtual Task<Wiki[]> WikiListAsync(string title)
 		{
 			throw new NotImplementedException($"Method { nameof(WikiListAsync) } is not implemented yet.");
 		}

@@ -6,9 +6,6 @@ namespace BooruDex.Booru.Client
 {
 	public class Yandere : Moebooru
 	{
-		// for post in pool, have to loop to get all post
-		// if post count more than 24
-
 		#region Constructor & Destructor
 
 		/// <summary>

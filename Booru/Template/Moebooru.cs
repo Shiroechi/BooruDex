@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Authentication;
 using System.Threading.Tasks;
+using System.Xml;
 
 using BooruDex.Exceptions;
 using BooruDex.Models;
@@ -27,7 +28,7 @@ namespace BooruDex.Booru.Template
 		/// </summary>
 		/// <param name="domain">URL of booru based sites.</param>
 		/// <param name="httpClient">Client for sending and receive http response.</param>
-		public Moebooru(string domain, HttpClient httpClient = null) : this(domain, httpClient, new JSF32())
+		public Moebooru(string domain, HttpClient httpClient = null) : this(domain, httpClient, new SplitMix64())
 		{
 
 		}
@@ -57,98 +58,110 @@ namespace BooruDex.Booru.Template
 
 		#endregion Constructor & Destructor
 
+		#region Protected Method
+
+		/// <summary>
+		/// Get max number of <see cref="Post"/> with 
+		/// the given <see cref="Tag"/> the site have.
+		/// </summary>
+		/// <param name="url">Url of the requested <see cref="Post"/>.</param>
+		/// <returns>Number of <see cref="Post"/>.</returns>
+		protected async Task<uint> GetPostCount(string url)
+		{
+			var xml = new XmlDocument();
+			xml.LoadXml(await this.GetStringResponseAsync(url));
+			return uint.Parse(xml.ChildNodes.Item(1).Attributes[0].InnerXml);
+		}
+
+		#endregion Protected Method
+
 		#region Protected Overrride Method
 
-		protected override string CreateBaseApiCall(string query)
+		/// <inheritdoc/>
+		protected override string CreateBaseApiCall(string query, bool json = true)
 		{
 			if (query.Contains("/"))
 			{
-				return $"{ this._BaseUrl.AbsoluteUri }{ query }.json?";
+				if (json)
+				{
+					return $"{ this._BaseUrl.AbsoluteUri }{ query }.json?";
+				}
+				return $"{ this._BaseUrl.AbsoluteUri }{ query }.xml?";
 			}
 			else
 			{
-				return $"{ this._BaseUrl.AbsoluteUri }{ query }/index.json?";
+				if (json)
+				{
+					return $"{ this._BaseUrl.AbsoluteUri }{ query }/index.json?";
+				}
+				return $"{ this._BaseUrl.AbsoluteUri }{ query }/index.xml?";
 			}
 		}
 
-		#endregion Protected Overrride Method
-
-		#region Protected Virtual Method
-
-		/// <summary>
-		/// Read <see cref="Artist"/> json search result.
-		/// </summary>
-		/// <param name="json">Json object.</param>
-		/// <returns></returns>
-		protected virtual Artist ReadArtist(JToken json)
+		/// <inheritdoc/>
+		protected override Artist ReadArtist(JToken json)
 		{
-			var item = json;
+			var array = JsonConvert.DeserializeObject<JArray>(
+				json["urls"].ToString());
+
+			List<string> urls = new List<string>();
+
+			if (array.Count != 0)
+			{
+				for (var i = 0; i < array.Count; i++)
+				{
+					urls.Add(array[i].Value<string>());
+				}
+			}
+
 			return new Artist(
-				item["id"].Value<uint>(),
-				item["name"].Value<string>());
+				json["id"].Value<uint>(),
+				json["name"].Value<string>(),
+				urls);
 		}
 
-		/// <summary>
-		/// Read <see cref="Pool"/> json search result.
-		/// </summary>
-		/// <param name="json">Json object.</param>
-		/// <returns></returns>
-		protected virtual Pool ReadPool(JToken json)
+		/// <inheritdoc/>
+		protected override Pool ReadPool(JToken json)
 		{
-			var item = json;
 			return new Pool(
-				item["id"].Value<uint>(),
-				item["name"].Value<string>(),
-				item["post_count"].Value<uint>(),
-				item["description"].Value<string>());
+				json["id"].Value<uint>(),
+				json["name"].Value<string>(),
+				json["post_count"].Value<uint>(),
+				json["description"].Value<string>());
 		}
 
-		/// <summary>
-		/// Read <see cref="Post"/> json search result.
-		/// </summary>
-		/// <param name="json">Json object.</param>
-		/// <returns></returns>
-		protected virtual Post ReadPost(JToken json)
+		/// <inheritdoc/>
+		protected override Post ReadPost(JToken json)
 		{
-			var item = json;
 			return new Post(
-				item["id"].Value<uint>(),
+				json["id"].Value<uint>(),
 				this._BaseUrl + "post/show/",
-				item["file_url"].Value<string>(),
-				item["preview_url"].Value<string>(),
-				this.ConvertRating(item["rating"].Value<string>()),
-				item["tags"].Value<string>(),
-				item["file_size"].Value<uint>(),
-				item["height"].Value<int>(),
-				item["width"].Value<int>(),
-				item["preview_height"].Value<int>(),
-				item["preview_width"].Value<int>(),
-				item["source"].Value<string>()
+				json["file_url"].Value<string>(),
+				json["preview_url"].Value<string>(),
+				this.ConvertRating(json["rating"].Value<string>()),
+				json["tags"].Value<string>(),
+				json["file_size"].Value<uint>(),
+				json["height"].Value<int>(),
+				json["width"].Value<int>(),
+				json["preview_height"].Value<int>(),
+				json["preview_width"].Value<int>(),
+				json["source"].Value<string>()
 				);
 		}
 
-		/// <summary>
-		/// Read <see cref="Tag"/> json search result.
-		/// </summary>
-		/// <param name="json">Json object.</param>
-		/// <returns></returns>
-		protected virtual Tag ReadTag(JToken json)
+		/// <inheritdoc/>
+		protected override Tag ReadTag(JToken json)
 		{
-			var item = json;
 			return new Tag(
-				item["id"].Value<uint>(),
-				item["name"].Value<string>(),
-				(TagType)item["type"].Value<int>(),
-				item["count"].Value<uint>()
+				json["id"].Value<uint>(),
+				json["name"].Value<string>(),
+				(TagType)json["type"].Value<int>(),
+				json["count"].Value<uint>()
 				);
 		}
 
-		/// <summary>
-		/// Read related tag json search result.
-		/// </summary>
-		/// <param name="json"></param>
-		/// <returns></returns>
-		protected virtual TagRelated ReadRelatedTag(JToken json)
+		/// <inheritdoc/>
+		protected override TagRelated ReadTagRelated(JToken json)
 		{
 			var item = (JArray)json;
 			return new TagRelated(
@@ -156,38 +169,24 @@ namespace BooruDex.Booru.Template
 				item[1].Value<uint>());
 		}
 
-		/// <summary>
-		/// Read <see cref="Wiki"/> json search result.
-		/// </summary>
-		/// <param name="json">Json object.</param>
-		/// <returns></returns>
-		protected virtual Wiki ReadWiki(JToken json)
+		/// <inheritdoc/>
+		protected override Wiki ReadWiki(JToken json)
 		{
-			var item = json;
 			return new Wiki(
-				item["id"].Value<uint>(),
-				item["title"].Value<string>(),
-				item["body"].Value<string>()
+				json["id"].Value<uint>(),
+				json["title"].Value<string>(),
+				json["body"].Value<string>()
 				);
 		}
 
-		#endregion Protected Virtual Method
+		#endregion Protected Overrride Method
 
 		#region Public Method
 
 		#region Artist
 
-		/// <summary>
-		/// Get a list of artists.
-		/// </summary>
-		/// <param name="name">The name (or a fragment of the name) of the artist.</param>
-		/// <param name="page">The page number.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		public override async Task<Artist[]> ArtistListAsync(string name, uint page = 0)
+		/// <inheritdoc/>
+		public override async Task<Artist[]> ArtistListAsync(string name, uint page = 0, bool sort = false)
 		{
 			if (name == null || name.Trim() == "")
 			{
@@ -197,8 +196,17 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("artist") +
 				$"page={ page }&name={ name }";
 
-			var jsonArray = JsonConvert.DeserializeObject<JArray>(
-				await GetJsonAsync(url));
+			if (sort)
+			{
+				url += "&order=name";
+			}
+
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"Can't find Artist with name \"{ name }\" at page { page }.");
+			}
 
 			return jsonArray.Select(ReadArtist).ToArray();
 		}
@@ -207,16 +215,7 @@ namespace BooruDex.Booru.Template
 
 		#region Pool
 
-		/// <summary>
-		/// Search a pool.
-		/// </summary>
-		/// <param name="title">The title of pool.</param>
-		/// <param name="page">Tha page number.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
+		/// <inheritdoc/>
 		public override async Task<Pool[]> PoolList(string title, uint page = 0)
 		{
 			if (title == null || title.Trim() == "")
@@ -227,31 +226,75 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("pool") +
 				$"page={ page }&query={ title }";
 
-			var jsonArray = JsonConvert.DeserializeObject<JArray>(
-				await this.GetJsonAsync(url));
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"Can't find Pool with title \"{ title }\" at page { page }.");
+			}
 
 			return jsonArray.Select(this.ReadPool).ToArray();
 		}
 
+		/// <inheritdoc/>
+		public override async Task<Post[]> PoolPostList(uint poolId)
+		{
+			var url = this.CreateBaseApiCall("pool/show") +
+				$"id={ poolId }";
+
+			try
+			{
+				var obj = await this.GetJsonResponseAsync<JObject>(url);
+
+				var jsonArray = JsonConvert.DeserializeObject<JArray>(
+						obj["posts"].ToString());
+
+				return jsonArray.Select(this.ReadPost).ToArray();
+			}
+			catch (JsonReaderException e)
+			{
+				// if pool not found, it will return pool page 
+				// like yande.re/pool, not a empty JSON.
+				throw new SearchNotFoundException($"Can't find Pool with id { poolId }.");
+			}
+		}
+
 		/// <summary>
-		/// Get list of post inside the pool.
+		/// Get partial <see cref="Post"/> inside the <see cref="Pool"/>.
 		/// </summary>
 		/// <param name="poolId">The <see cref="Pool"/> id.</param>
 		/// <param name="page">The page number.</param>
-		/// <returns></returns>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		public override async Task<Post[]> PoolPostList(uint poolId, uint page = 0)
+		/// <returns>Array of <see cref="Post"/> from <see cref="Pool"/>.</returns>
+		/// <exception cref="ArgumentNullException">
+		///		One or more parameter is null or empty.
+		/// </exception>
+		/// <exception cref="NotImplementedException">
+		///		Method is not implemented yet.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty.
+		/// </exception>
+		protected virtual async Task<Post[]> PoolPostList(uint poolId, uint page)
 		{
 			var url = this.CreateBaseApiCall("pool/show") +
 				$"page={ page }&id={ poolId }";
 
-			var obj = JsonConvert.DeserializeObject<JObject>(
-				await this.GetJsonAsync(url));
-		
+			var obj = await this.GetJsonResponseAsync<JObject>(url);
+
 			var jsonArray = JsonConvert.DeserializeObject<JArray>(
 				obj["posts"].ToString());
+
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"Can't find post in pool id { poolId } at page { page }.");
+			}
 
 			return jsonArray.Select(this.ReadPost).ToArray();
 		}
@@ -260,25 +303,14 @@ namespace BooruDex.Booru.Template
 
 		#region Post
 
-		/// <summary>
-		/// Get a list of <see cref="Post"/>.
-		/// </summary>
-		/// <param name="limit">How many <see cref="Post"/> to retrieve.</param>
-		/// <param name="page">The page number.</param>
-		/// <param name="tags">The tags to search for.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		/// <exception cref="SearchNotFoundException"></exception>
+		/// <inheritdoc/>
 		public override async Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
 		{
 			if ((this._TagsLimit != 0) && 
 				(tags != null) && 
 				(tags.Length > this._TagsLimit))
 			{
-				throw new ArgumentException($"Tag can't more than { this._TagsLimit } tag.");
+				throw new ArgumentOutOfRangeException($"Tag can't more than { this._TagsLimit } tag.");
 			}
 
 			if (limit <= 0)
@@ -299,83 +331,148 @@ namespace BooruDex.Booru.Template
 			}
 			else
 			{
-				string tagString = string.Join(" ", tags);
 				url = this.CreateBaseApiCall("post") +
-					$"limit={ limit }&page={ page }&tags={ tagString }";
+					$"limit={ limit }&page={ page }&tags={ string.Join(" ", tags) }";
 			}
 
-			var jsonArray = JsonConvert.DeserializeObject<JArray>(
-				await this.GetJsonAsync(url));
-			
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+
+			if (jsonArray.Count == 0)
+			{
+				if (tags == null || tags.Length <= 0)
+				{
+					throw new SearchNotFoundException($"No Post found with empty tags at page { page }.");
+				}
+				else
+				{
+					throw new SearchNotFoundException($"No Post found with tags { string.Join(", ", tags) } at page { page }.");
+				}
+			}
+
 			try
 			{
 				return jsonArray.Select(this.ReadPost).ToArray();
 			}
-			catch
+			catch (Exception e)
 			{
-				throw new SearchNotFoundException("No post found.");
+				Console.WriteLine(e);
+				throw new SearchNotFoundException("Something happen when deserialize Post data.", e);
 			}
 		}
 
-		/// <summary>
-		/// Search a single random post from booru with the given tags.
-		/// </summary>
-		/// <param name="tags"><see cref="Tag"/> to search.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		/// <exception cref="SearchNotFoundException"></exception>
+		/// <inheritdoc/>
 		public override async Task<Post> GetRandomPostAsync(string[] tags = null)
 		{
-			var post = await this.GetRandomPostAsync(
-					this._PostLimit,
-					tags);
-
-			if (post.Length == 0)
+			if ((this._TagsLimit != 0) &&
+				   (tags != null) &&
+				   (tags.Length > this._TagsLimit))
 			{
-				throw new SearchNotFoundException("No post found.");
+				throw new ArgumentOutOfRangeException($"Tag can't more than { this._TagsLimit } tag.");
 			}
 
-			return post[this._RNG.NextInt(0, (uint)(post.Length - 1))];
+			string url;
+
+			if (tags == null)
+			{
+				url = this.CreateBaseApiCall("post", false) +
+					$"limit={ 1 }&page={ 0 }";
+			}
+			else
+			{
+				url = this.CreateBaseApiCall("post", false) +
+					$"limit={ 1 }&page={ 0 }&tags={ string.Join(" ", tags) }";
+			}
+
+			// get Post count in XML response.
+
+			var postCount = await this.GetPostCount(url); 
+
+			if (postCount == 0)
+			{
+				throw new SearchNotFoundException($"No post found with tags { string.Join(" ", tags) }.");
+			}
+
+			// get post with random the page number, each page 
+			// limited only with 1 post.
+
+			var pageNumber = this._RNG.NextInt(1, (uint)postCount);
+
+			var post = await this.PostListAsync(1, tags, pageNumber);
+			
+			return post[0];
 		}
 
-		/// <summary>
-		/// Search some post from booru with the given tags.
-		/// </summary>
-		/// <param name="tags"><see cref="Tag"/> to search.</param>
-		/// <param name="limit">How many post to retrieve.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
-		public override async Task<Post[]> GetRandomPostAsync(uint limit , string[] tags = null)
+		/// <inheritdoc/>
+		public async override Task<Post[]> GetRandomPostAsync(uint limit , string[] tags = null)
 		{
-			return await this.PostListAsync(
-				limit,
-				tags,
-				this._RNG.NextInt(0, this._PageLimit));
+			if ((this._TagsLimit != 0) &&
+				   (tags != null) &&
+				   (tags.Length > this._TagsLimit))
+			{
+				throw new ArgumentOutOfRangeException($"Tag can't more than { this._TagsLimit } tag.");
+			}
+
+			if (limit <= 0)
+			{
+				limit = 1;
+			}
+			else if (limit > this._PostLimit)
+			{
+				limit = this._PostLimit;
+			}
+
+			string url;
+
+			if (tags == null)
+			{
+				url = this.CreateBaseApiCall("post", false) +
+					$"limit={ 1 }&page={ 0 }";
+			}
+			else
+			{
+				url = this.CreateBaseApiCall("post", false) +
+					$"limit={ 1 }&page={ 0 }&tags={ string.Join(" ", tags) }";
+			}
+
+			// get Post count int XML response.
+
+			var postCount = await this.GetPostCount(url);
+
+			if (postCount == 0)
+			{
+				throw new SearchNotFoundException($"No post found with tags { string.Join(" ", tags) }.");
+			}
+			else if (postCount < limit)
+			{
+				throw new SearchNotFoundException($"The site only have { postCount } post with tags { string.Join(", ", tags) }.");
+			}
+
+			var maxPageNumber = (uint)Math.Floor(postCount / limit * 1.0);
+
+			if (maxPageNumber == 1)
+			{
+				// get all post
+				return await this.PostListAsync(limit, tags);
+			}
+			else
+			{
+				// maxPageNumber - 1, to ensure the leftovers post
+				// in last page not included.
+
+				maxPageNumber -= 1;
+
+				return await this.PostListAsync(limit, tags, this._RNG.NextInt(1, maxPageNumber));
+			}
 		}
 
 		#endregion Post
 
 		#region Tag
 
-		/// <summary>
-		/// Get a list of tag that contains 
-		/// </summary>
-		/// <param name="name">The tag names to query.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
+		/// <inheritdoc/>
 		public override async Task<Tag[]> TagListAsync(string name)
 		{
-			if (name == null || name.Length <= 0)
+			if (name == null || name.Trim() == "")
 			{
 				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
 			}
@@ -383,26 +480,20 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("tag") +
 				$"limit=0&order=name&name={ name }";
 
-			var jsonArray = JsonConvert.DeserializeObject<JArray>(
-				await GetJsonAsync(url));
-			
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"Can't find Tags with name \"{ name }\".");
+			}
+
 			return jsonArray.Select(ReadTag).ToArray();
 		}
 
-		/// <summary>
-		/// Get a list of related tags.
-		/// </summary>
-		/// <param name="name">The tag names to query.</param>
-		/// <param name="type">Restrict results to tag type (can be general, artist, copyright, or character).</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentException"></exception>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
+		/// <inheritdoc/>
 		public override async Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
 		{
-			if (name == null || name.Length <= 0)
+			if (name == null || name.Trim() == "")
 			{
 				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
 			}
@@ -410,8 +501,7 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("tag/related") +
 				$"tags={ name }&type={ type }";
 
-			var obj = JsonConvert.DeserializeObject<JObject>(
-				await GetJsonAsync(url));
+			var obj = await this.GetJsonResponseAsync<JObject>(url);
 
 			JArray jsonArray;
 
@@ -426,22 +516,19 @@ namespace BooruDex.Booru.Template
 				obj["useless_tags"].ToString());
 			}
 
-			return jsonArray.Select(this.ReadRelatedTag).ToArray();
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"Can't find related Tags with Tag name \"{ name }\".");
+			}
+
+			return jsonArray.Select(this.ReadTagRelated).ToArray();
 		}
 
 		#endregion Tag
 
 		#region Wiki
 
-		/// <summary>
-		/// Search a wiki content.
-		/// </summary>
-		/// <param name="title">Wiki title.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		/// <exception cref="AuthenticationException"></exception>
-		/// <exception cref="HttpRequestException"></exception>
-		/// <exception cref="HttpResponseException"></exception>
+		/// <inheritdoc/>
 		public override async Task<Wiki[]> WikiListAsync(string title)
 		{
 			if (title == null || title.Trim() == "")
@@ -452,10 +539,14 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("wiki") +
 				$"order=title&query={ title }";
 
-			var array = JsonConvert.DeserializeObject<JArray>(
-				await GetJsonAsync(url));
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
 
-			return array.Select(this.ReadWiki).ToArray();
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"No Wiki found with title \"{ title }\"");
+			}
+
+			return jsonArray.Select(this.ReadWiki).ToArray();
 		}
 
 		#endregion Wiki
