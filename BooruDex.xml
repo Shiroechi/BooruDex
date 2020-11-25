@@ -1,0 +1,1193 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BooruDex</name>
+    </assembly>
+    <members>
+        <member name="T:BooruDex.Booru.Booru">
+            <summary>
+            Base class for all booru client.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Booru.Booru._HttpClient">
+            <summary>
+            Browser
+            </summary>
+        </member>
+        <member name="F:BooruDex.Booru.Booru._BaseUrl">
+            <summary>
+            Base API request URL.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Booru.Booru._PostLimit">
+            <summary>
+            Max retrieved post for each request.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Booru.Booru._TagsLimit">
+            <summary>
+            Max tags to use for search a post. 
+            </summary>
+        </member>
+        <member name="F:BooruDex.Booru.Booru._PageLimit">
+            <summary>
+            Max page number.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Booru.Booru._RNG">
+            <summary>
+            Random generator.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Booru.Booru._Username">
+            <summary>
+            Your username of the site (Required only for 
+            functions that modify the content).
+            </summary>
+        </member>
+        <member name="F:BooruDex.Booru.Booru._Password">
+            <summary>
+             Your user password in plain text (Required only 
+             for functions that modify the content).
+            </summary>
+        </member>
+        <member name="F:BooruDex.Booru.Booru._PasswordSalt">
+            <summary>
+            String that is append to password (required to login). 
+            (See the API documentation of the site for more information).
+            </summary>
+        </member>
+        <member name="F:BooruDex.Booru.Booru._ApiVersion">
+            <summary>
+            Version of Booru API.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Booru.Booru._Authentication">
+            <summary>
+            Authentication check.
+            </summary>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.#ctor(System.String)">
+            <summary>
+            Base object for booru client.
+            </summary>
+            <param name="domain">URL of booru based sites.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.#ctor(System.String,System.Net.Http.HttpClient)">
+            <summary>
+            Base object for booru client.
+            </summary>
+            <param name="domain">URL of booru based sites.</param>
+            <param name="httpClient">Client for sending and receive http response.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.#ctor(System.String,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
+            <summary>
+            Base object for booru client.
+            </summary>
+            <param name="domain">URL of booru based sites.</param>
+            <param name="httpClient">Client for sending and receive http response.</param>
+            <param name="rng">Random generator for random post.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.Finalize">
+            <summary>
+            Release all resource that this object hold.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Booru.Booru.HttpClient">
+            <summary>
+            For sending HTTP requests and receiving HTTP responses.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Booru.Booru.ApiVersion">
+            <summary>
+            Gets or sets Booru API version.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Booru.Booru.IsSafe">
+            <summary>
+            Gets or sets whether this booru contains explicit content or not.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Booru.Booru.PageLimit">
+            <summary>
+            Gets or sets maximum page number for booru.
+            </summary>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.GetJsonResponseAsync``1(System.String)">
+            <summary>
+            Get JSON response from url.
+            </summary>
+            <typeparam name="T">The type of the object to deserialize.</typeparam>
+            <param name="url"></param>
+            <returns>The instance of <typeparamref name="T"/> being deserialized.</returns>
+            <exception cref="T:BooruDex.Exceptions.HttpResponseException">
+            	Unexpected error occured.
+            </exception>
+            <exception cref="T:System.Net.Http.HttpRequestException">
+            	The request failed due to an underlying issue such as network connectivity, DNS
+                failure, server certificate validation or timeout.
+            </exception>
+            <exception cref="T:System.Threading.Tasks.TaskCanceledException">
+            	The request failed due timeout.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.GetStringResponseAsync(System.String)">
+            <summary>
+            Get <see cref="T:System.String"/> response from url.
+            </summary>
+            <param name="url"></param>
+            <returns><see cref="T:System.String"/> response.</returns>
+            <exception cref="T:BooruDex.Exceptions.HttpResponseException">
+            	Unexpected error occured.
+            </exception>
+            <exception cref="T:System.Net.Http.HttpRequestException">
+            	The request failed due to an underlying issue such as network connectivity, DNS
+                failure, server certificate validation or timeout.
+            </exception>
+            <exception cref="T:System.Threading.Tasks.TaskCanceledException">
+            	The request failed due timeout.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.DeserializeJsonFromStream``1(System.IO.Stream)">
+            <summary>
+            Deserializes the JSON structure into an instance of the specified type.
+            </summary>
+            <typeparam name="T">The type of the object to deserialize.</typeparam>
+            <param name="stream"></param>
+            <returns>The instance of <typeparamref name="T"/> being deserialized.</returns>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.DeserializeStringFromStreamAsync(System.IO.Stream)">
+            <summary>
+            Deserializes response into string.
+            </summary>
+            <param name="stream"></param>
+            <returns><see cref="T:System.String"/> content.</returns>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.CreateBaseApiCall(System.String,System.Boolean)">
+            <summary>
+            Create base API call url. 
+            </summary>
+            <param name="query">Categories.</param>
+            <param name="json">Create JSON API or not. <see langword="true"/> for JSON.</param>
+            <returns></returns>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.ConvertRating(System.String)">
+            <summary>
+            Convert string rating to <see cref="T:BooruDex.Models.Rating"/>.
+            </summary>
+            <param name="rating">String rating</param>
+            <returns></returns>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.ReadArtist(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Read <see cref="T:BooruDex.Models.Artist"/> JSON search result.
+            </summary>
+            <param name="json">JSON object.</param>
+            <returns><see cref="T:BooruDex.Models.Artist"/> object.</returns>
+            <exception cref="T:System.NotImplementedException">
+            	Method is not implemented yet.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.ReadPool(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Read <see cref="T:BooruDex.Models.Pool"/> JSON search result.
+            </summary>
+            <param name="json">JSON object.</param>
+            <returns><see cref="T:BooruDex.Models.Pool"/> object.</returns>
+            <exception cref="T:System.NotImplementedException">
+            	Method is not implemented yet.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.ReadPost(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Read <see cref="T:BooruDex.Models.Post"/> JSON search result.
+            </summary>
+            <param name="json">JSON object.</param>
+            <returns><see cref="T:BooruDex.Models.Post"/> object.</returns>
+            <exception cref="T:System.NotImplementedException">
+            	Method is not implemented yet.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.ReadTag(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Read <see cref="T:BooruDex.Models.Tag"/> JSON search result.
+            </summary>
+            <param name="json">JSON object.</param>
+            <returns><see cref="T:BooruDex.Models.Tag"/> object.</returns>
+            <exception cref="T:System.NotImplementedException">
+            	Method is not implemented yet.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.ReadTagRelated(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Read <see cref="T:BooruDex.Models.TagRelated"/> JSON search result.
+            </summary>
+            <param name="json">JSON object.</param>
+            <returns><see cref="T:BooruDex.Models.TagRelated"/> object.</returns>
+            <exception cref="T:System.NotImplementedException">
+            	Method is not implemented yet.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.ReadWiki(Newtonsoft.Json.Linq.JToken)">
+            <summary>
+            Read <see cref="T:BooruDex.Models.Wiki"/> JSON search result.
+            </summary>
+            <param name="json">JSON object.</param>
+            <returns><see cref="T:BooruDex.Models.Wiki"/> object.</returns>
+            <exception cref="T:System.NotImplementedException">
+            	Method is not implemented yet.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.Authenticate(System.String,System.String)">
+            <summary>
+            Login with booru username and password.
+            </summary>
+            <param name="username">Your username.</param>
+            <param name="password">Your password.</param>
+            <returns></returns>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.ArtistListAsync(System.String,System.UInt32,System.Boolean)">
+            <summary>
+            Search <see cref="T:BooruDex.Models.Artist"/> by name.
+            </summary>
+            <param name="name">The name (or a fragment of the name) of the artist.</param>
+            <param name="page">The page number.</param>
+            <param name="sort">Sort the search result by <see cref="T:BooruDex.Models.Artist"/> name. Default <see langword="false"/>.</param>
+            <returns>Array of <see cref="T:BooruDex.Models.Artist"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">
+            	One or more parameter is null or empty.
+            </exception>
+            <exception cref="T:System.NotImplementedException">
+            	Method is not implemented yet.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.HttpResponseException">
+            	Unexpected error occured.
+            </exception>
+            <exception cref="T:System.Net.Http.HttpRequestException">
+            	The request failed due to an underlying issue such as network connectivity, DNS
+                failure, server certificate validation or timeout.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.SearchNotFoundException">
+            	The search result is empty. No <see cref="T:BooruDex.Models.Artist"/> is found.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.PoolList(System.String,System.UInt32)">
+            <summary>
+            Search <see cref="T:BooruDex.Models.Pool"/> by title.
+            </summary>
+            <param name="title">The title of <see cref="T:BooruDex.Models.Pool"/>.</param>
+            <param name="page">The page number.</param>
+            <returns>Array of <see cref="T:BooruDex.Models.Pool"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">
+            	The <see cref="T:BooruDex.Models.Pool"/> title or name can't null or empty.
+            </exception>
+            <exception cref="T:System.NotImplementedException">
+            	Method is not implemented yet.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.HttpResponseException">
+            	Unexpected error occured.
+            </exception>
+            <exception cref="T:System.Net.Http.HttpRequestException">
+            	The request failed due to an underlying issue such as network connectivity, DNS
+                failure, server certificate validation or timeout.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.SearchNotFoundException">
+            	The search result is empty. No <see cref="T:BooruDex.Models.Pool"/> is found.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.PoolPostList(System.UInt32)">
+            <summary>
+            Get all <see cref="T:BooruDex.Models.Post"/> inside the <see cref="T:BooruDex.Models.Pool"/>.
+            </summary>
+            <param name="poolId">The <see cref="T:BooruDex.Models.Pool"/> id.</param>
+            <returns>Array of <see cref="T:BooruDex.Models.Post"/> from <see cref="T:BooruDex.Models.Pool"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">
+            	One or more parameter is null or empty.
+            </exception>
+            <exception cref="T:System.NotImplementedException">
+            	Method is not implemented yet.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.HttpResponseException">
+            	Unexpected error occured.
+            </exception>
+            <exception cref="T:System.Net.Http.HttpRequestException">
+            	The request failed due to an underlying issue such as network connectivity, DNS
+                failure, server certificate validation or timeout.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.SearchNotFoundException">
+            	The search result is empty. No <see cref="T:BooruDex.Models.Post"/> is found.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.PostListAsync(System.UInt32,System.String[],System.UInt32)">
+            <summary>
+            Get a list of the latest <see cref="T:BooruDex.Models.Post"/>.
+            </summary>
+            <param name="limit">How many <see cref="T:BooruDex.Models.Post"/> to retrieve.</param>
+            <param name="page">The page number.</param>
+            <param name="tags">The tags to search for.</param>
+            <returns>
+            	Array of <see cref="T:BooruDex.Models.Post"/>.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            	The provided <see cref="T:BooruDex.Models.Tag"/> is more than the limit.
+            </exception>
+            <exception cref="T:System.NotImplementedException">
+            	Method is not implemented yet.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.HttpResponseException">
+            	Unexpected error occured.
+            </exception>
+            <exception cref="T:System.Net.Http.HttpRequestException">
+            	The request failed due to an underlying issue such as network connectivity, DNS
+                failure, server certificate validation or timeout.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.SearchNotFoundException">
+            	The search result is empty. No <see cref="T:BooruDex.Models.Post"/> is found.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.GetRandomPostAsync(System.String[])">
+            <summary>
+            Get a single random <see cref="T:BooruDex.Models.Post"/> with the given tags.
+            </summary>
+            <param name="tags"><see cref="T:BooruDex.Models.Tag"/> to search.</param>
+            <returns>
+            	A random <see cref="T:BooruDex.Models.Post"/>.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            	The provided <see cref="T:BooruDex.Models.Tag"/> is more than the limit.
+            </exception>
+            <exception cref="T:System.NotImplementedException">
+            	Method is not implemented yet.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.HttpResponseException">
+            	Unexpected error occured.
+            </exception>
+            <exception cref="T:System.Net.Http.HttpRequestException">
+            	The request failed due to an underlying issue such as network connectivity, DNS
+                failure, server certificate validation or timeout.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.SearchNotFoundException">
+            	The search result is empty. No <see cref="T:BooruDex.Models.Post"/> is found.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.GetRandomPostAsync(System.UInt32,System.String[])">
+            <summary>
+            Get multiple random <see cref="T:BooruDex.Models.Post"/> with the given tags.
+            </summary>
+            <param name="tags"><see cref="T:BooruDex.Models.Tag"/> to search.</param>
+            <param name="limit">How many post to retrieve.</param>
+            <returns>
+            	Array of <see cref="T:BooruDex.Models.Post"/>.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            	The provided <see cref="T:BooruDex.Models.Tag"/> is more than the limit.
+            </exception>
+            <exception cref="T:System.NotImplementedException">
+            	Method is not implemented yet.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.HttpResponseException">
+            	Unexpected error occured.
+            </exception>
+            <exception cref="T:System.Net.Http.HttpRequestException">
+            	The request failed due to an underlying issue such as network connectivity, DNS
+                failure, server certificate validation or timeout.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.SearchNotFoundException">
+            	The search result is empty. No <see cref="T:BooruDex.Models.Post"/> is found.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.TagListAsync(System.String)">
+            <summary>
+            Search for <see cref="T:BooruDex.Models.Tag"/> with the name is similiar or alike.
+            </summary>
+            <param name="name">The <see cref="T:BooruDex.Models.Tag"/> name.</param>
+            <returns>
+            	Array of <see cref="T:BooruDex.Models.Tag"/>.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            	The provided <see cref="T:BooruDex.Models.Tag"/> name is null or empty string.
+            </exception>
+            <exception cref="T:System.NotImplementedException">
+            	Method is not implemented yet.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.HttpResponseException">
+            	Unexpected error occured.
+            </exception>
+            <exception cref="T:System.Net.Http.HttpRequestException">
+            	The request failed due to an underlying issue such as network connectivity, DNS
+                failure, server certificate validation or timeout.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.SearchNotFoundException">
+            	The search result is empty. No <see cref="T:BooruDex.Models.Tag"/> is found.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.TagRelatedAsync(System.String,BooruDex.Models.TagType)">
+            <summary>
+            Search for <see cref="T:BooruDex.Models.Tag"/> that related with other <see cref="T:BooruDex.Models.Tag"/>.	
+            </summary>
+            <param name="name">The <see cref="T:BooruDex.Models.Tag"/> name.</param>
+            <param name="type">Restrict results to search by <see cref="T:BooruDex.Models.TagType"/> (can be general, artist, copyright, or character).</param>
+            <returns>
+            	Array of <see cref="T:BooruDex.Models.TagRelated"/>.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            	The provided <see cref="T:BooruDex.Models.Tag"/> name is null or empty string.
+            </exception>
+            <exception cref="T:System.NotImplementedException">
+            	Method is not implemented yet.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.HttpResponseException">
+            	Unexpected error occured.
+            </exception>
+            <exception cref="T:System.Net.Http.HttpRequestException">
+            	The request failed due to an underlying issue such as network connectivity, DNS
+                failure, server certificate validation or timeout.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.SearchNotFoundException">
+            	The search result is empty. No <see cref="T:BooruDex.Models.TagRelated"/> is found.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.WikiListAsync(System.String)">
+            <summary>
+            Search for <see cref="T:BooruDex.Models.Wiki"/> by title.
+            </summary>
+            <param name="title"><see cref="T:BooruDex.Models.Wiki"/> title.</param>
+            <returns>
+            	Array of <see cref="T:BooruDex.Models.Wiki"/>.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            	The provided <see cref="T:BooruDex.Models.Wiki"/> title is null or empty string.
+            </exception>
+            <exception cref="T:System.NotImplementedException">
+            	Method is not implemented yet.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.HttpResponseException">
+            	Unexpected error occured.
+            </exception>
+            <exception cref="T:System.Net.Http.HttpRequestException">
+            	The request failed due to an underlying issue such as network connectivity, DNS
+                failure, server certificate validation or timeout.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.SearchNotFoundException">
+            	The search result is empty. No <see cref="T:BooruDex.Models.Wiki"/> is found.
+            </exception>
+        </member>
+        <member name="T:BooruDex.Booru.Client.Behoimi">
+            <summary>
+            3dbooru client.
+            </summary>
+        </member>
+        <member name="M:BooruDex.Booru.Client.Behoimi.#ctor(System.Net.Http.HttpClient)">
+            <summary>
+            Create <see cref="T:BooruDex.Booru.Client.Behoimi"/> client object.
+            </summary>
+            <param name="httpClient">Http client for sending request and recieving response.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Client.DanbooruDonmai.#ctor(System.Net.Http.HttpClient)">
+            <summary>
+            Create <see cref="T:BooruDex.Booru.Client.DanbooruDonmai"/> client object.
+            </summary>
+            <param name="httpClient">Http client for sending request and recieving response.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Client.Gelbooru.#ctor(System.Net.Http.HttpClient)">
+            <summary>
+            Create <see cref="T:BooruDex.Booru.Client.Gelbooru"/> client object.
+            </summary>
+            <param name="httpClient">Http client for sending request and recieving response.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Client.KonachanCom.#ctor(System.Net.Http.HttpClient)">
+            <summary>
+            Create <see cref="T:BooruDex.Booru.Client.KonachanCom"/> client object.
+            </summary>
+            <param name="httpClient">Http client for sending request and recieving response.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Client.KonachanNet.#ctor(System.Net.Http.HttpClient)">
+            <summary>
+            Create <see cref="T:BooruDex.Booru.Client.KonachanNet"/> client object.
+            </summary>
+            <param name="httpClient">Http client for sending request and recieving response.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Client.Lolibooru.#ctor(System.Net.Http.HttpClient)">
+            <summary>
+            Create <see cref="T:BooruDex.Booru.Client.Lolibooru"/> client object.
+            </summary>
+            <param name="httpClient">Http client for sending request and recieving response.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Client.Lolibooru.ReadTag(Newtonsoft.Json.Linq.JToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Client.Realbooru.#ctor(System.Net.Http.HttpClient)">
+            <summary>
+            Create <see cref="T:BooruDex.Booru.Client.Realbooru"/> client object.
+            </summary>
+            <param name="httpClient">Http client for sending request and recieving response.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Client.Rule34.#ctor(System.Net.Http.HttpClient)">
+            <summary>
+            Create <see cref="T:BooruDex.Booru.Client.Rule34"/> client object.
+            </summary>
+            <param name="httpClient">Http client for sending request and recieving response.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Client.Safebooru.#ctor(System.Net.Http.HttpClient)">
+            <summary>
+            Create <see cref="T:BooruDex.Booru.Client.Safebooru"/> client object.
+            </summary>
+            <param name="httpClient">Http client for sending request and recieving response.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Client.SafebooruDonmai.#ctor(System.Net.Http.HttpClient)">
+            <summary>
+            Create <see cref="T:BooruDex.Booru.Client.SafebooruDonmai"/> client object.
+            </summary>
+            <param name="httpClient">Http client for sending request and recieving response.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Client.Xbooru.#ctor(System.Net.Http.HttpClient)">
+            <summary>
+            Create <see cref="T:BooruDex.Booru.Client.Xbooru"/> client object.
+            </summary>
+            <param name="httpClient">Http client for sending request and recieving response.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Client.Yandere.#ctor(System.Net.Http.HttpClient)">
+            <summary>
+            Create <see cref="T:BooruDex.Booru.Client.Yandere"/> client object.
+            </summary>
+            <param name="httpClient">Http client for sending request and recieving response.</param>
+        </member>
+        <member name="T:BooruDex.Booru.Template.Danbooru">
+            <summary>
+            Danbooru, A taggable image board.
+            </summary>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.#ctor(System.String,System.Net.Http.HttpClient)">
+            <summary>
+            <see cref="T:BooruDex.Booru.Template.Danbooru"/> template for booru client.
+            </summary>
+            <param name="domain">URL of booru based sites.</param>
+            <param name="httpClient">Client for sending and receive http response.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.#ctor(System.String,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
+            <summary>
+            <see cref="T:BooruDex.Booru.Template.Danbooru"/> template for booru client.
+            </summary>
+            <param name="domain">URL of booru based sites.</param>
+            <param name="httpClient">Client for sending and receive http response.</param>
+            <param name="rng">Random generator for random post.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.Finalize">
+            <summary>
+            Release all resource that this object hold.
+            </summary>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.CreateBaseApiCall(System.String,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.ReadArtist(Newtonsoft.Json.Linq.JToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.ReadPool(Newtonsoft.Json.Linq.JToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.ReadPost(Newtonsoft.Json.Linq.JToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.ReadTag(Newtonsoft.Json.Linq.JToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.ReadTagRelated(Newtonsoft.Json.Linq.JToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.ReadWiki(Newtonsoft.Json.Linq.JToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.ArtistListAsync(System.String,System.UInt32,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.PoolList(System.String,System.UInt32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.PoolPostList(System.UInt32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.PostShowAsync(System.UInt32)">
+            <summary>
+            Show a detailed information of the <see cref="T:BooruDex.Models.Post"/>.
+            </summary>
+            <param name="postId">Id of the <see cref="T:BooruDex.Models.Post"/>.</param>
+            <returns><see cref="T:BooruDex.Models.Post"/>.</returns>
+            <exception cref="T:BooruDex.Exceptions.HttpResponseException">
+            	Unexpected error occured.
+            </exception>
+            <exception cref="T:System.Net.Http.HttpRequestException">
+            	The request failed due to an underlying issue such as network connectivity, DNS
+                failure, server certificate validation or timeout.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.SearchNotFoundException">
+            	The search result is empty. No <see cref="T:BooruDex.Models.Post"/> is found.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.PostListAsync(System.UInt32,System.String[],System.UInt32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.GetRandomPostAsync(System.String[])">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.GetRandomPostAsync(System.UInt32,System.String[])">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.TagListAsync(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.TagRelatedAsync(System.String,BooruDex.Models.TagType)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.WikiListAsync(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:BooruDex.Booru.Template.Gelbooru">
+            <summary>
+            Gelbooru.
+            </summary>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru.#ctor(System.String,System.Net.Http.HttpClient)">
+            <summary>
+            <see cref="T:BooruDex.Booru.Template.Gelbooru"/> template for booru client.
+            </summary>
+            <param name="domain">URL of booru based sites.</param>
+            <param name="httpClient">Client for sending and receive http response.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru.#ctor(System.String,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
+            <summary>
+            <see cref="T:BooruDex.Booru.Template.Gelbooru"/> template for booru client.
+            </summary>
+            <param name="domain">URL of booru based sites.</param>
+            <param name="httpClient">Client for sending and receive http response.</param>
+            <param name="rng">Random generator for random post.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru.Finalize">
+            <summary>
+            Release all resource that this object hold.
+            </summary>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru.GetPostCount(System.String)">
+            <summary>
+            Get max number of <see cref="T:BooruDex.Models.Post"/> with 
+            the given <see cref="T:BooruDex.Models.Tag"/> the site have.
+            </summary>
+            <param name="url">Url of the requested <see cref="T:BooruDex.Models.Post"/>.</param>
+            <returns>Number of <see cref="T:BooruDex.Models.Post"/>.</returns>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru.CreateBaseApiCall(System.String,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru.ReadPost(Newtonsoft.Json.Linq.JToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru.ReadTag(Newtonsoft.Json.Linq.JToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru.ToTagType(System.String)">
+            <summary>
+            Convert string "type" from tag JSON to <see cref="T:BooruDex.Models.TagType"/>.
+            </summary>
+            <param name="tagTypeName">Tag type name.</param>
+            <returns>
+            <see cref="T:BooruDex.Models.TagType"/> based on the name or 
+            <see cref="F:BooruDex.Models.TagType.Undefined"/> if "type" from tag JSON is not recognizable.
+            </returns>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru.PostListAsync(System.UInt32,System.String[],System.UInt32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru.GetRandomPostAsync(System.String[])">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru.GetRandomPostAsync(System.UInt32,System.String[])">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru.TagListAsync(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:BooruDex.Booru.Template.Gelbooru02">
+            <summary>
+            Gelbooru beta version 0.2.0.
+            </summary>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru02.#ctor(System.String,System.Net.Http.HttpClient)">
+            <summary>
+            <see cref="T:BooruDex.Booru.Template.Gelbooru02"/> template for booru client.
+            </summary>
+            <param name="domain">URL of booru based sites.</param>
+            <param name="httpClient">Client for sending and receive http response.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru02.#ctor(System.String,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
+            <summary>
+            <see cref="T:BooruDex.Booru.Template.Gelbooru02"/> template for booru client.
+            </summary>
+            <param name="domain">URL of booru based sites.</param>
+            <param name="httpClient">Client for sending and receive http response.</param>
+            <param name="rng">Random generator for random post.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru02.Finalize">
+            <summary>
+            Release all resource that this object hold.
+            </summary>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru02.GetPostCount(System.String)">
+            <summary>
+            Get max number of <see cref="T:BooruDex.Models.Post"/> with 
+            the given <see cref="T:BooruDex.Models.Tag"/> the site have.
+            </summary>
+            <param name="url">Url of the requested <see cref="T:BooruDex.Models.Post"/>.</param>
+            <returns>Number of <see cref="T:BooruDex.Models.Post"/>.</returns>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru02.CreateBaseApiCall(System.String,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru02.ReadPost(Newtonsoft.Json.Linq.JToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru02.PostListAsync(System.UInt32,System.String[],System.UInt32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru02.GetRandomPostAsync(System.String[])">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru02.GetRandomPostAsync(System.UInt32,System.String[])">
+            <inheritdoc/>
+        </member>
+        <member name="T:BooruDex.Booru.Template.Moebooru">
+            <summary>
+            Moebooru, a fork of Danbooru1 that has been heavily modified.
+            </summary>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.#ctor(System.String,System.Net.Http.HttpClient)">
+            <summary>
+            <see cref="T:BooruDex.Booru.Template.Moebooru"/> template for booru client.
+            </summary>
+            <param name="domain">URL of booru based sites.</param>
+            <param name="httpClient">Client for sending and receive http response.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.#ctor(System.String,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
+            <summary>
+            <see cref="T:BooruDex.Booru.Template.Moebooru"/> template for booru client.
+            </summary>
+            <param name="domain">URL of booru based sites.</param>
+            <param name="httpClient">Client for sending and receive http response.</param>
+            <param name="rng">Random generator for random post.</param>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.Finalize">
+            <summary>
+            Release all resource that this object hold.
+            </summary>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.GetPostCount(System.String)">
+            <summary>
+            Get max number of <see cref="T:BooruDex.Models.Post"/> with 
+            the given <see cref="T:BooruDex.Models.Tag"/> the site have.
+            </summary>
+            <param name="url">Url of the requested <see cref="T:BooruDex.Models.Post"/>.</param>
+            <returns>Number of <see cref="T:BooruDex.Models.Post"/>.</returns>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.CreateBaseApiCall(System.String,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.ReadArtist(Newtonsoft.Json.Linq.JToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.ReadPool(Newtonsoft.Json.Linq.JToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.ReadPost(Newtonsoft.Json.Linq.JToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.ReadTag(Newtonsoft.Json.Linq.JToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.ReadTagRelated(Newtonsoft.Json.Linq.JToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.ReadWiki(Newtonsoft.Json.Linq.JToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.ArtistListAsync(System.String,System.UInt32,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.PoolList(System.String,System.UInt32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.PoolPostList(System.UInt32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.PoolPostList(System.UInt32,System.UInt32)">
+            <summary>
+            Get partial <see cref="T:BooruDex.Models.Post"/> inside the <see cref="T:BooruDex.Models.Pool"/>.
+            </summary>
+            <param name="poolId">The <see cref="T:BooruDex.Models.Pool"/> id.</param>
+            <param name="page">The page number.</param>
+            <returns>Array of <see cref="T:BooruDex.Models.Post"/> from <see cref="T:BooruDex.Models.Pool"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">
+            	One or more parameter is null or empty.
+            </exception>
+            <exception cref="T:System.NotImplementedException">
+            	Method is not implemented yet.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.HttpResponseException">
+            	Unexpected error occured.
+            </exception>
+            <exception cref="T:System.Net.Http.HttpRequestException">
+            	The request failed due to an underlying issue such as network connectivity, DNS
+                failure, server certificate validation or timeout.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.SearchNotFoundException">
+            	The search result is empty.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.PostListAsync(System.UInt32,System.String[],System.UInt32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.GetRandomPostAsync(System.String[])">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.GetRandomPostAsync(System.UInt32,System.String[])">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.TagListAsync(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.TagRelatedAsync(System.String,BooruDex.Models.TagType)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.WikiListAsync(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="T:BooruDex.Exceptions.HttpResponseException">
+            <summary>
+            Error that occur whenever <see cref="T:System.Net.Http.HttpResponseMessage"/> is not OK.
+            </summary>
+        </member>
+        <member name="M:BooruDex.Exceptions.HttpResponseException.#ctor(System.String)">
+            <summary>
+            Create <see cref="T:BooruDex.Exceptions.HttpResponseException"/>.
+            </summary>
+            <param name="msg">Error message.</param>
+        </member>
+        <member name="M:BooruDex.Exceptions.HttpResponseException.#ctor(System.String,System.Exception)">
+            <summary>
+            Create <see cref="T:BooruDex.Exceptions.HttpResponseException"/>.
+            </summary>
+            <param name="msg">Error message.</param>
+            <param name="e">Exception.</param>
+        </member>
+        <member name="T:BooruDex.Exceptions.SearchNotFoundException">
+            <summary>
+            Error that occurs if no search results are found.
+            </summary>
+        </member>
+        <member name="T:BooruDex.Models.Artist">
+            <summary>
+            Represents a Artist object.
+            </summary>
+        </member>
+        <member name="M:BooruDex.Models.Artist.#ctor(System.UInt32,System.String,System.Collections.Generic.IList{System.String})">
+            <summary>
+            
+            </summary>
+            <param name="id"><see cref="T:BooruDex.Models.Artist"/> id.</param>
+            <param name="name"><see cref="T:BooruDex.Models.Artist"/> name.</param>
+            <param name="urls">List of <see cref="T:BooruDex.Models.Artist"/> urls.</param>
+        </member>
+        <member name="P:BooruDex.Models.Artist.ID">
+            <summary>
+            Gets the ID of the artist.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Artist.Name">
+            <summary>
+            Gets the name of the artist.
+            </summary>
+        </member>
+        <member name="T:BooruDex.Models.Pool">
+            <summary>
+            Represents a Artist object.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Pool.ID">
+            <summary>
+            Gets the ID of the pool.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Pool.Name">
+            <summary>
+            Gets the name of the pool.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Pool.PostCount">
+            <summary>
+            Gets the number of post in the pool.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Pool.Description">
+            <summary>
+            Gets the description of the pool.
+            </summary>
+        </member>
+        <member name="T:BooruDex.Models.Post">
+            <summary>
+            Represents a Post object.
+            </summary>
+        </member>
+        <member name="M:BooruDex.Models.Post.#ctor(System.UInt32,System.String,System.String,System.String,BooruDex.Models.Rating,System.String,System.UInt32,System.Int32,System.Int32,System.Nullable{System.Int32},System.Nullable{System.Int32},System.String)">
+            <summary>
+            Create <see cref="T:BooruDex.Models.Post"/> object.
+            </summary>
+            <param name="fileUrl">The URI of the file.</param>
+            <param name="previewUrl">The URI of the preview image.</param>
+            <param name="postUrl">The URI of the post.</param>
+            <param name="rating">The post's rating.</param>
+            <param name="tags">The array containing all the tags associated with the file.</param>
+            <param name="id">The ID of the post.</param>
+            <param name="size">The size of the file, in bytes.</param>
+            <param name="height">The height of the image, in pixels.</param>
+            <param name="width">The width of the image, in pixels.</param>
+            <param name="previewHeight">The height of the preview image, in pixels.</param>
+            <param name="previewWidth">The width of the preview image, in pixels.</param>
+            <param name="creation">The creation date of the post.</param>
+            <param name="source">The original source of the file.</param>
+            <param name="score">The score of the post.</param>
+            <param name="md5">The MD5 hash of the file.</param>
+        </member>
+        <member name="P:BooruDex.Models.Post.ID">
+            <summary>
+            Gets the ID of the post.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Post.PostUrl">
+            <summary>
+            Gets the URI of the post.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Post.FileUrl">
+            <summary>
+            Gets the URI of the file.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Post.PreviewUrl">
+            <summary>
+            Gets the URI of the preview image.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Post.Rating">
+            <summary>
+            Gets the post's rating.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Post.Tags">
+            <summary>
+            Gets the collection containing all the tags associated with the file.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Post.Size">
+            <summary>
+            Gets the size of the file, in bytes, or
+            <see langword="null"/> if file size is unknown.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Post.Height">
+            <summary>
+            Gets the height of the image, in pixels.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Post.Width">
+            <summary>
+            Gets the width of the image, in pixels.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Post.PreviewHeight">
+            <summary>
+            Gets the height of the preview image, in pixels,
+            or <see langword="null"/> if the height is unknown.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Post.PreviewWidth">
+            <summary>
+            Gets the width of the preview image, in pixels,
+            or <see langword="null"/> if the width is unknown.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Post.Source">
+            <summary>
+            Gets the original source of the file.
+            </summary>
+        </member>
+        <member name="T:BooruDex.Models.Rating">
+            <summary>
+            Represents a level of explicit content of the post.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Models.Rating.None">
+            <summary>
+            The post dont have a rating.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Models.Rating.Safe">
+            <summary>
+            Safe posts are images that you would not feel guilty looking at openly in public. 
+            Pictures of nudes, exposed nipples or pubic hair, cameltoe, or any sort of sexually suggestive pose are NOT safe and belong in questionable. 
+            Swimsuits and lingerie are borderline cases; some are safe, some are questionable.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Models.Rating.Questionable">
+            <summary>
+            Basically anything that isn't safe or explicit. 
+            This is the great middle area, and since it includes unrated posts, you shouldn't really expect anything one way or the other when browsing questionable posts.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Models.Rating.Explicit">
+            <summary>
+            Any image where the vagina or penis are exposed and easily visible. 
+            This includes depictions of sex, masturbation, or any sort of penetration.
+            Literally NSFW.
+            </summary>
+        </member>
+        <member name="T:BooruDex.Models.Tag">
+            <summary>
+            Represent a Tag object.
+            </summary>
+        </member>
+        <member name="M:BooruDex.Models.Tag.#ctor(System.UInt32,System.String,BooruDex.Models.TagType,System.UInt32)">
+            <summary>
+            Create a instance of <see cref="T:BooruDex.Models.Tag"/>
+            </summary>
+            <param name="id">The ID of the tag.</param>
+            <param name="name">The name of the tag.</param>
+            <param name="type">The type of the tag.</param>
+            <param name="count">The number of occurences of the tag.</param>
+        </member>
+        <member name="P:BooruDex.Models.Tag.ID">
+            <summary>
+            Gets the ID of the tag.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Tag.Name">
+            <summary>
+            Gets the name of the tag.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Tag.Type">
+            <summary>
+            Gets the type of the tag.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Tag.Count">
+            <summary>
+            Gets the number of occurences of the tag.
+            </summary>
+        </member>
+        <member name="T:BooruDex.Models.TagRelated">
+            <summary>
+            Represent a Tag Related object.
+            </summary>
+        </member>
+        <member name="M:BooruDex.Models.TagRelated.#ctor(System.String,System.UInt32)">
+            <summary>
+            Create a instance of <see cref="T:BooruDex.Models.TagRelated"/>
+            </summary>
+            <param name="name">The name of the tag.</param>
+            <param name="count">The number of occurences of the tag.</param>
+        </member>
+        <member name="P:BooruDex.Models.TagRelated.Name">
+            <summary>
+            Gets the name of the tag.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.TagRelated.Count">
+            <summary>
+            Gets the number of occurences of the tag.
+            </summary>
+        </member>
+        <member name="T:BooruDex.Models.TagType">
+            <summary>
+            Tag is keywords you can use to describe posts.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Models.TagType.Artist">
+            <summary>
+            Artist tags identify the tag as the artist. 
+            This doesn't mean the artist of the original copyrighted artwork.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Models.TagType.Character">
+            <summary>
+            Character tags identify the tag as a character.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Models.TagType.Copyright">
+            <summary>
+            The copyright type indicates the tag represents an anime, 
+            a game, a novel, or some sort of copyrighted setting. 
+            Otherwise they work identically to character and artist tags.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Models.TagType.General">
+            <summary>
+            General tags are used for everything else. 
+            General tags should objectively describe the contents of the post.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Models.TagType.Metadata">
+            <summary>
+            Meta tags generally describe things beyond the content of the image itself. 
+            Examples include translated, copyright request, duplicate, image sample, and bad id.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Models.TagType.Faults">
+            <summary>
+            There's something wrong with the post.
+            </summary>
+        </member>
+        <member name="F:BooruDex.Models.TagType.Circle">
+            <summary>
+            Circle tags are meta-copyrights. 
+            Most are artist circles (artist collectives) or studios 
+            like key which are in a way also artist circles. 
+            Also included are publications like Megami and NyanType. 
+            These are used ONLY for official artwork (produced or published by...)
+            unless otherwise stated in the wiki (eg. Nintendo is an exception).
+            </summary>
+        </member>
+        <member name="F:BooruDex.Models.TagType.Undefined">
+            <summary>
+            Tag not recognizable.
+            </summary>
+        </member>
+        <member name="T:BooruDex.Models.Wiki">
+            <summary>
+            Represent Wiki entry. 
+            </summary>
+        </member>
+        <member name="M:BooruDex.Models.Wiki.#ctor(System.UInt32,System.String,System.String)">
+            <summary>
+            Create a instance of <see cref="T:BooruDex.Models.Wiki"/>.
+            </summary>
+            <param name="id">The ID of the wiki entry.</param>
+            <param name="title">The name of the wiki</param>
+            <param name="creation">The date when the wiki entry was created.</param>
+            <param name="lastUpdate">The date of the latest update to the wiki entry.</param>
+            <param name="body">The wiki description.</param>
+        </member>
+        <member name="P:BooruDex.Models.Wiki.ID">
+            <summary>
+            Gets the ID of the wiki entry.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Wiki.Title">
+            <summary>
+            Gets the name of the described tag.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Models.Wiki.Body">
+            <summary>
+            Gets the tag description.
+            </summary>
+        </member>
+    </members>
+</doc>
