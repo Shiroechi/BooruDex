@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using BooruDex.Models;
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace BooruDex.Booru.Template
@@ -168,6 +170,67 @@ namespace BooruDex.Booru.Template
 		}
 
 		#endregion Artist
+
+		#region Pool
+
+		/// <inheritdoc/>
+		public override async Task<Pool[]> PoolList(string title, uint page = 0)
+		{
+			if (title == null || title.Trim() == "")
+			{
+				throw new ArgumentNullException(nameof(title), "Title can't null or empty.");
+			}
+
+			var url = this.CreateBaseApiCall("pools") +
+				$"limit={ this._PostLimit }&page={ page }&search[name_matches]={ title }";
+
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"Can't find Pool with title \"{ title }\" at page { page }.");
+			}
+
+			return jsonArray.Select(this.ReadPool).ToArray();
+		}
+
+		/// <inheritdoc/>
+		public override async Task<Post[]> PoolPostList(uint poolId)
+		{
+			var url = this.CreateBaseApiCall($"pools/{ poolId }");
+	
+			var obj = await this.GetJsonResponseAsync<JObject>(url);
+
+			// if Pool not found, it return JSON response
+			// containing a reason why it not found
+
+			if (obj.ContainsKey("success"))
+			{
+				throw new SearchNotFoundException($"Can't find Pool with id { poolId }.");
+			}
+
+			// the JSON response only give the Post id
+			// so we need get the Post data from another API call.
+
+			var postIds = JsonConvert.DeserializeObject<int[]>(
+				obj["post_ids"].ToString());
+
+			if (postIds.Length == 0)
+			{
+				throw new SearchNotFoundException($"No Post inside Pool with id { poolId }.");
+			}
+
+			var posts = new List<Post>();
+			foreach (uint id in postIds)
+			{
+				posts.Add(await this.PostShowAsync(id));
+			}
+
+			return posts.ToArray();
+		}
+
+		#endregion Pool
+
 
 		#endregion Public Method
 	}
