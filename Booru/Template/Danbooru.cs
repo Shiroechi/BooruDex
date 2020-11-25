@@ -1,5 +1,9 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
+using BooruDex.Exceptions;
 using BooruDex.Models;
 
 using Litdex.Security.RNG;
@@ -53,6 +57,7 @@ namespace BooruDex.Booru.Template
 
 		#region Protected Overrride Method
 
+		/// <inheritdoc/>
 		protected override string CreateBaseApiCall(string query, bool json = true)
 		{
 			if (json)
@@ -68,7 +73,7 @@ namespace BooruDex.Booru.Template
 			return new Artist(
 				json["id"].Value<uint>(),
 				json["name"].Value<string>(),
-				null); // no artist urls.
+				null); // no artist urls in API response.
 		}
 
 		/// <inheritdoc/>
@@ -131,5 +136,39 @@ namespace BooruDex.Booru.Template
 		}
 
 		#endregion Protected Overrride Method
+
+		#region Public Method
+
+		#region Artist
+
+		/// <inheritdoc/>
+		public override async Task<Artist[]> ArtistListAsync(string name, uint page = 0, bool sort = false)
+		{
+			if (name == null || name.Trim() == "")
+			{
+				throw new ArgumentNullException(nameof(name), "Artist name can't null or empty");
+			}
+
+			var url = this.CreateBaseApiCall("artists") +
+				$"limit={ this._PostLimit }&page={ page }&search[any_name_matches]={ name }";
+
+			if (sort)
+			{
+				url += "&search[order]=name";
+			}
+
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"Can't find Artist with name \"{ name }\" at page { page }.");
+			}
+
+			return jsonArray.Select(ReadArtist).ToArray();
+		}
+
+		#endregion Artist
+
+		#endregion Public Method
 	}
 }
