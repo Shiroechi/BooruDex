@@ -436,6 +436,31 @@ namespace BooruDex.Booru.Template
 
 		#endregion Tag
 
+		#region Wiki
+
+		/// <inheritdoc/>
+		public override async Task<Wiki[]> WikiListAsync(string title)
+		{
+			if (title == null || title.Trim() == "")
+			{
+				throw new ArgumentNullException(nameof(title), "Title can't null or empty.");
+			}
+
+			var url = this.CreateBaseApiCall("wiki_pages") +
+				$"search[order]=title&search[title]={ title }";
+
+			var array = await this.GetJsonResponseAsync<JArray>(url);
+
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"No Wiki found with title \"{ title }\"");
+			}
+
+			return jsonArray.Select(this.ReadWiki).ToArray();
+		}
+
+		#endregion Wiki
+
 		#endregion Public Method
 	}
 }
