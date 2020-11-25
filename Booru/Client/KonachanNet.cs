@@ -12,7 +12,7 @@ namespace BooruDex.Booru.Client
 		/// Create <see cref="KonachanNet"/> client object.
 		/// </summary>
 		/// <param name="httpClient">Http client for sending request and recieving response.</param>
-		public KonachanNet(HttpClient httpClient = null) : base("http://konachan.net/", httpClient)
+		public KonachanNet(HttpClient httpClient = null) : base("https://konachan.net/", httpClient)
 		{
 			this.IsSafe = true;
 			this._PasswordSalt = "So-I-Heard-You-Like-Mupkids-?--{}--";

@@ -12,7 +12,7 @@ namespace BooruDex.Booru.Client
 		/// Create <see cref="Realbooru"/> client object.
 		/// </summary>
 		/// <param name="httpClient">Http client for sending request and recieving response.</param>
-		public Realbooru(HttpClient httpClient = null) : base("http://realbooru.com/", httpClient)
+		public Realbooru(HttpClient httpClient = null) : base("https://realbooru.com/", httpClient)
 		{
 
 		}
