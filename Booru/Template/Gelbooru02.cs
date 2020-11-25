@@ -1,7 +1,12 @@
 ﻿using System.Net.Http;
+using System.Text;
+
+using BooruDex.Models;
 
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
+
+using Newtonsoft.Json.Linq;
 
 namespace BooruDex.Booru.Template
 {
@@ -61,6 +66,25 @@ namespace BooruDex.Booru.Template
 			}
 
 			return sb.ToString();
+		}
+
+		/// <inheritdoc/>
+		protected override Post ReadPost(JToken json)
+		{
+			return new Post(
+				json["id"].Value<uint>(),
+				this._BaseUrl + "index.php?page=post&s=view&id=",
+				json["file_url"].Value<string>(),
+				this._BaseUrl + "thumbnails/" + json["directory"].Value<string>() + "/thumbnail_" + json["hash"].Value<string>() + ".jpg",
+				this.ConvertRating(json["rating"].Value<string>()),
+				json["tags"].Value<string>(),
+				0,
+				json["height"].Value<int>(),
+				json["width"].Value<int>(),
+				0,
+				0,
+				json["source"].Value<string>()
+				);
 		}
 
 		#endregion Protected Overrride Method
