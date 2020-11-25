@@ -75,7 +75,7 @@ namespace BooruDex.Booru.Template
 			return new Artist(
 				json["id"].Value<uint>(),
 				json["name"].Value<string>(),
-				null); // no artist urls in API response.
+				new string[] { "" }); // no artist urls in API response.
 		}
 
 		/// <inheritdoc/>
