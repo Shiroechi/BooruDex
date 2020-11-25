@@ -88,7 +88,7 @@ namespace BooruDex.Booru
 		/// Base object for booru client.
 		/// </summary>
 		/// <param name="domain">URL of booru based sites.</param>
-		public Booru(string domain) : this(domain, null, new JSF32())
+		public Booru(string domain) : this(domain, null, new SplitMix64())
 		{
 			
 		}
@@ -113,7 +113,7 @@ namespace BooruDex.Booru
 		{
 			this._BaseUrl = new Uri(domain, UriKind.Absolute);
 			this.HttpClient = httpClient;
-			this._RNG = rng;
+			this._RNG = rng is null ? new SplitMix64() : rng;
 			this._Authentication = false;
 			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 		}
