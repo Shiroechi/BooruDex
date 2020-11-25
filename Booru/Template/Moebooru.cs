@@ -355,7 +355,6 @@ namespace BooruDex.Booru.Template
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine(e);
 				throw new SearchNotFoundException("Something happen when deserialize Post data.", e);
 			}
 		}
@@ -434,7 +433,7 @@ namespace BooruDex.Booru.Template
 					$"limit={ 1 }&page={ 0 }&tags={ string.Join(" ", tags) }";
 			}
 
-			// get Post count int XML response.
+			// get Post count in XML response.
 
 			var postCount = await this.GetPostCount(url);
 
