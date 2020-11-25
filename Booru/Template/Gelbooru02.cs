@@ -93,11 +93,12 @@ namespace BooruDex.Booru.Template
 		/// <inheritdoc/>
 		protected override Post ReadPost(JToken json)
 		{
+			var imageName = json["image"].Value<string>().Substring(0, json["image"].Value<string>().IndexOf("."));
 			return new Post(
 				json["id"].Value<uint>(),
 				this._BaseUrl + "index.php?page=post&s=view&id=",
-				json["file_url"].Value<string>(),
-				this._BaseUrl + "thumbnails/" + json["directory"].Value<string>() + "/thumbnail_" + json["hash"].Value<string>() + ".jpg",
+				this._BaseUrl + "/images/" + json["directory"].Value<string>() + "/" + json["image"].Value<string>(),
+				this._BaseUrl + "/thumbnails/" + json["directory"].Value<string>() + "/thumbnails_" + imageName + ".jpg",
 				this.ConvertRating(json["rating"].Value<string>()),
 				json["tags"].Value<string>(),
 				0,
@@ -105,7 +106,7 @@ namespace BooruDex.Booru.Template
 				json["width"].Value<int>(),
 				0,
 				0,
-				json["source"].Value<string>()
+				""
 				);
 		}
 
@@ -146,7 +147,7 @@ namespace BooruDex.Booru.Template
 				url = this.CreateBaseApiCall("post") +
 					$"&limit={ limit }&pid={ page }&tags={ string.Join(" ", tags) }";
 			}
-
+			Console.WriteLine(url);
 			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
 
 			if (jsonArray.Count == 0)
@@ -186,7 +187,7 @@ namespace BooruDex.Booru.Template
 			if (tags == null)
 			{
 				url = this.CreateBaseApiCall("post", false) +
-					$"limit={ 1 }&page={ 0 }";
+					$"&limit={ 1 }&pid={ 0 }";
 			}
 			else
 			{
@@ -237,15 +238,16 @@ namespace BooruDex.Booru.Template
 			if (tags == null)
 			{
 				url = this.CreateBaseApiCall("post", false) +
-					$"limit={ 1 }&page={ 0 }";
+					$"&limit={ 1 }&pid={ 0 }";
 			}
 			else
 			{
 				url = this.CreateBaseApiCall("post", false) +
-					$"limit={ 1 }&page={ 0 }&tags={ string.Join(" ", tags) }";
+					$"&limit={ 1 }&pid={ 0 }&tags={ string.Join(" ", tags) }";
 			}
 
 			// get Post count in XML response.
+			Console.WriteLine(url);
 
 			var postCount = await this.GetPostCount(url);
 
