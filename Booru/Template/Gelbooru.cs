@@ -1,8 +1,13 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Text;
+
+using BooruDex.Models;
 
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
+
+using Newtonsoft.Json.Linq;
 
 namespace BooruDex.Booru.Template
 {
@@ -62,6 +67,64 @@ namespace BooruDex.Booru.Template
 			}
 
 			return sb.ToString();
+		}
+
+		/// <inheritdoc/>
+		protected override Post ReadPost(JToken json)
+		{
+			return new Post(
+				json["id"].Value<uint>(),
+				this._BaseUrl + "index.php?page=post&s=view&id=",
+				json["file_url"].Value<string>(),
+				this._BaseUrl + "thumbnails/" + json["directory"].Value<string>() + "/thumbnail_" + json["hash"].Value<string>() + ".jpg",
+				this.ConvertRating(json["rating"].Value<string>()),
+				json["tags"].Value<string>(),
+				0,
+				json["height"].Value<int>(),
+				json["width"].Value<int>(),
+				0,
+				0,
+				json["source"].Value<string>()
+				);
+		}
+
+		/// <inheritdoc/>
+		protected override Tag ReadTag(JToken json)
+		{
+			return new Tag(
+				json["id"].Value<uint>(),
+				json["tag"].Value<string>(),
+				this.ToTagType(json["type"].Value<string>()),
+				json["count"].Value<uint>()
+				);
+		}
+
+		/// <summary>
+		/// Convert string "type" from tag JSON to <see cref="TagType"/>.
+		/// </summary>
+		/// <param name="tagTypeName">Tag type name.</param>
+		/// <returns>
+		/// <see cref="TagType"/> based on the name or 
+		/// <see cref="TagType.Undefined"/> if "type" from tag JSON is not recognizable.
+		/// </returns>
+		protected virtual TagType ToTagType(string tagTypeName)
+		{
+			StringComparer comparer = StringComparer.OrdinalIgnoreCase;
+
+			if (comparer.Equals(tagTypeName, "tag"))
+			{
+				return TagType.General;
+			}
+
+			foreach (TagType type in Enum.GetValues(typeof(TagType)))
+			{
+				if (comparer.Equals(tagTypeName, type.ToString()))
+				{
+					return type;
+				}
+			}
+
+			return TagType.Undefined;
 		}
 
 		#endregion Protected Overrride Method
