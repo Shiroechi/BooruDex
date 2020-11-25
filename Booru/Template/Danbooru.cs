@@ -387,6 +387,55 @@ namespace BooruDex.Booru.Template
 
 		#endregion Post
 
+		#region Tag
+
+		/// <inheritdoc/>
+		public override async Task<Tag[]> TagListAsync(string name)
+		{
+			if (name == null || name.Trim() == "")
+			{
+				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
+			}
+
+			var url = this.CreateBaseApiCall("tags") +
+				$"limit={ this._PostLimit }&order=name&search[name_matches]={ name }";
+
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"Can't find Tags with name \"{ name }\".");
+			}
+
+			return jsonArray.Select(ReadTag).ToArray();
+		}
+
+		/// <inheritdoc/>
+		public override async Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
+		{
+			if (name == null || name.Trim() == "")
+			{
+				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
+			}
+
+			var url = this.CreateBaseApiCall("related_tag") +
+				$"query={ name }&category={ type }";
+
+			var obj = await this.GetJsonResponseAsync<JObject>(url);
+
+			var jsonArray = JsonConvert.DeserializeObject<JArray>(
+				obj["tags"].ToString());
+
+			if (jsonArray.Count == 0)
+			{
+				throw new SearchNotFoundException($"Can't find related Tags with Tag name \"{ name }\".");
+			}
+
+			return jsonArray.Select(this.ReadTagRelated).ToArray();
+		}
+
+		#endregion Tag
+
 		#endregion Public Method
 	}
 }
