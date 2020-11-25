@@ -449,7 +449,7 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("wiki_pages") +
 				$"search[order]=title&search[title]={ title }";
 
-			var array = await this.GetJsonResponseAsync<JArray>(url);
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
 
 			if (jsonArray.Count == 0)
 			{
