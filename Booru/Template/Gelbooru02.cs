@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -11,6 +12,7 @@ using BooruDex.Models;
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace BooruDex.Booru.Template
@@ -135,6 +137,11 @@ namespace BooruDex.Booru.Template
 				limit = this._PostLimit;
 			}
 
+			if (page > 200000)
+			{
+				page = 200000;
+			}
+
 			string url = "";
 
 			if (tags == null)
@@ -147,7 +154,7 @@ namespace BooruDex.Booru.Template
 				url = this.CreateBaseApiCall("post") +
 					$"&limit={ limit }&pid={ page }&tags={ string.Join(" ", tags) }";
 			}
-			Console.WriteLine(url);
+
 			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
 
 			if (jsonArray.Count == 0)
@@ -207,7 +214,10 @@ namespace BooruDex.Booru.Template
 			// get post with random the page number, each page 
 			// limited only with 1 post.
 
-			var pageNumber = this._RNG.NextInt(1, postCount);
+			// there's rate limit for page number, 200.000 page only.
+			// more than that will return error 
+
+			var pageNumber = this._RNG.NextInt(1, postCount) % 200000;
 
 			var post = await this.PostListAsync(1, tags, pageNumber);
 
@@ -247,7 +257,6 @@ namespace BooruDex.Booru.Template
 			}
 
 			// get Post count in XML response.
-			Console.WriteLine(url);
 
 			var postCount = await this.GetPostCount(url);
 
@@ -260,7 +269,10 @@ namespace BooruDex.Booru.Template
 				throw new SearchNotFoundException($"The site only have { postCount } post with tags { string.Join(", ", tags) }.");
 			}
 
-			var maxPageNumber = (uint)Math.Floor(postCount / limit * 1.0);
+			// there's rate limit for page number, 200.000 page only.
+			// more than that will return error 
+
+			var maxPageNumber = (uint)Math.Floor(postCount / limit * 1.0) % 200000;
 
 			if (maxPageNumber == 1)
 			{
