@@ -394,7 +394,7 @@ namespace BooruDex.Booru.Template
 			// get post with random the page number, each page 
 			// limited only with 1 post.
 
-			var pageNumber = this._RNG.NextInt(1, (uint)postCount);
+			var pageNumber = this._RNG.NextInt(1, postCount);
 
 			var post = await this.PostListAsync(1, tags, pageNumber);
 			
