@@ -225,7 +225,7 @@ namespace BooruDex.Booru.Template
 			if (tags == null)
 			{
 				url = this.CreateBaseApiCall("post", false) +
-					$"limit={ 1 }&page={ 0 }";
+					$"&limit={ 1 }&pid={ 0 }";
 			}
 			else
 			{
@@ -276,12 +276,12 @@ namespace BooruDex.Booru.Template
 			if (tags == null)
 			{
 				url = this.CreateBaseApiCall("post", false) +
-					$"limit={ 1 }&page={ 0 }";
+					$"&limit={ 1 }&pid={ 0 }";
 			}
 			else
 			{
 				url = this.CreateBaseApiCall("post", false) +
-					$"limit={ 1 }&page={ 0 }&tags={ string.Join(" ", tags) }";
+					$"&limit={ 1 }&pid={ 0 }&tags={ string.Join(" ", tags) }";
 			}
 
 			// get Post count in XML response.
