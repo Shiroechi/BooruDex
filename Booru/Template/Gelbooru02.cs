@@ -1,6 +1,10 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
+using BooruDex.Exceptions;
 using BooruDex.Models;
 
 using Litdex.Security.RNG;
@@ -53,6 +57,23 @@ namespace BooruDex.Booru.Template
 
 		#endregion Constructor & Destructor
 
+		#region Protected Method
+
+		/// <summary>
+		/// Get max number of <see cref="Post"/> with 
+		/// the given <see cref="Tag"/> the site have.
+		/// </summary>
+		/// <param name="url">Url of the requested <see cref="Post"/>.</param>
+		/// <returns>Number of <see cref="Post"/>.</returns>
+		protected async Task<uint> GetPostCount(string url)
+		{
+			var xml = new XmlDocument();
+			xml.LoadXml(await this.GetStringResponseAsync(url));
+			return uint.Parse(xml.ChildNodes.Item(1).Attributes[0].InnerXml);
+		}
+
+		#endregion Protected Method
+
 		#region Protected Overrride Method
 
 		/// <inheritdoc/>
@@ -89,5 +110,173 @@ namespace BooruDex.Booru.Template
 
 		#endregion Protected Overrride Method
 
+		#region Public Method
+
+		#region Post
+
+		/// <inheritdoc/>
+		public override async Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
+		{
+			if ((this._TagsLimit != 0) &&
+				(tags != null) &&
+				(tags.Length > this._TagsLimit))
+			{
+				throw new ArgumentOutOfRangeException($"Tag can't more than { this._TagsLimit } tag.");
+			}
+
+			if (limit <= 0)
+			{
+				limit = 1;
+			}
+			else if (limit > this._PostLimit)
+			{
+				limit = this._PostLimit;
+			}
+
+			string url = "";
+
+			if (tags == null)
+			{
+				url = this.CreateBaseApiCall("post") +
+					$"&limit={ limit }&pid={ page }";
+			}
+			else
+			{
+				url = this.CreateBaseApiCall("post") +
+					$"&limit={ limit }&pid={ page }&tags={ string.Join(" ", tags) }";
+			}
+
+			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+
+			if (jsonArray.Count == 0)
+			{
+				if (tags == null || tags.Length <= 0)
+				{
+					throw new SearchNotFoundException($"No Post found with empty tags at page { page }.");
+				}
+				else
+				{
+					throw new SearchNotFoundException($"No Post found with tags { string.Join(", ", tags) } at page { page }.");
+				}
+			}
+
+			try
+			{
+				return jsonArray.Select(this.ReadPost).ToArray();
+			}
+			catch (Exception e)
+			{
+				throw new SearchNotFoundException("Something happen when deserialize Post data.", e);
+			}
+		}
+
+		/// <inheritdoc/>
+		public override async Task<Post> GetRandomPostAsync(string[] tags = null)
+		{
+			if ((this._TagsLimit != 0) &&
+				(tags != null) &&
+				(tags.Length > this._TagsLimit))
+			{
+				throw new ArgumentOutOfRangeException($"Tag can't more than { this._TagsLimit } tag.");
+			}
+
+			string url;
+
+			if (tags == null)
+			{
+				url = this.CreateBaseApiCall("post", false) +
+					$"limit={ 1 }&page={ 0 }";
+			}
+			else
+			{
+				url = this.CreateBaseApiCall("post", false) +
+					$"&limit={ 1 }&pid={ 0 }&tags={ string.Join(" ", tags) }";
+			}
+
+			// get Post count in XML response.
+
+			var postCount = await this.GetPostCount(url);
+
+			if (postCount == 0)
+			{
+				throw new SearchNotFoundException($"No post found with tags { string.Join(" ", tags) }.");
+			}
+
+			// get post with random the page number, each page 
+			// limited only with 1 post.
+
+			var pageNumber = this._RNG.NextInt(1, postCount);
+
+			var post = await this.PostListAsync(1, tags, pageNumber);
+
+			return post[0];
+		}
+
+		/// <inheritdoc/>
+		public async override Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
+		{
+			if ((this._TagsLimit != 0) &&
+				(tags != null) &&
+				(tags.Length > this._TagsLimit))
+			{
+				throw new ArgumentOutOfRangeException($"Tag can't more than { this._TagsLimit } tag.");
+			}
+
+			if (limit <= 0)
+			{
+				limit = 1;
+			}
+			else if (limit > this._PostLimit)
+			{
+				limit = this._PostLimit;
+			}
+
+			string url;
+
+			if (tags == null)
+			{
+				url = this.CreateBaseApiCall("post", false) +
+					$"limit={ 1 }&page={ 0 }";
+			}
+			else
+			{
+				url = this.CreateBaseApiCall("post", false) +
+					$"limit={ 1 }&page={ 0 }&tags={ string.Join(" ", tags) }";
+			}
+
+			// get Post count in XML response.
+
+			var postCount = await this.GetPostCount(url);
+
+			if (postCount == 0)
+			{
+				throw new SearchNotFoundException($"No post found with tags { string.Join(" ", tags) }.");
+			}
+			else if (postCount < limit)
+			{
+				throw new SearchNotFoundException($"The site only have { postCount } post with tags { string.Join(", ", tags) }.");
+			}
+
+			var maxPageNumber = (uint)Math.Floor(postCount / limit * 1.0);
+
+			if (maxPageNumber == 1)
+			{
+				// get all post
+				return await this.PostListAsync(limit, tags);
+			}
+			else
+			{
+				// maxPageNumber - 1, to ensure the leftovers post
+				// in last page not included.
+
+				maxPageNumber -= 1;
+
+				return await this.PostListAsync(limit, tags, this._RNG.NextInt(1, maxPageNumber));
+			}
+		}
+
+		#endregion Post
+
+		#endregion Public Method
 	}
 }
