@@ -8,7 +8,8 @@ Currently BooruDex support the following websites:
 - [3Dbooru](http://behoimi.org/)
 - [Danbooru](https://danbooru.donmai.us/)
 - [Gelbooru](http://gelbooru.com/)
-- [Konachan](http://konachan.com/)
+- [Konachan.com](http://konachan.com/)
+- [Konachan.net](http://konachan.net/)
 - [Lolibooru](http://lolibooru.moe/)
 - [Realbooru](http://realbooru.com/)
 - [Rule34](https://rule34.xxx/)
@@ -24,8 +25,8 @@ Currently BooruDex support the following websites:
 - Search for multiple random image by tags
 - List of latest post update
 - Search for tags by tag name pattern
-- Searc for related tag by tag
-- Search for wiki by name
+- Search for tag related by other tag
+- Search for wiki by title
 
 **Note**
 Some client may not have some feature listed above, because the API not supported.
