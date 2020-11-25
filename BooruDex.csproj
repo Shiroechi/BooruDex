@@ -16,6 +16,11 @@
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>x86</PlatformTarget>
+    <DocumentationFile>D:\Project\C#\API\BooruDex\BooruDex.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Litdex.Security.RNG" Version="2.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />

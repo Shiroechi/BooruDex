@@ -4,18 +4,17 @@ using BooruDex.Booru.Template;
 
 namespace BooruDex.Booru.Client
 {
-	public class KonachanNet : Moebooru
+	public class Rule34 : Gelbooru02
 	{
 		#region Constructor & Destructor
 
 		/// <summary>
-		/// Create <see cref="KonachanNet"/> client object.
+		/// Create <see cref="Rule34"/> client object.
 		/// </summary>
 		/// <param name="httpClient">Http client for sending request and recieving response.</param>
-		public KonachanNet(HttpClient httpClient = null) : base("https://konachan.net/", httpClient)
+		public Rule34(HttpClient httpClient = null) : base("https://rule34.xxx/", httpClient)
 		{
-			this.IsSafe = true;
-			this._PasswordSalt = "So-I-Heard-You-Like-Mupkids-?--{}--";
+
 		}
 
 		#endregion Constructor & Destructor

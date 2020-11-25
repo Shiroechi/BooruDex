@@ -15,7 +15,7 @@ namespace BooruDex.Booru.Client
 		/// Create <see cref="Lolibooru"/> client object.
 		/// </summary>
 		/// <param name="httpClient">Http client for sending request and recieving response.</param>
-		public Lolibooru(HttpClient httpClient = null) : base("http://lolibooru.moe/", httpClient)
+		public Lolibooru(HttpClient httpClient = null) : base("https://lolibooru.moe/", httpClient)
 		{
 			this._TagsLimit = 0; // not tag limit
 			this._PasswordSalt = "--{}--";
