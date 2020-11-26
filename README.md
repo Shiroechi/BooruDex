@@ -73,15 +73,27 @@ WarmupCount=10
 **Note** 
 The speed or perfomance may not accurate because internet connection. But BooruDex is more effecient handling memory(RAM) usage.
 
-Refer to this [repository]() for the benchmark log and source code.
+Refer to this [repository](https://github.com/Shiroechi/BooruDex.Test) for the benchmark log and source code.
 
 # Download
 
 # Example
 
+Get 10 random post from [danbooru.donmai.us](https://danbooru.donmai.us/).
+```C#
+var client = new DanbooruDonmai();
+var posts = await client.GetRandomPostAsync(10);
+foreach (var post in posts)
+{
+    Console.WriteLine($"Id: { post.ID }");
+    Console.WriteLine($"File url: { post.FileUrl }");
+}
+```
+
 # Documentation
 
 For documentation: [Wiki]()
+
 For how to use: [how to use]()
 
 # Donation
