@@ -93,6 +93,8 @@ foreach (var post in posts)
 }
 ```
 
+More example can be found [here](https://github.com/Shiroechi/BooruDex/wiki/Example).
+
 # Documentation
 
 For documentation: [Wiki](https://github.com/Shiroechi/BooruDex/wiki)
