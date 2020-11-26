@@ -77,7 +77,7 @@ Refer to this [repository](https://github.com/Shiroechi/BooruDex.Test) for the b
 
 # Download
 
-[![Nuget](https://img.shields.io/nuget/v/BooruDex?label=Litdex.Security.RNG)](https://www.nuget.org/packages/BooruDex)
+[![Nuget](https://img.shields.io/nuget/v/BooruDex?label=BooruDex)](https://www.nuget.org/packages/BooruDex)
 [![Nuget](https://img.shields.io/nuget/v/Litdex.Security.RNG?label=Litdex.Security.RNG)](https://www.nuget.org/packages/Litdex.Security.RNG)
 
 # Example
