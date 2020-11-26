@@ -77,6 +77,9 @@ Refer to this [repository](https://github.com/Shiroechi/BooruDex.Test) for the b
 
 # Download
 
+[![Nuget](https://img.shields.io/nuget/v/BooruDex?label=Litdex.Security.RNG)](https://www.nuget.org/packages/BooruDex)
+[![Nuget](https://img.shields.io/nuget/v/Litdex.Security.RNG?label=Litdex.Security.RNG)](https://www.nuget.org/packages/Litdex.Security.RNG)
+
 # Example
 
 Get 10 random post from [danbooru.donmai.us](https://danbooru.donmai.us/).
