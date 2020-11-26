@@ -6,7 +6,7 @@ For other method like POST, contributions are welcomed.
 
 Currently BooruDex support the following websites:
 - [3Dbooru](http://behoimi.org/)
-- [Danbooru](https://danbooru.donmai.us/)
+- [danbooru.donmai.us](https://danbooru.donmai.us/)
 - [Gelbooru](http://gelbooru.com/)
 - [Konachan.com](http://konachan.com/)
 - [Konachan.net](http://konachan.net/)
@@ -14,7 +14,7 @@ Currently BooruDex support the following websites:
 - [Realbooru](http://realbooru.com/)
 - [Rule34](https://rule34.xxx/)
 - [Safebooru](https://safebooru.org/)
-- [SafebooruDonmai](http://safebooru.donmai.us/)
+- [safebooru.donmai.us](http://safebooru.donmai.us/)
 - [Xbooru](https://xbooru.com/)
 - [Yandere](https://yande.re/)
 
