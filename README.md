@@ -95,9 +95,7 @@ foreach (var post in posts)
 
 # Documentation
 
-For documentation: [Wiki]()
-
-For how to use: [how to use]()
+For documentation: [Wiki](https://github.com/Shiroechi/BooruDex/wiki)
 
 # Donation
 
