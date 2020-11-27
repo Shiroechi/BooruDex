@@ -100,8 +100,7 @@ namespace BooruDex2.Booru.Template
 				json.GetProperty("image_width").GetInt32(),
 				0,
 				0,
-				json.GetProperty("source").GetString()
-				);
+				json.GetProperty("source").GetString());
 		}
 
 		/// <inheritdoc/>
@@ -111,8 +110,7 @@ namespace BooruDex2.Booru.Template
 				json.GetProperty("id").GetUInt32(),
 				json.GetProperty("name").GetString(),
 				(TagType)json.GetProperty("category").GetInt32(),
-				json.GetProperty("post_count").GetUInt32()
-				);
+				json.GetProperty("post_count").GetUInt32());
 		}
 
 		/// <inheritdoc/>
