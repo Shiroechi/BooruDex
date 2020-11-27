@@ -49,14 +49,58 @@ namespace BooruDex2.Booru.Client
 		}
 
 		/// <inheritdoc/>
+		protected override Pool ReadPool(JsonElement json)
+		{
+			return new Pool(
+				uint.Parse(json.GetProperty("id").GetString()),
+				json.GetProperty("name").GetString(),
+				uint.Parse(json.GetProperty("post_count").GetString()),
+				json.GetProperty("description").GetString());
+		}
+
+		/// <inheritdoc/>
+		protected override Post ReadPost(JsonElement json)
+		{
+			return new Post(
+				uint.Parse(json.GetProperty("id").GetString()),
+				this._BaseUrl + "post/show/",
+				json.GetProperty("file_url").GetString(),
+				json.GetProperty("preview_url").GetString(),
+				this.ConvertRating(json.GetProperty("rating").GetString()),
+				json.GetProperty("tags").GetString(),
+				uint.Parse(json.GetProperty("file_size").GetString()),
+				int.Parse(json.GetProperty("height").GetString()),
+				int.Parse(json.GetProperty("width").GetString()),
+				int.Parse(json.GetProperty("preview_height").GetString()),
+				int.Parse(json.GetProperty("preview_width").GetString()),
+				json.GetProperty("source").GetString());
+		}
+
+		/// <inheritdoc/>
 		protected override Tag ReadTag(JsonElement json)
 		{
 			return new Tag(
-				json.GetProperty("id").GetUInt32(),
+				uint.Parse(json.GetProperty("id").GetString()),
 				json.GetProperty("name").GetString(),
-				(TagType)json.GetProperty("tag_type").GetInt32(),
-				json.GetProperty("post_count").GetUInt32()
-				);
+				(TagType)int.Parse(json.GetProperty("tag_type").GetString()),
+				uint.Parse(json.GetProperty("post_count").GetString()));
+		}
+
+		/// <inheritdoc/>
+		protected override TagRelated ReadTagRelated(JsonElement json)
+		{
+			return new TagRelated(
+				json[0].GetString(),
+				uint.Parse(json[1].GetString()));
+		}
+
+		/// <inheritdoc/>
+		protected override Wiki ReadWiki(JsonElement json)
+		{
+			return new Wiki(
+				uint.Parse(json.GetProperty("id").GetString()),
+				json.GetProperty("title").GetString(),
+				json.GetProperty("body").GetString());
 		}
 
 		#endregion Protected Override Method
