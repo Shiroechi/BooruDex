@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
-using System.Xml;
 
 using BooruDex2.Exceptions;
 using BooruDex2.Models;
 
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace BooruDex2.Booru.Template
 {
@@ -82,24 +80,23 @@ namespace BooruDex2.Booru.Template
 		}
 
 		/// <inheritdoc/>
-		protected override Artist ReadArtist(JToken json)
+		protected override Artist ReadArtist(JsonElement json)
 		{
-			var array = JsonConvert.DeserializeObject<JArray>(
-				json["urls"].ToString());
+			var array = json.GetProperty("urls");
 
-			List<string> urls = new List<string>();
+			var urls = new List<string>();
 
-			if (array.Count != 0)
+			if (array.GetArrayLength() != 0)
 			{
-				for (var i = 0; i < array.Count; i++)
+				foreach (var item in array.EnumerateArray())
 				{
-					urls.Add(array[i].Value<string>());
+					urls.Add(item.GetString());
 				}
 			}
 
 			return new Artist(
-				json["id"].Value<uint>(),
-				json["name"].Value<string>(),
+				json.GetProperty("id").GetUInt32(),
+				json.GetProperty("name").GetString(),
 				urls);
 		}
 
