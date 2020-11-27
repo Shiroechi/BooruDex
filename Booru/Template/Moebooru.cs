@@ -248,7 +248,7 @@ namespace BooruDex2.Booru.Template
 			{
 				// if pool not found, it will return to pool page 
 				// like yande.re/pool, not a empty JSON.
-				throw new SearchNotFoundException($"Can't find Pool with id { poolId }.");
+				throw new SearchNotFoundException($"Can't find Pool with id { poolId }.", e);
 			}
 		}
 		
