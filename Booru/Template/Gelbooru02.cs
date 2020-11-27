@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Net.Http;
@@ -126,7 +127,7 @@ namespace BooruDex2.Booru.Template
 				page = 200000;
 			}
 
-			string url = "";
+			string url;
 
 			if (tags == null)
 			{
@@ -139,9 +140,9 @@ namespace BooruDex2.Booru.Template
 					$"&limit={ limit }&pid={ page }&tags={ string.Join(" ", tags) }";
 			}
 
-			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
 
-			if (jsonArray.Count == 0)
+			if (jsonArray.GetArrayLength() == 0)
 			{
 				if (tags == null || tags.Length <= 0)
 				{
@@ -155,7 +156,14 @@ namespace BooruDex2.Booru.Template
 
 			try
 			{
-				return jsonArray.Select(this.ReadPost).ToArray();
+				var posts = new List<Post>();
+
+				foreach (var item in jsonArray.EnumerateArray())
+				{
+					posts.Add(this.ReadPost(item));
+				}
+
+				return posts.ToArray();
 			}
 			catch (Exception e)
 			{
