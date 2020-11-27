@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Xml;
 
 using BooruDex2.Exceptions;
 using BooruDex2.Models;
@@ -93,8 +90,7 @@ namespace BooruDex2.Booru.Template
 				json.GetProperty("width").GetInt32(),
 				0,
 				0,
-				string.Empty
-				);
+				string.Empty);
 		}
 
 		#endregion Protected Overrride Method
