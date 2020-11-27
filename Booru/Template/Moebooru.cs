@@ -101,13 +101,13 @@ namespace BooruDex2.Booru.Template
 		}
 
 		/// <inheritdoc/>
-		protected override Pool ReadPool(JToken json)
+		protected override Pool ReadPool(JsonElement json)
 		{
 			return new Pool(
-				json["id"].Value<uint>(),
-				json["name"].Value<string>(),
-				json["post_count"].Value<uint>(),
-				json["description"].Value<string>());
+				json.GetProperty("id").GetUInt32(),
+				json.GetProperty("name").GetString(),
+				json.GetProperty("post_count").GetUInt32(),
+				json.GetProperty("description").GetString());
 		}
 
 		/// <inheritdoc/>
