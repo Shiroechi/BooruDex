@@ -141,12 +141,11 @@ namespace BooruDex2.Booru.Template
 		}
 
 		/// <inheritdoc/>
-		protected override TagRelated ReadTagRelated(JToken json)
+		protected override TagRelated ReadTagRelated(JsonElement json)
 		{
-			var item = (JArray)json;
 			return new TagRelated(
-				item[0].Value<string>(),
-				item[1].Value<uint>());
+				json[0].GetString(),
+				json[1].GetUInt32());
 		}
 
 		/// <inheritdoc/>
