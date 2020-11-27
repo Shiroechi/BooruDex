@@ -397,7 +397,7 @@ namespace BooruDex2.Booru
 		/// <returns></returns>
 		protected Rating ConvertRating(string rating)
 		{
-			switch (rating[0])
+			switch (rating.ToLower()[0])
 			{
 				case 'e':
 					return Rating.Explicit;
