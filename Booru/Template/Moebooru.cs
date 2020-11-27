@@ -149,13 +149,12 @@ namespace BooruDex2.Booru.Template
 		}
 
 		/// <inheritdoc/>
-		protected override Wiki ReadWiki(JToken json)
+		protected override Wiki ReadWiki(JsonElement json)
 		{
 			return new Wiki(
-				json["id"].Value<uint>(),
-				json["title"].Value<string>(),
-				json["body"].Value<string>()
-				);
+				json.GetProperty("id").GetUInt32(),
+				json.GetProperty("title").GetString(),
+				json.GetProperty("body").GetString());
 		}
 
 		#endregion Protected Overrride Method
