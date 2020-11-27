@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Text.Json;
 
 using BooruDex2.Booru.Template;
 using BooruDex2.Models;
@@ -26,14 +27,14 @@ namespace BooruDex2.Booru.Client
 		#region Protected Override Method
 
 		/// <inheritdoc/>
-		protected override Tag ReadTag(JToken json)
+		protected override Tag ReadTag(JsonElement json)
 		{
 			var item = json;
 			return new Tag(
-				item["id"].Value<uint>(),
-				item["name"].Value<string>(),
-				(TagType)item["tag_type"].Value<int>(),
-				item["post_count"].Value<uint>()
+				json.GetProperty("id").GetUInt32(),
+				json.GetProperty("name").GetString(),
+				(TagType)json.GetProperty("tag_type").GetInt32(),
+				json.GetProperty("post_count").GetUInt32()
 				);
 		}
 
