@@ -210,14 +210,16 @@ namespace BooruDex2.Booru.Template
 			var url = this.CreateBaseApiCall("pool") +
 				$"page={ page }&query={ title }";
 
-			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
 
-			if (jsonArray.Count == 0)
+			var pools = new List<Pool>();
+
+			foreach (var item in jsonArray.EnumerateArray())
 			{
-				throw new SearchNotFoundException($"Can't find Pool with title \"{ title }\" at page { page }.");
+				pools.Add(this.ReadPool(item));
 			}
 
-			return jsonArray.Select(this.ReadPool).ToArray();
+			return pools.ToArray();
 		}
 
 		/// <inheritdoc/>
@@ -228,61 +230,30 @@ namespace BooruDex2.Booru.Template
 
 			try
 			{
-				var obj = await this.GetJsonResponseAsync<JObject>(url);
+				JsonElement obj;
 
-				var jsonArray = JsonConvert.DeserializeObject<JArray>(
-						obj["posts"].ToString());
+				using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
+				{
+					obj = temp.RootElement.Clone();
+				}
 
-				return jsonArray.Select(this.ReadPost).ToArray();
+				var posts = new List<Post>();
+
+				foreach (var item in obj.GetProperty("posts").EnumerateArray())
+				{
+					posts.Add(this.ReadPost(item));
+				}
+
+				return posts.ToArray();
 			}
-			catch (JsonReaderException e)
+			catch (Exception e)
 			{
-				// if pool not found, it will return pool page 
+				// if pool not found, it will return to pool page 
 				// like yande.re/pool, not a empty JSON.
 				throw new SearchNotFoundException($"Can't find Pool with id { poolId }.");
 			}
 		}
-
-		/// <summary>
-		/// Get partial <see cref="Post"/> inside the <see cref="Pool"/>.
-		/// </summary>
-		/// <param name="poolId">The <see cref="Pool"/> id.</param>
-		/// <param name="page">The page number.</param>
-		/// <returns>Array of <see cref="Post"/> from <see cref="Pool"/>.</returns>
-		/// <exception cref="ArgumentNullException">
-		///		One or more parameter is null or empty.
-		/// </exception>
-		/// <exception cref="NotImplementedException">
-		///		Method is not implemented yet.
-		/// </exception>
-		/// <exception cref="HttpResponseException">
-		///		Unexpected error occured.
-		/// </exception>
-		/// <exception cref="HttpRequestException">
-		///		The request failed due to an underlying issue such as network connectivity, DNS
-		///     failure, server certificate validation or timeout.
-		/// </exception>
-		/// <exception cref="SearchNotFoundException">
-		///		The search result is empty.
-		/// </exception>
-		protected virtual async Task<Post[]> PoolPostList(uint poolId, uint page)
-		{
-			var url = this.CreateBaseApiCall("pool/show") +
-				$"page={ page }&id={ poolId }";
-
-			var obj = await this.GetJsonResponseAsync<JObject>(url);
-
-			var jsonArray = JsonConvert.DeserializeObject<JArray>(
-				obj["posts"].ToString());
-
-			if (jsonArray.Count == 0)
-			{
-				throw new SearchNotFoundException($"Can't find post in pool id { poolId } at page { page }.");
-			}
-
-			return jsonArray.Select(this.ReadPost).ToArray();
-		}
-
+		
 		#endregion Pool
 
 		#region Post
