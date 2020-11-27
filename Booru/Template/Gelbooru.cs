@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Xml;
 
 using BooruDex2.Exceptions;
 using BooruDex2.Models;
 
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
-
-using Newtonsoft.Json.Linq;
 
 namespace BooruDex2.Booru.Template
 {
@@ -157,7 +154,7 @@ namespace BooruDex2.Booru.Template
 				limit = this._PostLimit;
 			}
 
-			string url = "";
+			string url;
 
 			if (tags == null)
 			{
@@ -170,9 +167,9 @@ namespace BooruDex2.Booru.Template
 					$"&limit={ limit }&pid={ page }&tags={ string.Join(" ", tags) }";
 			}
 
-			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
 
-			if (jsonArray.Count == 0)
+			if (jsonArray.GetArrayLength() == 0)
 			{
 				if (tags == null || tags.Length <= 0)
 				{
@@ -186,7 +183,14 @@ namespace BooruDex2.Booru.Template
 
 			try
 			{
-				return jsonArray.Select(this.ReadPost).ToArray();
+				var posts = new List<Post>();
+
+				foreach (var item in jsonArray.EnumerateArray())
+				{
+					posts.Add(this.ReadPost(item));
+				}
+
+				return posts.ToArray();
 			}
 			catch (Exception e)
 			{
@@ -314,14 +318,21 @@ namespace BooruDex2.Booru.Template
 			var url = this.CreateBaseApiCall("tag") +
 				$"&limit={ this._PostLimit }&orderby=name&name_pattern={ name }";
 
-			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
 
-			if (jsonArray.Count == 0)
+			if (jsonArray.GetArrayLength() == 0)
 			{
 				throw new SearchNotFoundException($"Can't find Tags with name \"{ name }\".");
 			}
 
-			return jsonArray.Select(ReadTag).ToArray();
+			var tags = new List<Tag>();
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				tags.Add(this.ReadTag(item));
+			}
+
+			return tags.ToArray();
 		}
 
 		#endregion Tag
