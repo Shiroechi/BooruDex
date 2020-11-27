@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BooruDex.Exceptions
+namespace BooruDex2.Exceptions
 {
 	/// <summary>
 	/// Error that occurs if no search results are found.

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace BooruDex.Models
+namespace BooruDex2.Models
 {
 	/// <summary>
 	/// Represents a Artist object.

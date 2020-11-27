@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BooruDex.Models
+namespace BooruDex2.Models
 {
 	/// <summary>
 	/// Represent Wiki entry. 

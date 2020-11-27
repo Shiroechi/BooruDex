@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BooruDex.Models
+namespace BooruDex2.Models
 {
 	/// <summary>
 	/// Represents a Post object.
@@ -10,21 +10,18 @@ namespace BooruDex.Models
 		/// <summary>
 		/// Create <see cref="Post"/> object.
 		/// </summary>
+		/// <param name="id">The ID of the post.</param>
+		/// <param name="postUrl">The URI of the post.</param>
 		/// <param name="fileUrl">The URI of the file.</param>
 		/// <param name="previewUrl">The URI of the preview image.</param>
-		/// <param name="postUrl">The URI of the post.</param>
 		/// <param name="rating">The post's rating.</param>
 		/// <param name="tags">The array containing all the tags associated with the file.</param>
-		/// <param name="id">The ID of the post.</param>
 		/// <param name="size">The size of the file, in bytes.</param>
 		/// <param name="height">The height of the image, in pixels.</param>
 		/// <param name="width">The width of the image, in pixels.</param>
 		/// <param name="previewHeight">The height of the preview image, in pixels.</param>
 		/// <param name="previewWidth">The width of the preview image, in pixels.</param>
-		/// <param name="creation">The creation date of the post.</param>
 		/// <param name="source">The original source of the file.</param>
-		/// <param name="score">The score of the post.</param>
-		/// <param name="md5">The MD5 hash of the file.</param>
 		public Post(
 			uint id, 
 			string postUrl,
@@ -40,9 +37,9 @@ namespace BooruDex.Models
 			string source)
 		{
 			this.ID = id;
-			this.FileUrl = new Uri(fileUrl);
-			this.PreviewUrl = new Uri(previewUrl);
-			this.PostUrl = new Uri(postUrl + this.ID);
+			this.FileUrl = fileUrl;
+			this.PreviewUrl = previewUrl;
+			this.PostUrl = postUrl + this.ID;
 			this.Rating = rating;
 			this.Tags = tags;
 			this.Size = size;
@@ -61,17 +58,17 @@ namespace BooruDex.Models
 		/// <summary>
 		/// Gets the URI of the post.
 		/// </summary>
-		public Uri PostUrl { get; }
+		public string PostUrl { get; }
 
 		/// <summary>
 		/// Gets the URI of the file.
 		/// </summary>
-		public Uri FileUrl { get; }
+		public string FileUrl { get; }
 
 		/// <summary>
 		/// Gets the URI of the preview image.
 		/// </summary>
-		public Uri PreviewUrl { get; }
+		public string PreviewUrl { get; }
 
 		/// <summary>
 		/// Gets the post's rating.

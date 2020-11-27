@@ -5,15 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-using BooruDex.Exceptions;
-using BooruDex.Models;
+using BooruDex2.Exceptions;
+using BooruDex2.Models;
 
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
 
 using Newtonsoft.Json.Linq;
 
-namespace BooruDex.Booru.Template
+namespace BooruDex2.Booru.Template
 {
 	/// <summary>
 	/// Gelbooru.

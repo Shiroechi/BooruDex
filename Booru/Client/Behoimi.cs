@@ -1,8 +1,8 @@
 ﻿using System.Net.Http;
 
-using BooruDex.Booru.Template;
+using BooruDex2.Booru.Template;
 
-namespace BooruDex.Booru.Client
+namespace BooruDex2.Booru.Client
 {
 	/// <summary>
 	/// 3dbooru client.

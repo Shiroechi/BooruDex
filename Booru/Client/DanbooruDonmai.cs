@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 
-namespace BooruDex.Booru.Client
+namespace BooruDex2.Booru.Client
 {
 	public class DanbooruDonmai : Template.Danbooru
 	{

@@ -5,8 +5,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
 
-using BooruDex.Exceptions;
-using BooruDex.Models;
+using BooruDex2.Exceptions;
+using BooruDex2.Models;
 
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
@@ -14,7 +14,7 @@ using Litdex.Security.RNG.PRNG;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace BooruDex.Booru.Template
+namespace BooruDex2.Booru.Template
 {
 	/// <summary>
 	/// Moebooru, a fork of Danbooru1 that has been heavily modified.

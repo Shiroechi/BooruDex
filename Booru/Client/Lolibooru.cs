@@ -1,11 +1,11 @@
 ﻿using System.Net.Http;
 
-using BooruDex.Booru.Template;
-using BooruDex.Models;
+using BooruDex2.Booru.Template;
+using BooruDex2.Models;
 
 using Newtonsoft.Json.Linq;
 
-namespace BooruDex.Booru.Client
+namespace BooruDex2.Booru.Client
 {
 	public class Lolibooru : Moebooru
 	{
