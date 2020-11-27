@@ -86,19 +86,17 @@ namespace BooruDex2.Booru.Template
 				json.GetProperty("width").GetInt32(),
 				0,
 				0,
-				json.GetProperty("source").GetString()
-				);
+				json.GetProperty("source").GetString());
 		}
 
 		/// <inheritdoc/>
 		protected override Tag ReadTag(JsonElement json)
 		{
 			return new Tag(
-				json.GetProperty("id").GetUInt32(),
+				uint.Parse(json.GetProperty("id").GetString()),
 				json.GetProperty("tag").GetString(),
 				this.ToTagType(json.GetProperty("type").GetString()),
-				json.GetProperty("count").GetUInt32()
-				);
+				uint.Parse(json.GetProperty("count").GetString()));
 		}
 
 		/// <summary>
