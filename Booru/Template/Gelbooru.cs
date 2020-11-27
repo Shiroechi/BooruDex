@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -74,21 +75,21 @@ namespace BooruDex2.Booru.Template
 		}
 
 		/// <inheritdoc/>
-		protected override Post ReadPost(JToken json)
+		protected override Post ReadPost(JsonElement json)
 		{
 			return new Post(
-				json["id"].Value<uint>(),
+				json.GetProperty("id").GetUInt32(),
 				this._BaseUrl + "index.php?page=post&s=view&id=",
-				json["file_url"].Value<string>(),
-				this._BaseUrl + "thumbnails/" + json["directory"].Value<string>() + "/thumbnail_" + json["hash"].Value<string>() + ".jpg",
-				this.ConvertRating(json["rating"].Value<string>()),
-				json["tags"].Value<string>(),
+				json.GetProperty("file_url").GetString(),
+				this._BaseUrl + "thumbnails/" + json.GetProperty("directory").GetString() + "/thumbnail_" + json.GetProperty("hash").GetString() + ".jpg",
+				this.ConvertRating(json.GetProperty("rating").GetString()),
+				json.GetProperty("tags").GetString(),
 				0,
-				json["height"].Value<int>(),
-				json["width"].Value<int>(),
+				json.GetProperty("height").GetInt32(),
+				json.GetProperty("width").GetInt32(),
 				0,
 				0,
-				json["source"].Value<string>()
+				json.GetProperty("source").GetString()
 				);
 		}
 
