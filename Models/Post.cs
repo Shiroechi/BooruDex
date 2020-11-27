@@ -5,7 +5,7 @@ namespace BooruDex.Models
 	/// <summary>
 	/// Represents a Post object.
 	/// </summary>
-	public struct Post
+	readonly public struct Post
 	{
 		/// <summary>
 		/// Create <see cref="Post"/> object.
@@ -56,64 +56,70 @@ namespace BooruDex.Models
 		/// <summary>
 		/// Gets the ID of the post.
 		/// </summary>
-		public uint ID { private set;  get; }
+		public uint ID { get; }
 
 		/// <summary>
 		/// Gets the URI of the post.
 		/// </summary>
-		public Uri PostUrl { private set; get; }
+		public Uri PostUrl { get; }
 
 		/// <summary>
 		/// Gets the URI of the file.
 		/// </summary>
-		public Uri FileUrl { private set;  get; }
+		public Uri FileUrl { get; }
 
 		/// <summary>
 		/// Gets the URI of the preview image.
 		/// </summary>
-		public Uri PreviewUrl { private set; get; }
+		public Uri PreviewUrl { get; }
 
 		/// <summary>
 		/// Gets the post's rating.
 		/// </summary>
-		public Rating Rating { private set; get; }
+		public Rating Rating { get; }
 
 		/// <summary>
 		/// Gets the collection containing all the tags associated with the file.
 		/// </summary>
-		public string Tags { private set; get; }
+		public string Tags { get; }
 
 		/// <summary>
 		/// Gets the size of the file, in bytes, or
 		/// <see langword="null"/> if file size is unknown.
 		/// </summary>
-		public uint Size { private set; get; }
+		public uint Size { get; }
 
 		/// <summary>
 		/// Gets the height of the image, in pixels.
 		/// </summary>
-		public int Height { private set; get; }
+		public int Height { get; }
 
 		/// <summary>
 		/// Gets the width of the image, in pixels.
 		/// </summary>
-		public int Width { private set; get; }
+		public int Width { get; }
 
 		/// <summary>
 		/// Gets the height of the preview image, in pixels,
 		/// or <see langword="null"/> if the height is unknown.
 		/// </summary>
-		public int? PreviewHeight { private set; get; }
+		public int? PreviewHeight { get; }
 
 		/// <summary>
 		/// Gets the width of the preview image, in pixels,
 		/// or <see langword="null"/> if the width is unknown.
 		/// </summary>
-		public int? PreviewWidth { private set; get; }
+		public int? PreviewWidth { get; }
 
 		/// <summary>
 		/// Gets the original source of the file.
 		/// </summary>
-		public string Source { private set; get; }
+		public string Source { get; }
+
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return this.ID.ToString();
+		}
 	}
 }

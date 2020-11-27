@@ -6,7 +6,7 @@ namespace BooruDex.Models
 	/// <summary>
 	/// Represents a Artist object.
 	/// </summary>
-	public struct Artist
+	readonly public struct Artist
 	{
 		/// <summary>
 		/// 
@@ -24,15 +24,19 @@ namespace BooruDex.Models
 		/// <summary>
 		/// Gets the ID of the artist.
 		/// </summary>
-		public uint ID { private set; get; }
+		public uint ID { get; }
 
 		/// <summary>
 		/// Gets the name of the artist.
 		/// </summary>
-		public string Name { private set; get; }
+		public string Name { get; }
 
-		public ReadOnlyCollection<string> Urls { private set; get; }
+		/// <summary>
+		/// List of <see cref="Artist"/> official url.
+		/// </summary>
+		public ReadOnlyCollection<string> Urls { get; }
 
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return this.Name;

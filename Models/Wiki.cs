@@ -37,5 +37,10 @@ namespace BooruDex.Models
         /// </summary>
         public string Body { private set; get; }
 
-    }
+        /// <inheritdoc/>
+        public override string ToString()
+		{
+			return this.Title;
+		}
+	}
 }

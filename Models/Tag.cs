@@ -1,9 +1,9 @@
 ﻿namespace BooruDex.Models
 {
-	/// <summary>
-	/// Represent a Tag object.
-	/// </summary>
-	public struct Tag
+    /// <summary>
+    /// Represent a Tag object.
+    /// </summary>
+    readonly public struct Tag
 	{
         /// <summary>
         /// Create a instance of <see cref="Tag"/>
@@ -23,24 +23,25 @@
         /// <summary>
         /// Gets the ID of the tag.
         /// </summary>
-        public uint ID { private set; get; }
+        public uint ID { get; }
 
         /// <summary>
         /// Gets the name of the tag.
         /// </summary>
-        public string Name { private set; get; }
+        public string Name { get; }
 
         /// <summary>
         /// Gets the type of the tag.
         /// </summary>
-        public TagType Type { private set; get; }
+        public TagType Type { get; }
 
         /// <summary>
         /// Gets the number of occurences of the tag.
         /// </summary>
-        public uint Count { private set; get; }
+        public uint Count { get; }
 
-		public override string ToString()
+        /// <inheritdoc/>
+        public override string ToString()
 		{
             return this.Name;
 		}

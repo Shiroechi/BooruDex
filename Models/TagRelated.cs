@@ -3,7 +3,7 @@
     /// <summary>
     /// Represent a Tag Related object.
     /// </summary>
-    public struct TagRelated
+    readonly public struct TagRelated
     {
         /// <summary>
         /// Create a instance of <see cref="TagRelated"/>
@@ -19,13 +19,14 @@
         /// <summary>
         /// Gets the name of the tag.
         /// </summary>
-        public string Name { private set; get; }
+        public string Name { get; }
 
         /// <summary>
         /// Gets the number of occurences of the tag.
         /// </summary>
-        public uint Count { private set; get; }
+        public uint Count { get; }
 
+        /// <inheritdoc/>
         public override string ToString()
         {
             return this.Name;
