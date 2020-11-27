@@ -94,13 +94,13 @@ namespace BooruDex2.Booru.Template
 		}
 
 		/// <inheritdoc/>
-		protected override Tag ReadTag(JToken json)
+		protected override Tag ReadTag(JsonElement json)
 		{
 			return new Tag(
-				json["id"].Value<uint>(),
-				json["tag"].Value<string>(),
-				this.ToTagType(json["type"].Value<string>()),
-				json["count"].Value<uint>()
+				json.GetProperty("id").GetUInt32(),
+				json.GetProperty("tag").GetString(),
+				this.ToTagType(json.GetProperty("type").GetString()),
+				json.GetProperty("count").GetUInt32()
 				);
 		}
 
