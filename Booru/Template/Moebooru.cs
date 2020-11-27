@@ -111,21 +111,21 @@ namespace BooruDex2.Booru.Template
 		}
 
 		/// <inheritdoc/>
-		protected override Post ReadPost(JToken json)
+		protected override Post ReadPost(JsonElement json)
 		{
 			return new Post(
-				json["id"].Value<uint>(),
+				json.GetProperty("id").GetUInt32(),
 				this._BaseUrl + "post/show/",
-				json["file_url"].Value<string>(),
-				json["preview_url"].Value<string>(),
-				this.ConvertRating(json["rating"].Value<string>()),
-				json["tags"].Value<string>(),
-				json["file_size"].Value<uint>(),
-				json["height"].Value<int>(),
-				json["width"].Value<int>(),
-				json["preview_height"].Value<int>(),
-				json["preview_width"].Value<int>(),
-				json["source"].Value<string>()
+				json.GetProperty("file_url").GetString(),
+				json.GetProperty("preview_url").GetString(),
+				this.ConvertRating(json.GetProperty("rating").GetString()),
+				json.GetProperty("tags").GetString(),
+				json.GetProperty("file_size").GetUInt32(),
+				json.GetProperty("height").GetInt32(),
+				json.GetProperty("width").GetInt32(),
+				json.GetProperty("preview_height").GetInt32(),
+				json.GetProperty("preview_width").GetInt32(),
+				json.GetProperty("source").GetString()
 				);
 		}
 
