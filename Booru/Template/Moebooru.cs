@@ -441,14 +441,21 @@ namespace BooruDex2.Booru.Template
 			var url = this.CreateBaseApiCall("tag") +
 				$"limit=0&order=name&name={ name }";
 
-			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
 
-			if (jsonArray.Count == 0)
+			if (jsonArray.GetArrayLength() == 0)
 			{
 				throw new SearchNotFoundException($"Can't find Tags with name \"{ name }\".");
 			}
 
-			return jsonArray.Select(ReadTag).ToArray();
+			var tags = new List<Tag>();
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				tags.Add(this.ReadTag(item));
+			}
+
+			return tags.ToArray();
 		}
 
 		/// <inheritdoc/>
@@ -461,28 +468,38 @@ namespace BooruDex2.Booru.Template
 
 			var url = this.CreateBaseApiCall("tag/related") +
 				$"tags={ name }&type={ type }";
+			
+			JsonElement obj;
 
-			var obj = await this.GetJsonResponseAsync<JObject>(url);
-
-			JArray jsonArray;
-
-			if (obj.ContainsKey(name))
+			using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
 			{
-				jsonArray = JsonConvert.DeserializeObject<JArray>(
-				obj[name].ToString());
+				obj = temp.RootElement.Clone();
+			}
+
+			JsonElement jsonArray;
+
+			if (this.PropertyExist(obj, name))
+			{
+				jsonArray = obj.GetProperty(name);
 			}
 			else
 			{
-				jsonArray = JsonConvert.DeserializeObject<JArray>(
-				obj["useless_tags"].ToString());
+				jsonArray = obj.GetProperty("useless_tags");
 			}
 
-			if (jsonArray.Count == 0)
+			if (jsonArray.GetArrayLength() == 0)
 			{
 				throw new SearchNotFoundException($"Can't find related Tags with Tag name \"{ name }\".");
 			}
 
-			return jsonArray.Select(this.ReadTagRelated).ToArray();
+			var tags = new List<TagRelated>();
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				tags.Add(this.ReadTagRelated(item));
+			}
+
+			return tags.ToArray();
 		}
 
 		#endregion Tag
