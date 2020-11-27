@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
@@ -330,7 +331,7 @@ namespace BooruDex2.Booru
 		{
 			if (stream != null)
 			{
-				using (var sr = new StreamReader(stream))
+				using (var sr = new StreamReader(stream, Encoding.UTF8))
 				{
 					return sr.ReadToEndAsync();
 				}
