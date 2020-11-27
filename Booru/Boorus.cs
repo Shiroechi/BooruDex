@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml;
 
 using BooruDex2.Exceptions;
 using BooruDex2.Models;
@@ -336,6 +337,36 @@ namespace BooruDex2.Booru
 			}
 
 			return null;
+		}
+
+		/// <summary>
+		/// Get max number of <see cref="Post"/> with 
+		/// the given <see cref="Tag"/> the site have.
+		/// </summary>
+		/// <param name="url">Url of the requested <see cref="Post"/>.</param>
+		/// <returns>Number of <see cref="Post"/>.</returns>
+		/// <exception cref="XmlException">
+		///		There is a load or parse error in the XML.
+		/// </exception>
+		/// <exception cref="FormatException">
+		///		Can't convert to <see cref="uint"/>.
+		/// </exception>
+		protected async Task<uint> GetPostCountAsync(string url)
+		{
+			try
+			{
+				var xml = new XmlDocument();
+				xml.LoadXml(await this.GetStringResponseAsync(url));
+				return uint.Parse(xml.ChildNodes.Item(1).Attributes[0].InnerXml);
+			}
+			catch (XmlException e)
+			{
+				throw e;
+			}
+			catch (FormatException e)
+			{
+				throw e;
+			}
 		}
 
 		/// <summary>
