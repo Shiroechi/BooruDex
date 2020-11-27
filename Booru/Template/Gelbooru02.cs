@@ -12,15 +12,12 @@ using BooruDex2.Models;
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
 namespace BooruDex2.Booru.Template
 {
 	/// <summary>
 	/// Gelbooru beta version 0.2.0.
 	/// </summary>
-	public abstract class Gelbooru02 : Booru
+	public abstract class Gelbooru02 : Boorus
 	{
 		#region Constructor & Destructor
 
@@ -59,23 +56,6 @@ namespace BooruDex2.Booru.Template
 		}
 
 		#endregion Constructor & Destructor
-
-		#region Protected Method
-
-		/// <summary>
-		/// Get max number of <see cref="Post"/> with 
-		/// the given <see cref="Tag"/> the site have.
-		/// </summary>
-		/// <param name="url">Url of the requested <see cref="Post"/>.</param>
-		/// <returns>Number of <see cref="Post"/>.</returns>
-		protected async Task<uint> GetPostCount(string url)
-		{
-			var xml = new XmlDocument();
-			xml.LoadXml(await this.GetStringResponseAsync(url));
-			return uint.Parse(xml.ChildNodes.Item(1).Attributes[0].InnerXml);
-		}
-
-		#endregion Protected Method
 
 		#region Protected Overrride Method
 
@@ -204,7 +184,7 @@ namespace BooruDex2.Booru.Template
 
 			// get Post count in XML response.
 
-			var postCount = await this.GetPostCount(url);
+			var postCount = await this.GetPostCountAsync(url);
 
 			if (postCount == 0)
 			{
@@ -258,7 +238,7 @@ namespace BooruDex2.Booru.Template
 
 			// get Post count in XML response.
 
-			var postCount = await this.GetPostCount(url);
+			var postCount = await this.GetPostCountAsync(url);
 
 			if (postCount == 0)
 			{
