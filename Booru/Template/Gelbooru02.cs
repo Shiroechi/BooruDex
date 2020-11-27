@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -73,22 +74,25 @@ namespace BooruDex2.Booru.Template
 		}
 
 		/// <inheritdoc/>
-		protected override Post ReadPost(JToken json)
+		protected override Post ReadPost(JsonElement json)
 		{
-			var imageName = json["image"].Value<string>().Substring(0, json["image"].Value<string>().IndexOf("."));
+			var imageName = json.GetProperty("image").GetString();
+
+			var directory = json.GetProperty("directory").GetString();
+
 			return new Post(
-				json["id"].Value<uint>(),
+				json.GetProperty("id").GetUInt32(),
 				this._BaseUrl + "index.php?page=post&s=view&id=",
-				this._BaseUrl + "/images/" + json["directory"].Value<string>() + "/" + json["image"].Value<string>(),
-				this._BaseUrl + "/thumbnails/" + json["directory"].Value<string>() + "/thumbnails_" + imageName + ".jpg",
-				this.ConvertRating(json["rating"].Value<string>()),
-				json["tags"].Value<string>(),
+				this._BaseUrl + "/images/" + directory + "/" + imageName,
+				this._BaseUrl + "/thumbnails/" + directory + "/thumbnails_" + imageName.Substring(0, imageName.IndexOf(".")) + ".jpg",
+				this.ConvertRating(json.GetProperty("rating").GetString()),
+				json.GetProperty("tags").GetString(),
 				0,
-				json["height"].Value<int>(),
-				json["width"].Value<int>(),
+				json.GetProperty("height").GetInt32(),
+				json.GetProperty("width").GetInt32(),
 				0,
 				0,
-				""
+				string.Empty
 				);
 		}
 
