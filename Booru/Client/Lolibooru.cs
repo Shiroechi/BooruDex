@@ -59,30 +59,12 @@ namespace BooruDex2.Booru.Client
 		}
 
 		/// <inheritdoc/>
-		protected override Post ReadPost(JsonElement json)
-		{
-			return new Post(
-				uint.Parse(json.GetProperty("id").GetString()),
-				this._BaseUrl + "post/show/",
-				json.GetProperty("file_url").GetString(),
-				json.GetProperty("preview_url").GetString(),
-				this.ConvertRating(json.GetProperty("rating").GetString()),
-				json.GetProperty("tags").GetString(),
-				uint.Parse(json.GetProperty("file_size").GetString()),
-				int.Parse(json.GetProperty("height").GetString()),
-				int.Parse(json.GetProperty("width").GetString()),
-				int.Parse(json.GetProperty("preview_height").GetString()),
-				int.Parse(json.GetProperty("preview_width").GetString()),
-				json.GetProperty("source").GetString());
-		}
-
-		/// <inheritdoc/>
 		protected override Tag ReadTag(JsonElement json)
 		{
 			return new Tag(
 				uint.Parse(json.GetProperty("id").GetString()),
 				json.GetProperty("name").GetString(),
-				(TagType)int.Parse(json.GetProperty("tag_type").GetString()),
+				(TagType)json.GetProperty("tag_type").GetInt32(),
 				uint.Parse(json.GetProperty("post_count").GetString()));
 		}
 
