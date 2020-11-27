@@ -129,8 +129,7 @@ namespace BooruDex2.Booru.Template
 			return new Wiki(
 				json.GetProperty("id").GetUInt32(),
 				json.GetProperty("title").GetString(),
-				json.GetProperty("body").GetString()
-				);
+				json.GetProperty("body").GetString());
 		}
 
 		#endregion Protected Overrride Method
