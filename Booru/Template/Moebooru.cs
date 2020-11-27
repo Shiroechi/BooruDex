@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
@@ -179,14 +178,21 @@ namespace BooruDex2.Booru.Template
 				url += "&order=name";
 			}
 
-			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
 
-			if (jsonArray.Count == 0)
+			if (jsonArray.GetArrayLength() == 0)
 			{
 				throw new SearchNotFoundException($"Can't find Artist with name \"{ name }\" at page { page }.");
 			}
 
-			return jsonArray.Select(ReadArtist).ToArray();
+			var artists = new List<Artist>();
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				artists.Add(this.ReadArtist(item));
+			}
+
+			return artists.ToArray();
 		}
 
 		#endregion Artist
