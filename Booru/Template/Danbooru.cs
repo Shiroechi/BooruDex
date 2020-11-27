@@ -481,6 +481,7 @@ namespace BooruDex2.Booru.Template
 			{
 				tags.Add(this.ReadTagRelated(item));
 			}
+
 			return tags.ToArray();
 		}
 
