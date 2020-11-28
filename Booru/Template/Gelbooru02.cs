@@ -82,7 +82,7 @@ namespace BooruDex.Booru.Template
 				json.GetProperty("id").GetUInt32(),
 				this._BaseUrl + "index.php?page=post&s=view&id=",
 				this._BaseUrl + "images/" + directory + "/" + imageName,
-				this._BaseUrl + "thumbnails/" + directory + "/thumbnails_" + imageName.Substring(0, imageName.IndexOf(".")) + ".jpg",
+				this._BaseUrl + "thumbnails/" + directory + "/thumbnail_" + imageName.Substring(0, imageName.IndexOf(".")) + ".jpg",
 				this.ConvertRating(json.GetProperty("rating").GetString()),
 				json.GetProperty("tags").GetString(),
 				0,
@@ -127,18 +127,20 @@ namespace BooruDex.Booru.Template
 
 			if (tags == null)
 			{
-				url = this.CreateBaseApiCall("post") +
+				url = this.CreateBaseApiCall("post", false) +
 					$"&limit={ limit }&pid={ page }";
 			}
 			else
 			{
-				url = this.CreateBaseApiCall("post") +
+				url = this.CreateBaseApiCall("post", false) +
 					$"&limit={ limit }&pid={ page }&tags={ string.Join(" ", tags) }";
 			}
 
-			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
+			// get Post count in XML response.
 
-			if (jsonArray.GetArrayLength() == 0)
+			var postCount = await this.GetPostCountAsync(url);
+
+			if (postCount == 0)
 			{
 				if (tags == null || tags.Length <= 0)
 				{
@@ -149,6 +151,8 @@ namespace BooruDex.Booru.Template
 					throw new SearchNotFoundException($"No Post found with tags { string.Join(", ", tags) } at page { page }.");
 				}
 			}
+
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url + "&json=1");
 
 			try
 			{
