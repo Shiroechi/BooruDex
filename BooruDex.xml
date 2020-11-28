@@ -550,6 +550,9 @@
             </summary>
             <param name="httpClient">Http client for sending request and recieving response.</param>
         </member>
+        <member name="M:BooruDex.Booru.Client.Realbooru.ReadPost(System.Text.Json.JsonElement)">
+            <inheritdoc/>
+        </member>
         <member name="M:BooruDex.Booru.Client.Rule34.#ctor(System.Net.Http.HttpClient)">
             <summary>
             Create <see cref="T:BooruDex.Booru.Client.Rule34"/> client object.
