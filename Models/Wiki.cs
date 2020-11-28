@@ -12,8 +12,6 @@ namespace BooruDex.Models
         /// </summary>
         /// <param name="id">The ID of the wiki entry.</param>
         /// <param name="title">The name of the wiki</param>
-        /// <param name="creation">The date when the wiki entry was created.</param>
-        /// <param name="lastUpdate">The date of the latest update to the wiki entry.</param>
         /// <param name="body">The wiki description.</param>
         public Wiki(uint id, string title, string body)
         {
