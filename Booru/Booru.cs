@@ -259,7 +259,14 @@ namespace BooruDex.Booru
 				{
 					if (response.IsSuccessStatusCode)
 					{
-						return await JsonSerializer.DeserializeAsync<T>(stream);
+						try
+						{
+							return await JsonSerializer.DeserializeAsync<T>(stream);
+						}
+						catch (JsonException e)
+						{
+							throw e;
+						}
 					}
 
 					throw new HttpResponseException(
