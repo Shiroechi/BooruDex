@@ -623,6 +623,20 @@
             <param name="stream"></param>
             <returns><see cref="T:System.String"/> content.</returns>
         </member>
+        <member name="M:BooruDex2.Booru.Boorus.GetPostCountAsync(System.String)">
+            <summary>
+            Get max number of <see cref="T:BooruDex2.Models.Post"/> with 
+            the given <see cref="T:BooruDex2.Models.Tag"/> the site have.
+            </summary>
+            <param name="url">Url of the requested <see cref="T:BooruDex2.Models.Post"/>.</param>
+            <returns>Number of <see cref="T:BooruDex2.Models.Post"/>.</returns>
+            <exception cref="T:System.Xml.XmlException">
+            	There is a load or parse error in the XML.
+            </exception>
+            <exception cref="T:System.FormatException">
+            	Can't convert to <see cref="T:System.UInt32"/>.
+            </exception>
+        </member>
         <member name="M:BooruDex2.Booru.Boorus.PropertyExist(System.Text.Json.JsonElement,System.String)">
             <summary>
             Check the property of JSON object exist or not.
@@ -983,7 +997,19 @@
             </summary>
             <param name="httpClient">Http client for sending request and recieving response.</param>
         </member>
-        <member name="M:BooruDex2.Booru.Client.Lolibooru.ReadTag(Newtonsoft.Json.Linq.JToken)">
+        <member name="M:BooruDex2.Booru.Client.Lolibooru.ReadArtist(System.Text.Json.JsonElement)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex2.Booru.Client.Lolibooru.ReadPool(System.Text.Json.JsonElement)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex2.Booru.Client.Lolibooru.ReadTag(System.Text.Json.JsonElement)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex2.Booru.Client.Lolibooru.ReadTagRelated(System.Text.Json.JsonElement)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex2.Booru.Client.Lolibooru.ReadWiki(System.Text.Json.JsonElement)">
             <inheritdoc/>
         </member>
         <member name="M:BooruDex2.Booru.Client.Realbooru.#ctor(System.Net.Http.HttpClient)">
@@ -1137,21 +1163,13 @@
             Release all resource that this object hold.
             </summary>
         </member>
-        <member name="M:BooruDex2.Booru.Template.Gelbooru.GetPostCount(System.String)">
-            <summary>
-            Get max number of <see cref="T:BooruDex2.Models.Post"/> with 
-            the given <see cref="T:BooruDex2.Models.Tag"/> the site have.
-            </summary>
-            <param name="url">Url of the requested <see cref="T:BooruDex2.Models.Post"/>.</param>
-            <returns>Number of <see cref="T:BooruDex2.Models.Post"/>.</returns>
-        </member>
         <member name="M:BooruDex2.Booru.Template.Gelbooru.CreateBaseApiCall(System.String,System.Boolean)">
             <inheritdoc/>
         </member>
-        <member name="M:BooruDex2.Booru.Template.Gelbooru.ReadPost(Newtonsoft.Json.Linq.JToken)">
+        <member name="M:BooruDex2.Booru.Template.Gelbooru.ReadPost(System.Text.Json.JsonElement)">
             <inheritdoc/>
         </member>
-        <member name="M:BooruDex2.Booru.Template.Gelbooru.ReadTag(Newtonsoft.Json.Linq.JToken)">
+        <member name="M:BooruDex2.Booru.Template.Gelbooru.ReadTag(System.Text.Json.JsonElement)">
             <inheritdoc/>
         </member>
         <member name="M:BooruDex2.Booru.Template.Gelbooru.ToTagType(System.String)">
@@ -1201,18 +1219,10 @@
             Release all resource that this object hold.
             </summary>
         </member>
-        <member name="M:BooruDex2.Booru.Template.Gelbooru02.GetPostCount(System.String)">
-            <summary>
-            Get max number of <see cref="T:BooruDex2.Models.Post"/> with 
-            the given <see cref="T:BooruDex2.Models.Tag"/> the site have.
-            </summary>
-            <param name="url">Url of the requested <see cref="T:BooruDex2.Models.Post"/>.</param>
-            <returns>Number of <see cref="T:BooruDex2.Models.Post"/>.</returns>
-        </member>
         <member name="M:BooruDex2.Booru.Template.Gelbooru02.CreateBaseApiCall(System.String,System.Boolean)">
             <inheritdoc/>
         </member>
-        <member name="M:BooruDex2.Booru.Template.Gelbooru02.ReadPost(Newtonsoft.Json.Linq.JToken)">
+        <member name="M:BooruDex2.Booru.Template.Gelbooru02.ReadPost(System.Text.Json.JsonElement)">
             <inheritdoc/>
         </member>
         <member name="M:BooruDex2.Booru.Template.Gelbooru02.PostListAsync(System.UInt32,System.String[],System.UInt32)">
@@ -1249,33 +1259,25 @@
             Release all resource that this object hold.
             </summary>
         </member>
-        <member name="M:BooruDex2.Booru.Template.Moebooru.GetPostCount(System.String)">
-            <summary>
-            Get max number of <see cref="T:BooruDex2.Models.Post"/> with 
-            the given <see cref="T:BooruDex2.Models.Tag"/> the site have.
-            </summary>
-            <param name="url">Url of the requested <see cref="T:BooruDex2.Models.Post"/>.</param>
-            <returns>Number of <see cref="T:BooruDex2.Models.Post"/>.</returns>
-        </member>
         <member name="M:BooruDex2.Booru.Template.Moebooru.CreateBaseApiCall(System.String,System.Boolean)">
             <inheritdoc/>
         </member>
-        <member name="M:BooruDex2.Booru.Template.Moebooru.ReadArtist(Newtonsoft.Json.Linq.JToken)">
+        <member name="M:BooruDex2.Booru.Template.Moebooru.ReadArtist(System.Text.Json.JsonElement)">
             <inheritdoc/>
         </member>
-        <member name="M:BooruDex2.Booru.Template.Moebooru.ReadPool(Newtonsoft.Json.Linq.JToken)">
+        <member name="M:BooruDex2.Booru.Template.Moebooru.ReadPool(System.Text.Json.JsonElement)">
             <inheritdoc/>
         </member>
-        <member name="M:BooruDex2.Booru.Template.Moebooru.ReadPost(Newtonsoft.Json.Linq.JToken)">
+        <member name="M:BooruDex2.Booru.Template.Moebooru.ReadPost(System.Text.Json.JsonElement)">
             <inheritdoc/>
         </member>
-        <member name="M:BooruDex2.Booru.Template.Moebooru.ReadTag(Newtonsoft.Json.Linq.JToken)">
+        <member name="M:BooruDex2.Booru.Template.Moebooru.ReadTag(System.Text.Json.JsonElement)">
             <inheritdoc/>
         </member>
-        <member name="M:BooruDex2.Booru.Template.Moebooru.ReadTagRelated(Newtonsoft.Json.Linq.JToken)">
+        <member name="M:BooruDex2.Booru.Template.Moebooru.ReadTagRelated(System.Text.Json.JsonElement)">
             <inheritdoc/>
         </member>
-        <member name="M:BooruDex2.Booru.Template.Moebooru.ReadWiki(Newtonsoft.Json.Linq.JToken)">
+        <member name="M:BooruDex2.Booru.Template.Moebooru.ReadWiki(System.Text.Json.JsonElement)">
             <inheritdoc/>
         </member>
         <member name="M:BooruDex2.Booru.Template.Moebooru.ArtistListAsync(System.String,System.UInt32,System.Boolean)">
@@ -1286,30 +1288,6 @@
         </member>
         <member name="M:BooruDex2.Booru.Template.Moebooru.PoolPostList(System.UInt32)">
             <inheritdoc/>
-        </member>
-        <member name="M:BooruDex2.Booru.Template.Moebooru.PoolPostList(System.UInt32,System.UInt32)">
-            <summary>
-            Get partial <see cref="T:BooruDex2.Models.Post"/> inside the <see cref="T:BooruDex2.Models.Pool"/>.
-            </summary>
-            <param name="poolId">The <see cref="T:BooruDex2.Models.Pool"/> id.</param>
-            <param name="page">The page number.</param>
-            <returns>Array of <see cref="T:BooruDex2.Models.Post"/> from <see cref="T:BooruDex2.Models.Pool"/>.</returns>
-            <exception cref="T:System.ArgumentNullException">
-            	One or more parameter is null or empty.
-            </exception>
-            <exception cref="T:System.NotImplementedException">
-            	Method is not implemented yet.
-            </exception>
-            <exception cref="T:BooruDex2.Exceptions.HttpResponseException">
-            	Unexpected error occured.
-            </exception>
-            <exception cref="T:System.Net.Http.HttpRequestException">
-            	The request failed due to an underlying issue such as network connectivity, DNS
-                failure, server certificate validation or timeout.
-            </exception>
-            <exception cref="T:BooruDex2.Exceptions.SearchNotFoundException">
-            	The search result is empty.
-            </exception>
         </member>
         <member name="M:BooruDex2.Booru.Template.Moebooru.PostListAsync(System.UInt32,System.String[],System.UInt32)">
             <inheritdoc/>
