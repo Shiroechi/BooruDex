@@ -16,7 +16,7 @@ namespace BooruDex2.Booru.Template
 	/// <summary>
 	/// Gelbooru.
 	/// </summary>
-	public abstract class Gelbooru : Boorus
+	public abstract class Gelbooru : Booru
 	{
 		#region Constructor & Destructor
 

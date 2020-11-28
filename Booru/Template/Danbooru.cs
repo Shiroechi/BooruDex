@@ -15,7 +15,7 @@ namespace BooruDex2.Booru.Template
 	/// <summary>
 	/// Danbooru, A taggable image board.
 	/// </summary>
-	public abstract class Danbooru : Boorus
+	public abstract class Danbooru : Booru
 	{
 		#region Constructor & Destructor
 

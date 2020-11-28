@@ -15,7 +15,7 @@ namespace BooruDex2.Booru.Template
 	/// <summary>
 	/// Moebooru, a fork of Danbooru1 that has been heavily modified.
 	/// </summary>
-	public abstract class Moebooru : Boorus
+	public abstract class Moebooru : Booru
 	{
 		#region Constructor & Destructor
 
