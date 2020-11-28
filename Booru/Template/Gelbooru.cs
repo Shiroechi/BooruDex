@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using System.Xml;
 
 using BooruDex.Exceptions;
 using BooruDex.Models;
 
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
-
-using Newtonsoft.Json.Linq;
 
 namespace BooruDex.Booru.Template
 {
@@ -58,23 +56,6 @@ namespace BooruDex.Booru.Template
 
 		#endregion Constructor & Destructor
 
-		#region Protected Method
-
-		/// <summary>
-		/// Get max number of <see cref="Post"/> with 
-		/// the given <see cref="Tag"/> the site have.
-		/// </summary>
-		/// <param name="url">Url of the requested <see cref="Post"/>.</param>
-		/// <returns>Number of <see cref="Post"/>.</returns>
-		protected async Task<uint> GetPostCount(string url)
-		{
-			var xml = new XmlDocument();
-			xml.LoadXml(await this.GetStringResponseAsync(url));
-			return uint.Parse(xml.ChildNodes.Item(1).Attributes[0].InnerXml);
-		}
-
-		#endregion Protected Method
-
 		#region Protected Overrride Method
 
 		/// <inheritdoc/>
@@ -91,33 +72,31 @@ namespace BooruDex.Booru.Template
 		}
 
 		/// <inheritdoc/>
-		protected override Post ReadPost(JToken json)
+		protected override Post ReadPost(JsonElement json)
 		{
 			return new Post(
-				json["id"].Value<uint>(),
+				json.GetProperty("id").GetUInt32(),
 				this._BaseUrl + "index.php?page=post&s=view&id=",
-				json["file_url"].Value<string>(),
-				this._BaseUrl + "thumbnails/" + json["directory"].Value<string>() + "/thumbnail_" + json["hash"].Value<string>() + ".jpg",
-				this.ConvertRating(json["rating"].Value<string>()),
-				json["tags"].Value<string>(),
+				json.GetProperty("file_url").GetString(),
+				this._BaseUrl + "thumbnails/" + json.GetProperty("directory").GetString() + "/thumbnail_" + json.GetProperty("hash").GetString() + ".jpg",
+				this.ConvertRating(json.GetProperty("rating").GetString()),
+				json.GetProperty("tags").GetString(),
 				0,
-				json["height"].Value<int>(),
-				json["width"].Value<int>(),
+				json.GetProperty("height").GetInt32(),
+				json.GetProperty("width").GetInt32(),
 				0,
 				0,
-				json["source"].Value<string>()
-				);
+				json.GetProperty("source").GetString());
 		}
 
 		/// <inheritdoc/>
-		protected override Tag ReadTag(JToken json)
+		protected override Tag ReadTag(JsonElement json)
 		{
 			return new Tag(
-				json["id"].Value<uint>(),
-				json["tag"].Value<string>(),
-				this.ToTagType(json["type"].Value<string>()),
-				json["count"].Value<uint>()
-				);
+				uint.Parse(json.GetProperty("id").GetString()),
+				json.GetProperty("tag").GetString(),
+				this.ToTagType(json.GetProperty("type").GetString()),
+				uint.Parse(json.GetProperty("count").GetString()));
 		}
 
 		/// <summary>
@@ -173,7 +152,7 @@ namespace BooruDex.Booru.Template
 				limit = this._PostLimit;
 			}
 
-			string url = "";
+			string url;
 
 			if (tags == null)
 			{
@@ -186,9 +165,9 @@ namespace BooruDex.Booru.Template
 					$"&limit={ limit }&pid={ page }&tags={ string.Join(" ", tags) }";
 			}
 
-			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
 
-			if (jsonArray.Count == 0)
+			if (jsonArray.GetArrayLength() == 0)
 			{
 				if (tags == null || tags.Length <= 0)
 				{
@@ -202,7 +181,14 @@ namespace BooruDex.Booru.Template
 
 			try
 			{
-				return jsonArray.Select(this.ReadPost).ToArray();
+				var posts = new List<Post>();
+
+				foreach (var item in jsonArray.EnumerateArray())
+				{
+					posts.Add(this.ReadPost(item));
+				}
+
+				return posts.ToArray();
 			}
 			catch (Exception e)
 			{
@@ -235,7 +221,7 @@ namespace BooruDex.Booru.Template
 
 			// get Post count in XML response.
 
-			var postCount = await this.GetPostCount(url);
+			var postCount = await this.GetPostCountAsync(url);
 
 			if (postCount == 0)
 			{
@@ -286,7 +272,7 @@ namespace BooruDex.Booru.Template
 
 			// get Post count in XML response.
 
-			var postCount = await this.GetPostCount(url);
+			var postCount = await this.GetPostCountAsync(url);
 
 			if (postCount == 0)
 			{
@@ -330,14 +316,21 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("tag") +
 				$"&limit={ this._PostLimit }&orderby=name&name_pattern={ name }";
 
-			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
 
-			if (jsonArray.Count == 0)
+			if (jsonArray.GetArrayLength() == 0)
 			{
 				throw new SearchNotFoundException($"Can't find Tags with name \"{ name }\".");
 			}
 
-			return jsonArray.Select(ReadTag).ToArray();
+			var tags = new List<Tag>();
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				tags.Add(this.ReadTag(item));
+			}
+
+			return tags.ToArray();
 		}
 
 		#endregion Tag

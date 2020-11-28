@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
-using System.Xml;
 
 using BooruDex.Exceptions;
 using BooruDex.Models;
 
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace BooruDex.Booru.Template
 {
@@ -58,23 +54,6 @@ namespace BooruDex.Booru.Template
 
 		#endregion Constructor & Destructor
 
-		#region Protected Method
-
-		/// <summary>
-		/// Get max number of <see cref="Post"/> with 
-		/// the given <see cref="Tag"/> the site have.
-		/// </summary>
-		/// <param name="url">Url of the requested <see cref="Post"/>.</param>
-		/// <returns>Number of <see cref="Post"/>.</returns>
-		protected async Task<uint> GetPostCount(string url)
-		{
-			var xml = new XmlDocument();
-			xml.LoadXml(await this.GetStringResponseAsync(url));
-			return uint.Parse(xml.ChildNodes.Item(1).Attributes[0].InnerXml);
-		}
-
-		#endregion Protected Method
-
 		#region Protected Overrride Method
 
 		/// <inheritdoc/>
@@ -99,84 +78,79 @@ namespace BooruDex.Booru.Template
 		}
 
 		/// <inheritdoc/>
-		protected override Artist ReadArtist(JToken json)
+		protected override Artist ReadArtist(JsonElement json)
 		{
-			var array = JsonConvert.DeserializeObject<JArray>(
-				json["urls"].ToString());
+			var array = json.GetProperty("urls");
 
-			List<string> urls = new List<string>();
+			var urls = new List<string>();
 
-			if (array.Count != 0)
+			if (array.GetArrayLength() != 0)
 			{
-				for (var i = 0; i < array.Count; i++)
+				foreach (var item in array.EnumerateArray())
 				{
-					urls.Add(array[i].Value<string>());
+					urls.Add(item.GetString());
 				}
 			}
 
 			return new Artist(
-				json["id"].Value<uint>(),
-				json["name"].Value<string>(),
+				json.GetProperty("id").GetUInt32(),
+				json.GetProperty("name").GetString(),
 				urls);
 		}
 
 		/// <inheritdoc/>
-		protected override Pool ReadPool(JToken json)
+		protected override Pool ReadPool(JsonElement json)
 		{
 			return new Pool(
-				json["id"].Value<uint>(),
-				json["name"].Value<string>(),
-				json["post_count"].Value<uint>(),
-				json["description"].Value<string>());
+				json.GetProperty("id").GetUInt32(),
+				json.GetProperty("name").GetString(),
+				json.GetProperty("post_count").GetUInt32(),
+				json.GetProperty("description").GetString());
 		}
 
 		/// <inheritdoc/>
-		protected override Post ReadPost(JToken json)
+		protected override Post ReadPost(JsonElement json)
 		{
 			return new Post(
-				json["id"].Value<uint>(),
+				json.GetProperty("id").GetUInt32(),
 				this._BaseUrl + "post/show/",
-				json["file_url"].Value<string>(),
-				json["preview_url"].Value<string>(),
-				this.ConvertRating(json["rating"].Value<string>()),
-				json["tags"].Value<string>(),
-				json["file_size"].Value<uint>(),
-				json["height"].Value<int>(),
-				json["width"].Value<int>(),
-				json["preview_height"].Value<int>(),
-				json["preview_width"].Value<int>(),
-				json["source"].Value<string>()
-				);
+				json.GetProperty("file_url").GetString(),
+				json.GetProperty("preview_url").GetString(),
+				this.ConvertRating(json.GetProperty("rating").GetString()),
+				json.GetProperty("tags").GetString(),
+				json.GetProperty("file_size").GetUInt32(),
+				json.GetProperty("height").GetInt32(),
+				json.GetProperty("width").GetInt32(),
+				json.GetProperty("preview_height").GetInt32(),
+				json.GetProperty("preview_width").GetInt32(),
+				json.GetProperty("source").GetString());
 		}
 
 		/// <inheritdoc/>
-		protected override Tag ReadTag(JToken json)
+		protected override Tag ReadTag(JsonElement json)
 		{
 			return new Tag(
-				json["id"].Value<uint>(),
-				json["name"].Value<string>(),
-				(TagType)json["type"].Value<int>(),
-				json["count"].Value<uint>()
-				);
+				json.GetProperty("id").GetUInt32(),
+				json.GetProperty("name").GetString(),
+				(TagType)json.GetProperty("type").GetInt32(),
+				json.GetProperty("count").GetUInt32());
 		}
 
 		/// <inheritdoc/>
-		protected override TagRelated ReadTagRelated(JToken json)
+		protected override TagRelated ReadTagRelated(JsonElement json)
 		{
-			var item = (JArray)json;
 			return new TagRelated(
-				item[0].Value<string>(),
-				item[1].Value<uint>());
+				json[0].GetString(),
+				json[1].GetUInt32());
 		}
 
 		/// <inheritdoc/>
-		protected override Wiki ReadWiki(JToken json)
+		protected override Wiki ReadWiki(JsonElement json)
 		{
 			return new Wiki(
-				json["id"].Value<uint>(),
-				json["title"].Value<string>(),
-				json["body"].Value<string>()
-				);
+				json.GetProperty("id").GetUInt32(),
+				json.GetProperty("title").GetString(),
+				json.GetProperty("body").GetString());
 		}
 
 		#endregion Protected Overrride Method
@@ -201,14 +175,21 @@ namespace BooruDex.Booru.Template
 				url += "&order=name";
 			}
 
-			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
 
-			if (jsonArray.Count == 0)
+			if (jsonArray.GetArrayLength() == 0)
 			{
 				throw new SearchNotFoundException($"Can't find Artist with name \"{ name }\" at page { page }.");
 			}
 
-			return jsonArray.Select(ReadArtist).ToArray();
+			var artists = new List<Artist>();
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				artists.Add(this.ReadArtist(item));
+			}
+
+			return artists.ToArray();
 		}
 
 		#endregion Artist
@@ -226,14 +207,21 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("pool") +
 				$"page={ page }&query={ title }";
 
-			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
 
-			if (jsonArray.Count == 0)
+			if (jsonArray.GetArrayLength() == 0)
 			{
-				throw new SearchNotFoundException($"Can't find Pool with title \"{ title }\" at page { page }.");
+				throw new SearchNotFoundException($"Can't find Pool with title \"{ title }\".");
 			}
 
-			return jsonArray.Select(this.ReadPool).ToArray();
+			var pools = new List<Pool>();
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				pools.Add(this.ReadPool(item));
+			}
+
+			return pools.ToArray();
 		}
 
 		/// <inheritdoc/>
@@ -244,61 +232,30 @@ namespace BooruDex.Booru.Template
 
 			try
 			{
-				var obj = await this.GetJsonResponseAsync<JObject>(url);
+				JsonElement obj;
 
-				var jsonArray = JsonConvert.DeserializeObject<JArray>(
-						obj["posts"].ToString());
+				using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
+				{
+					obj = temp.RootElement.Clone();
+				}
 
-				return jsonArray.Select(this.ReadPost).ToArray();
+				var posts = new List<Post>();
+
+				foreach (var item in obj.GetProperty("posts").EnumerateArray())
+				{
+					posts.Add(this.ReadPost(item));
+				}
+
+				return posts.ToArray();
 			}
-			catch (JsonReaderException e)
+			catch (Exception e)
 			{
-				// if pool not found, it will return pool page 
+				// if pool not found, it will return to pool page 
 				// like yande.re/pool, not a empty JSON.
-				throw new SearchNotFoundException($"Can't find Pool with id { poolId }.");
+				throw new SearchNotFoundException($"Can't find Pool with id { poolId }.", e);
 			}
 		}
-
-		/// <summary>
-		/// Get partial <see cref="Post"/> inside the <see cref="Pool"/>.
-		/// </summary>
-		/// <param name="poolId">The <see cref="Pool"/> id.</param>
-		/// <param name="page">The page number.</param>
-		/// <returns>Array of <see cref="Post"/> from <see cref="Pool"/>.</returns>
-		/// <exception cref="ArgumentNullException">
-		///		One or more parameter is null or empty.
-		/// </exception>
-		/// <exception cref="NotImplementedException">
-		///		Method is not implemented yet.
-		/// </exception>
-		/// <exception cref="HttpResponseException">
-		///		Unexpected error occured.
-		/// </exception>
-		/// <exception cref="HttpRequestException">
-		///		The request failed due to an underlying issue such as network connectivity, DNS
-		///     failure, server certificate validation or timeout.
-		/// </exception>
-		/// <exception cref="SearchNotFoundException">
-		///		The search result is empty.
-		/// </exception>
-		protected virtual async Task<Post[]> PoolPostList(uint poolId, uint page)
-		{
-			var url = this.CreateBaseApiCall("pool/show") +
-				$"page={ page }&id={ poolId }";
-
-			var obj = await this.GetJsonResponseAsync<JObject>(url);
-
-			var jsonArray = JsonConvert.DeserializeObject<JArray>(
-				obj["posts"].ToString());
-
-			if (jsonArray.Count == 0)
-			{
-				throw new SearchNotFoundException($"Can't find post in pool id { poolId } at page { page }.");
-			}
-
-			return jsonArray.Select(this.ReadPost).ToArray();
-		}
-
+		
 		#endregion Pool
 
 		#region Post
@@ -322,7 +279,7 @@ namespace BooruDex.Booru.Template
 				limit = this._PostLimit;
 			}
 
-			string url = "";
+			string url;
 
 			if (tags == null)
 			{
@@ -335,9 +292,9 @@ namespace BooruDex.Booru.Template
 					$"limit={ limit }&page={ page }&tags={ string.Join(" ", tags) }";
 			}
 
-			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
 
-			if (jsonArray.Count == 0)
+			if (jsonArray.GetArrayLength() == 0)
 			{
 				if (tags == null || tags.Length <= 0)
 				{
@@ -351,7 +308,14 @@ namespace BooruDex.Booru.Template
 
 			try
 			{
-				return jsonArray.Select(this.ReadPost).ToArray();
+				var posts = new List<Post>();
+
+				foreach (var item in jsonArray.EnumerateArray())
+				{
+					posts.Add(this.ReadPost(item));
+				}
+
+				return posts.ToArray();
 			}
 			catch (Exception e)
 			{
@@ -384,7 +348,7 @@ namespace BooruDex.Booru.Template
 
 			// get Post count in XML response.
 
-			var postCount = await this.GetPostCount(url); 
+			var postCount = await this.GetPostCountAsync(url); 
 
 			if (postCount == 0)
 			{
@@ -435,7 +399,7 @@ namespace BooruDex.Booru.Template
 
 			// get Post count in XML response.
 
-			var postCount = await this.GetPostCount(url);
+			var postCount = await this.GetPostCountAsync(url);
 
 			if (postCount == 0)
 			{
@@ -479,14 +443,21 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("tag") +
 				$"limit=0&order=name&name={ name }";
 
-			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
 
-			if (jsonArray.Count == 0)
+			if (jsonArray.GetArrayLength() == 0)
 			{
 				throw new SearchNotFoundException($"Can't find Tags with name \"{ name }\".");
 			}
 
-			return jsonArray.Select(ReadTag).ToArray();
+			var tags = new List<Tag>();
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				tags.Add(this.ReadTag(item));
+			}
+
+			return tags.ToArray();
 		}
 
 		/// <inheritdoc/>
@@ -499,28 +470,38 @@ namespace BooruDex.Booru.Template
 
 			var url = this.CreateBaseApiCall("tag/related") +
 				$"tags={ name }&type={ type }";
+			
+			JsonElement obj;
 
-			var obj = await this.GetJsonResponseAsync<JObject>(url);
-
-			JArray jsonArray;
-
-			if (obj.ContainsKey(name))
+			using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
 			{
-				jsonArray = JsonConvert.DeserializeObject<JArray>(
-				obj[name].ToString());
+				obj = temp.RootElement.Clone();
+			}
+
+			JsonElement jsonArray;
+
+			if (this.PropertyExist(obj, name))
+			{
+				jsonArray = obj.GetProperty(name);
 			}
 			else
 			{
-				jsonArray = JsonConvert.DeserializeObject<JArray>(
-				obj["useless_tags"].ToString());
+				jsonArray = obj.GetProperty("useless_tags");
 			}
 
-			if (jsonArray.Count == 0)
+			if (jsonArray.GetArrayLength() == 0)
 			{
 				throw new SearchNotFoundException($"Can't find related Tags with Tag name \"{ name }\".");
 			}
 
-			return jsonArray.Select(this.ReadTagRelated).ToArray();
+			var tags = new List<TagRelated>();
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				tags.Add(this.ReadTagRelated(item));
+			}
+
+			return tags.ToArray();
 		}
 
 		#endregion Tag
@@ -538,14 +519,21 @@ namespace BooruDex.Booru.Template
 			var url = this.CreateBaseApiCall("wiki") +
 				$"order=title&query={ title }";
 
-			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
 
-			if (jsonArray.Count == 0)
+			if (jsonArray.GetArrayLength() == 0)
 			{
 				throw new SearchNotFoundException($"No Wiki found with title \"{ title }\"");
 			}
 
-			return jsonArray.Select(this.ReadWiki).ToArray();
+			var wikis = new List<Wiki>();
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				wikis.Add(this.ReadWiki(item));
+			}
+
+			return wikis.ToArray();
 		}
 
 		#endregion Wiki

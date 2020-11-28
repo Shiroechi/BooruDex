@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Data;
-using System.Linq;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using System.Xml;
 
 using BooruDex.Exceptions;
 using BooruDex.Models;
 
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace BooruDex.Booru.Template
 {
@@ -60,23 +56,6 @@ namespace BooruDex.Booru.Template
 
 		#endregion Constructor & Destructor
 
-		#region Protected Method
-
-		/// <summary>
-		/// Get max number of <see cref="Post"/> with 
-		/// the given <see cref="Tag"/> the site have.
-		/// </summary>
-		/// <param name="url">Url of the requested <see cref="Post"/>.</param>
-		/// <returns>Number of <see cref="Post"/>.</returns>
-		protected async Task<uint> GetPostCount(string url)
-		{
-			var xml = new XmlDocument();
-			xml.LoadXml(await this.GetStringResponseAsync(url));
-			return uint.Parse(xml.ChildNodes.Item(1).Attributes[0].InnerXml);
-		}
-
-		#endregion Protected Method
-
 		#region Protected Overrride Method
 
 		/// <inheritdoc/>
@@ -93,23 +72,25 @@ namespace BooruDex.Booru.Template
 		}
 
 		/// <inheritdoc/>
-		protected override Post ReadPost(JToken json)
+		protected override Post ReadPost(JsonElement json)
 		{
-			var imageName = json["image"].Value<string>().Substring(0, json["image"].Value<string>().IndexOf("."));
+			var imageName = json.GetProperty("image").GetString();
+
+			var directory = json.GetProperty("directory").GetString();
+
 			return new Post(
-				json["id"].Value<uint>(),
+				json.GetProperty("id").GetUInt32(),
 				this._BaseUrl + "index.php?page=post&s=view&id=",
-				this._BaseUrl + "/images/" + json["directory"].Value<string>() + "/" + json["image"].Value<string>(),
-				this._BaseUrl + "/thumbnails/" + json["directory"].Value<string>() + "/thumbnails_" + imageName + ".jpg",
-				this.ConvertRating(json["rating"].Value<string>()),
-				json["tags"].Value<string>(),
+				this._BaseUrl + "images/" + directory + "/" + imageName,
+				this._BaseUrl + "thumbnails/" + directory + "/thumbnail_" + imageName.Substring(0, imageName.IndexOf(".")) + ".jpg",
+				this.ConvertRating(json.GetProperty("rating").GetString()),
+				json.GetProperty("tags").GetString(),
 				0,
-				json["height"].Value<int>(),
-				json["width"].Value<int>(),
+				json.GetProperty("height").GetInt32(),
+				json.GetProperty("width").GetInt32(),
 				0,
 				0,
-				""
-				);
+				string.Empty);
 		}
 
 		#endregion Protected Overrride Method
@@ -142,22 +123,24 @@ namespace BooruDex.Booru.Template
 				page = 200000;
 			}
 
-			string url = "";
+			string url;
 
 			if (tags == null)
 			{
-				url = this.CreateBaseApiCall("post") +
+				url = this.CreateBaseApiCall("post", false) +
 					$"&limit={ limit }&pid={ page }";
 			}
 			else
 			{
-				url = this.CreateBaseApiCall("post") +
+				url = this.CreateBaseApiCall("post", false) +
 					$"&limit={ limit }&pid={ page }&tags={ string.Join(" ", tags) }";
 			}
 
-			var jsonArray = await this.GetJsonResponseAsync<JArray>(url);
+			// get Post count in XML response.
 
-			if (jsonArray.Count == 0)
+			var postCount = await this.GetPostCountAsync(url);
+
+			if (postCount == 0)
 			{
 				if (tags == null || tags.Length <= 0)
 				{
@@ -169,9 +152,18 @@ namespace BooruDex.Booru.Template
 				}
 			}
 
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url + "&json=1");
+
 			try
 			{
-				return jsonArray.Select(this.ReadPost).ToArray();
+				var posts = new List<Post>();
+
+				foreach (var item in jsonArray.EnumerateArray())
+				{
+					posts.Add(this.ReadPost(item));
+				}
+
+				return posts.ToArray();
 			}
 			catch (Exception e)
 			{
@@ -204,7 +196,7 @@ namespace BooruDex.Booru.Template
 
 			// get Post count in XML response.
 
-			var postCount = await this.GetPostCount(url);
+			var postCount = await this.GetPostCountAsync(url);
 
 			if (postCount == 0)
 			{
@@ -258,7 +250,7 @@ namespace BooruDex.Booru.Template
 
 			// get Post count in XML response.
 
-			var postCount = await this.GetPostCount(url);
+			var postCount = await this.GetPostCountAsync(url);
 
 			if (postCount == 0)
 			{

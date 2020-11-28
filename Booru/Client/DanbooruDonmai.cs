@@ -16,6 +16,5 @@ namespace BooruDex.Booru.Client
 		}
 		
 		#endregion Constructor & Destructor
-		
 	}
 }

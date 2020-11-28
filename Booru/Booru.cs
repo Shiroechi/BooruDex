@@ -2,16 +2,16 @@
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml;
 
 using BooruDex.Exceptions;
 using BooruDex.Models;
 
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
-
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace BooruDex.Booru
 {
@@ -23,7 +23,7 @@ namespace BooruDex.Booru
 		#region Member
 
 		/// <summary>
-		/// Browser
+		/// Http client to send reuquest and receive response.
 		/// </summary>
 		private HttpClient _HttpClient;
 
@@ -31,14 +31,14 @@ namespace BooruDex.Booru
 		/// Base API request URL.
 		/// </summary>
 		protected Uri _BaseUrl;
-		
+
 		/// <summary>
 		/// Max retrieved post for each request.
 		/// </summary>
 		protected byte _PostLimit;
-		
+
 		/// <summary>
-		/// Max tags to use for search a post. 
+		/// Max allowed <see cref="Tag"/>s to use for search a <see cref="Post"/>. 
 		/// </summary>
 		protected byte _TagsLimit;
 
@@ -57,7 +57,7 @@ namespace BooruDex.Booru
 		/// functions that modify the content).
 		/// </summary>
 		protected string _Username;
-	
+
 		/// <summary>
 		///  Your user password in plain text (Required only 
 		///  for functions that modify the content).
@@ -90,7 +90,7 @@ namespace BooruDex.Booru
 		/// <param name="domain">URL of booru based sites.</param>
 		public Booru(string domain) : this(domain, null, new SplitMix64())
 		{
-			
+
 		}
 
 		/// <summary>
@@ -100,7 +100,7 @@ namespace BooruDex.Booru
 		/// <param name="httpClient">Client for sending and receive http response.</param>
 		public Booru(string domain, HttpClient httpClient = null) : this(domain, httpClient, new SplitMix64())
 		{
-			
+
 		}
 
 		/// <summary>
@@ -123,7 +123,11 @@ namespace BooruDex.Booru
 		/// </summary>
 		~Booru()
 		{
-			
+			this._BaseUrl = null;
+			this._ApiVersion = 
+				this._Password = 
+				this._PasswordSalt = 
+				this._Username = null;
 		}
 
 		#endregion Constructor & Destructor
@@ -181,10 +185,10 @@ namespace BooruDex.Booru
 		/// <summary>
 		/// Gets or sets maximum page number for booru.
 		/// </summary>
-		public byte PageLimit 
+		protected byte PageLimit
 		{
 			set
-			{ 
+			{
 				if (value < 10)
 				{
 					this._PageLimit = 10;
@@ -214,7 +218,7 @@ namespace BooruDex.Booru
 		{
 			if (this._HttpClient == null)
 			{
-				return; 
+				return;
 			}
 
 			if (this._HttpClient.DefaultRequestHeaders.UserAgent.Count == 0)
@@ -245,6 +249,9 @@ namespace BooruDex.Booru
 		/// <exception cref="TaskCanceledException">
 		///		The request failed due timeout.
 		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
+		/// </exception>
 		protected async Task<T> GetJsonResponseAsync<T>(string url)
 		{
 			try
@@ -255,7 +262,14 @@ namespace BooruDex.Booru
 				{
 					if (response.IsSuccessStatusCode)
 					{
-						return this.DeserializeJsonFromStream<T>(stream);
+						try
+						{
+							return await JsonSerializer.DeserializeAsync<T>(stream);
+						}
+						catch (JsonException e)
+						{
+							throw e;
+						}
 					}
 
 					throw new HttpResponseException(
@@ -319,27 +333,6 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Deserializes the JSON structure into an instance of the specified type.
-		/// </summary>
-		/// <typeparam name="T">The type of the object to deserialize.</typeparam>
-		/// <param name="stream"></param>
-		/// <returns>The instance of <typeparamref name="T"/> being deserialized.</returns>
-		protected T DeserializeJsonFromStream<T>(Stream stream)
-		{
-			if (stream == null || stream.CanRead == false)
-			{
-				return default(T);
-			}
-
-			using (var sr = new StreamReader(stream))
-			using (JsonReader reader = new JsonTextReader(sr))
-			{
-				JsonSerializer serializer = new JsonSerializer();
-				return serializer.Deserialize<T>(reader);
-			}
-		}
-
-		/// <summary>
 		/// Deserializes response into string.
 		/// </summary>
 		/// <param name="stream"></param>
@@ -348,13 +341,56 @@ namespace BooruDex.Booru
 		{
 			if (stream != null)
 			{
-				using (var sr = new StreamReader(stream))
+				using (var sr = new StreamReader(stream, Encoding.UTF8))
 				{
 					return sr.ReadToEndAsync();
 				}
 			}
 
 			return null;
+		}
+
+		/// <summary>
+		/// Get max number of <see cref="Post"/> with 
+		/// the given <see cref="Tag"/> the site have.
+		/// </summary>
+		/// <param name="url">Url of the requested <see cref="Post"/>.</param>
+		/// <returns>Number of <see cref="Post"/>.</returns>
+		/// <exception cref="XmlException">
+		///		There is a load or parse error in the XML.
+		/// </exception>
+		/// <exception cref="FormatException">
+		///		Can't convert to <see cref="uint"/>.
+		/// </exception>
+		protected async Task<uint> GetPostCountAsync(string url)
+		{
+			try
+			{
+				var xml = new XmlDocument();
+				xml.LoadXml(await this.GetStringResponseAsync(url));
+				return uint.Parse(xml.ChildNodes.Item(1).Attributes[0].InnerXml);
+			}
+			catch (XmlException e)
+			{
+				throw e;
+			}
+			catch (FormatException e)
+			{
+				throw e;
+			}
+		}
+
+		/// <summary>
+		/// Check the property of JSON object exist or not.
+		/// </summary>
+		/// <param name="json">JSON object.</param>
+		/// <param name="propertyName">The name of the property to find.</param>
+		/// <returns>
+		///		<see langword="true"/> if the property was found; otherwise, <see langword="false"/>.
+		///	</returns>
+		protected bool PropertyExist(JsonElement json, string propertyName)
+		{
+			return json.TryGetProperty(propertyName, out _);
 		}
 
 		/// <summary>
@@ -372,7 +408,7 @@ namespace BooruDex.Booru
 		/// <returns></returns>
 		protected Rating ConvertRating(string rating)
 		{
-			switch (rating.ToString()[0])
+			switch (rating.ToLower()[0])
 			{
 				case 'e':
 					return Rating.Explicit;
@@ -393,7 +429,7 @@ namespace BooruDex.Booru
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
-		protected virtual Artist ReadArtist(JToken json)
+		protected virtual Artist ReadArtist(JsonElement json)
 		{
 			throw new NotImplementedException($"Method { nameof(ReadArtist) } is not implemented yet.");
 		}
@@ -406,7 +442,7 @@ namespace BooruDex.Booru
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
-		protected virtual Pool ReadPool(JToken json)
+		protected virtual Pool ReadPool(JsonElement json)
 		{
 			throw new NotImplementedException($"Method { nameof(ReadPool) } is not implemented yet.");
 		}
@@ -419,7 +455,7 @@ namespace BooruDex.Booru
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
-		protected virtual Post ReadPost(JToken json)
+		protected virtual Post ReadPost(JsonElement json)
 		{
 			throw new NotImplementedException($"Method { nameof(ReadPost) } is not implemented yet.");
 		}
@@ -432,7 +468,7 @@ namespace BooruDex.Booru
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
-		protected virtual Tag ReadTag(JToken json)
+		protected virtual Tag ReadTag(JsonElement json)
 		{
 			throw new NotImplementedException($"Method { nameof(ReadTag) } is not implemented yet.");
 		}
@@ -445,7 +481,7 @@ namespace BooruDex.Booru
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
-		protected virtual TagRelated ReadTagRelated(JToken json)
+		protected virtual TagRelated ReadTagRelated(JsonElement json)
 		{
 			throw new NotImplementedException($"Method { nameof(ReadTagRelated) } is not implemented yet.");
 		}
@@ -458,7 +494,7 @@ namespace BooruDex.Booru
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
-		protected virtual Wiki ReadWiki(JToken json)
+		protected virtual Wiki ReadWiki(JsonElement json)
 		{
 			throw new NotImplementedException($"Method { nameof(ReadWiki) } is not implemented yet.");
 		}
@@ -473,7 +509,7 @@ namespace BooruDex.Booru
 		/// <param name="username">Your username.</param>
 		/// <param name="password">Your password.</param>
 		/// <returns></returns>
-		public bool Authenticate(string username, string password)
+		protected bool Authenticate(string username, string password)
 		{
 			throw new NotImplementedException($"Method { nameof(Authenticate) } is not implemented yet.");
 			this._Username = username;
@@ -507,6 +543,9 @@ namespace BooruDex.Booru
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Artist"/> is found.
 		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
+		/// </exception>
 		public virtual Task<Artist[]> ArtistListAsync(string name, uint page = 0, bool sort = false)
 		{
 			throw new NotImplementedException($"Method { nameof(ArtistListAsync) } is not implemented yet.");
@@ -538,6 +577,9 @@ namespace BooruDex.Booru
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Pool"/> is found.
 		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
+		/// </exception>
 		public virtual Task<Pool[]> PoolList(string title, uint page = 0)
 		{
 			throw new NotImplementedException($"Method { nameof(PoolList) } is not implemented yet.");
@@ -563,6 +605,9 @@ namespace BooruDex.Booru
 		/// </exception>
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Post"/> is found.
+		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
 		/// </exception>
 		public virtual Task<Post[]> PoolPostList(uint poolId)
 		{
@@ -598,6 +643,9 @@ namespace BooruDex.Booru
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Post"/> is found.
 		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
+		/// </exception>
 		public virtual Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
 		{
 			throw new NotImplementedException($"Method { nameof(PostListAsync) } is not implemented yet.");
@@ -625,6 +673,9 @@ namespace BooruDex.Booru
 		/// </exception>
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Post"/> is found.
+		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
 		/// </exception>
 		public virtual Task<Post> GetRandomPostAsync(string[] tags = null)
 		{
@@ -654,6 +705,9 @@ namespace BooruDex.Booru
 		/// </exception>
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Post"/> is found.
+		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
 		/// </exception>
 		public virtual Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
 		{
@@ -687,6 +741,9 @@ namespace BooruDex.Booru
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Tag"/> is found.
 		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
+		/// </exception>
 		public virtual Task<Tag[]> TagListAsync(string name)
 		{
 			throw new NotImplementedException($"Method { nameof(TagListAsync) } is not implemented yet.");
@@ -715,6 +772,9 @@ namespace BooruDex.Booru
 		/// </exception>
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="TagRelated"/> is found.
+		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
 		/// </exception>
 		public virtual Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
 		{
@@ -747,6 +807,9 @@ namespace BooruDex.Booru
 		/// </exception>
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Wiki"/> is found.
+		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
 		/// </exception>
 		public virtual Task<Wiki[]> WikiListAsync(string title)
 		{

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -7,15 +7,22 @@
     <PackageProjectUrl>https://github.com/Shiroechi/BooruDex</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Shiroechi/BooruDex</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>Imageboard Booru</PackageTags>
+    <PackageTags>Imageboard Image Booru Danbooru Gelbooru Gelbooru02 Moebooru Yandere Konachan Safebooru Lolibooru Rule34 Behoimi Realbooru</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
-    <Description>Library to access the booru website using public API. This library only support GET method, it means only listing and searching only. For other method like POST, contributions are welcomed.</Description>
-    <PackageReleaseNotes></PackageReleaseNotes>
+    <Description>Library to access the booru website using public API. This library only support GET method, it means only listing and searching only.</Description>
+    <PackageReleaseNotes>- Migrate from Newtonsoft.Json to System.Text.Json.
+- Make the Models struct to readonly.
+- Fix bug error when parsing data from danbooru json response.
+- Change URL in Post from Uri to string.
+- Some bug fixes.</PackageReleaseNotes>
+    <Version>2.0.0</Version>
+    <AssemblyName>BooruDex</AssemblyName>
+    <RootNamespace>BooruDex</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>true</Optimize>
-    <DocumentationFile></DocumentationFile>
+    <DocumentationFile>D:\Project\C#\API\BooruDex\BooruDex.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -25,7 +32,7 @@
 
   <ItemGroup>
     <PackageReference Include="Litdex.Security.RNG" Version="2.1.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="System.Text.Json" Version="5.0.0" />
   </ItemGroup>
 
 </Project>
