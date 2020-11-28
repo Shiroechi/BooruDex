@@ -209,6 +209,11 @@ namespace BooruDex.Booru.Template
 
 			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
 
+			if (jsonArray.GetArrayLength() == 0)
+			{
+				throw new SearchNotFoundException($"Can't find Pool with title \"{ title }\".");
+			}
+
 			var pools = new List<Pool>();
 
 			foreach (var item in jsonArray.EnumerateArray())
