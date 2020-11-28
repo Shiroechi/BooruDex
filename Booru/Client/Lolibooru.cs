@@ -5,8 +5,6 @@ using System.Text.Json;
 using BooruDex.Booru.Template;
 using BooruDex.Models;
 
-using Newtonsoft.Json.Linq;
-
 namespace BooruDex.Booru.Client
 {
 	public class Lolibooru : Moebooru
