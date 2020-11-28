@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 
-namespace BooruDex2.Booru.Client
+namespace BooruDex.Booru.Client
 {
 	public class Gelbooru : Template.Gelbooru
 	{

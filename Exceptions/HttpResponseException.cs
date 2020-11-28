@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace BooruDex2.Exceptions
+namespace BooruDex.Exceptions
 {
 	/// <summary>
 	/// Error that occur whenever <see cref="HttpResponseMessage"/> is not OK.

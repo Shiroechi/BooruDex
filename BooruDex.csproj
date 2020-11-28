@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -12,13 +12,13 @@
     <Description>Library to access the booru website using public API. This library only support GET method, it means only listing and searching only.</Description>
     <PackageReleaseNotes></PackageReleaseNotes>
     <Version>2.0.0</Version>
-    <AssemblyName>BooruDex2</AssemblyName>
-    <RootNamespace>BooruDex2</RootNamespace>
+    <AssemblyName>BooruDex</AssemblyName>
+    <RootNamespace>BooruDex</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>true</Optimize>
-    <DocumentationFile></DocumentationFile>
+    <DocumentationFile>D:\Project\C#\API\BooruDex\BooruDex.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

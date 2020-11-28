@@ -1,4 +1,4 @@
-﻿namespace BooruDex2.Models
+﻿namespace BooruDex.Models
 {
     /// <summary>
     /// Represents a level of explicit content of the post.

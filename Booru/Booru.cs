@@ -7,13 +7,13 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
 
-using BooruDex2.Exceptions;
-using BooruDex2.Models;
+using BooruDex.Exceptions;
+using BooruDex.Models;
 
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
 
-namespace BooruDex2.Booru
+namespace BooruDex.Booru
 {
 	/// <summary>
 	/// Base class for all booru client.

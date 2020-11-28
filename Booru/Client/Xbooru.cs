@@ -1,8 +1,8 @@
 ﻿using System.Net.Http;
 
-using BooruDex2.Booru.Template;
+using BooruDex.Booru.Template;
 
-namespace BooruDex2.Booru.Client
+namespace BooruDex.Booru.Client
 {
 	public class Xbooru : Gelbooru02
 	{

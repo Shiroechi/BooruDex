@@ -1,10 +1,10 @@
 ﻿using System.Net.Http;
 using System.Text.Json;
 
-using BooruDex2.Booru.Template;
-using BooruDex2.Models;
+using BooruDex.Booru.Template;
+using BooruDex.Models;
 
-namespace BooruDex2.Booru.Client
+namespace BooruDex.Booru.Client
 {
 	public class Realbooru : Gelbooru02
 	{

@@ -1,4 +1,4 @@
-﻿namespace BooruDex2.Models
+﻿namespace BooruDex.Models
 {
 	/// <summary>
 	/// Tag is keywords you can use to describe posts.

@@ -1,4 +1,4 @@
-﻿namespace BooruDex2.Models
+﻿namespace BooruDex.Models
 {
     /// <summary>
     /// Represent a Tag Related object.
