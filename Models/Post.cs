@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BooruDex.Models
+﻿namespace BooruDex.Models
 {
 	/// <summary>
 	/// Represents a Post object.
