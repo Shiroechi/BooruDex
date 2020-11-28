@@ -1,5 +1,3 @@
-This branch for archive only for early development of V2. The latest version in this [branch](https://github.com/Shiroechi/BooruDex/tree/main)
-
 # BooruDex
 
 Library to access the booru website using public API. 
@@ -36,7 +34,7 @@ Currently BooruDex support the following websites:
   - Search for wiki by title
 
 **Note**
-Some client may not have some feature listed above, because the API not supported.
+Some client may not have some feature listed above, because there's no public API for it.
 
 ## Feature by template
 
@@ -77,10 +75,9 @@ WarmupCount=10
 All library retrieve 10 random post from [danbooru](https://danbooru.donmai.us/).
 
 [BooruDexV1](https://www.nuget.org/packages/BooruDex/1.0.0) was more effecient in handling memory(RAM) usage than [BooruSharp](https://github.com/Xwilarg/BooruSharp). 
-Both library use [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) for processing JSON response. 
+Both library use [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) for processing JSON response.
 
-But `BooruDexV2` is more effecient after migrating from [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) to [System.Text.Json](https://www.nuget.org/packages/System.Text.Json). The memory(RAM) usage is more reduced. 
-As you know in [BooruDexV1](https://www.nuget.org/packages/BooruDex/1.0.0) has error for parsing data from danbooru, it was fixed in `BooruDexV2`.
+But `BooruDexV2` is more effecient after migrating from [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) to [System.Text.Json](https://www.nuget.org/packages/System.Text.Json). The memory(RAM) usage is more reduced. Compared from `v1` and `v2`, `v2` is more smaller al least 3 times than `v1`.
 
 Refer to this [repository](https://github.com/Shiroechi/BooruDex.Test) for the benchmark log and source code.
 
