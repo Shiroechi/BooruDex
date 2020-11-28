@@ -13,7 +13,8 @@
     <PackageReleaseNotes>- Migrate from Newtonsoft.Json to System.Text.Json.
 - Make the Models struct to readonly.
 - Fix bug error when parsing data from danbooru json response.
-- Change URL in Post from Uri to string.</PackageReleaseNotes>
+- Change URL in Post from Uri to string.
+- Some bug fixes.</PackageReleaseNotes>
     <Version>2.0.0</Version>
     <AssemblyName>BooruDex</AssemblyName>
     <RootNamespace>BooruDex</RootNamespace>
