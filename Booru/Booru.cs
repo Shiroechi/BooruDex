@@ -18,7 +18,7 @@ namespace BooruDex2.Booru
 	/// <summary>
 	/// Base class for all booru client.
 	/// </summary>
-	public abstract class Boorus
+	public abstract class Booru
 	{
 		#region Member
 
@@ -88,7 +88,7 @@ namespace BooruDex2.Booru
 		/// Base object for booru client.
 		/// </summary>
 		/// <param name="domain">URL of booru based sites.</param>
-		public Boorus(string domain) : this(domain, null, new SplitMix64())
+		public Booru(string domain) : this(domain, null, new SplitMix64())
 		{
 
 		}
@@ -98,7 +98,7 @@ namespace BooruDex2.Booru
 		/// </summary>
 		/// <param name="domain">URL of booru based sites.</param>
 		/// <param name="httpClient">Client for sending and receive http response.</param>
-		public Boorus(string domain, HttpClient httpClient = null) : this(domain, httpClient, new SplitMix64())
+		public Booru(string domain, HttpClient httpClient = null) : this(domain, httpClient, new SplitMix64())
 		{
 
 		}
@@ -109,7 +109,7 @@ namespace BooruDex2.Booru
 		/// <param name="domain">URL of booru based sites.</param>
 		/// <param name="httpClient">Client for sending and receive http response.</param>
 		/// <param name="rng">Random generator for random post.</param>
-		public Boorus(string domain, HttpClient httpClient, IRNG rng)
+		public Booru(string domain, HttpClient httpClient, IRNG rng)
 		{
 			this._BaseUrl = new Uri(domain, UriKind.Absolute);
 			this.HttpClient = httpClient;
@@ -121,7 +121,7 @@ namespace BooruDex2.Booru
 		/// <summary>
 		/// Release all resource that this object hold.
 		/// </summary>
-		~Boorus()
+		~Booru()
 		{
 			this._BaseUrl = null;
 			this._ApiVersion = 
