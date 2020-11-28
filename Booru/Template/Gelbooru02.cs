@@ -81,8 +81,8 @@ namespace BooruDex.Booru.Template
 			return new Post(
 				json.GetProperty("id").GetUInt32(),
 				this._BaseUrl + "index.php?page=post&s=view&id=",
-				this._BaseUrl + "/images/" + directory + "/" + imageName,
-				this._BaseUrl + "/thumbnails/" + directory + "/thumbnails_" + imageName.Substring(0, imageName.IndexOf(".")) + ".jpg",
+				this._BaseUrl + "images/" + directory + "/" + imageName,
+				this._BaseUrl + "thumbnails/" + directory + "/thumbnails_" + imageName.Substring(0, imageName.IndexOf(".")) + ".jpg",
 				this.ConvertRating(json.GetProperty("rating").GetString()),
 				json.GetProperty("tags").GetString(),
 				0,
