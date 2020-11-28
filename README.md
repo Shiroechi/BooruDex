@@ -4,6 +4,17 @@ Library to access the booru website using public API.
 This library only support GET method, it means only listing and searching only. 
 For other method like POST, contributions are welcomed.
 
+# Badges
+
+[![CodeFactor](https://www.codefactor.io/repository/github/shiroechi/boorudex/badge)](https://www.codefactor.io/repository/github/shiroechi/boorudex)
+
+# Download
+
+[![Nuget](https://img.shields.io/nuget/v/BooruDex?label=BooruDex)](https://www.nuget.org/packages/BooruDex)
+[![Nuget](https://img.shields.io/nuget/v/Litdex.Security.RNG?label=Litdex.Security.RNG)](https://www.nuget.org/packages/Litdex.Security.RNG)
+
+# Overview 
+
 Currently BooruDex support the following websites:
 - [3Dbooru](http://behoimi.org/)
 - [Danbooru.donmai.us](https://danbooru.donmai.us/)
@@ -47,7 +58,7 @@ Only GET method.
 | Gelbooru beta 0.2 | ❌ | ❌ | ✔️ | ❌ | ❌ |
 | Moebooru | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
 
-# Benchmark
+## Benchmark
 
 This benchmark compare with other library, [BooruSharp](https://github.com/Xwilarg/BooruSharp)
 
@@ -80,11 +91,6 @@ Both library use [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) f
 But `BooruDexV2` is more effecient after migrating from [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) to [System.Text.Json](https://www.nuget.org/packages/System.Text.Json). The memory(RAM) usage is more reduced. Compared from `v1` and `v2`, `v2` is more smaller al least 3 times than `v1`.
 
 Refer to this [repository](https://github.com/Shiroechi/BooruDex.Test) for the benchmark log and source code.
-
-# Download
-
-[![Nuget](https://img.shields.io/nuget/v/BooruDex?label=BooruDex)](https://www.nuget.org/packages/BooruDex)
-[![Nuget](https://img.shields.io/nuget/v/Litdex.Security.RNG?label=Litdex.Security.RNG)](https://www.nuget.org/packages/Litdex.Security.RNG)
 
 # Example
 
