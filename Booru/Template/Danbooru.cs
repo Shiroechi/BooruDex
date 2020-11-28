@@ -219,23 +219,21 @@ namespace BooruDex.Booru.Template
 			// the JSON response only give the Post id
 			// so we need get the Post data from another API call.
 
-			var postIds = new List<int>();
+			var postIds = obj.GetProperty("post_ids");
 
-			foreach (var id in obj.GetProperty("post_ids").EnumerateArray())
-			{
-				postIds.Add(id.GetInt32());
-			}
-
-			if (postIds.Count == 0)
+			if (postIds.GetArrayLength() == 0)
 			{
 				throw new SearchNotFoundException($"No Post inside Pool with id { poolId }.");
 			}
 
 			var posts = new List<Post>();
 
-			foreach (uint id in postIds)
+			foreach (var id in postIds.EnumerateArray())
 			{
-				posts.Add(await this.PostShowAsync(id));
+				posts.Add(
+					new Post(
+						id.GetUInt32(), 
+						this._BaseUrl + "posts/", "", "", Rating.None, "", 0, 0, 0, 0, 0, ""));
 			}
 
 			return posts.ToArray();
