@@ -258,6 +258,9 @@ namespace BooruDex.Booru.Template
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Post"/> is found.
 		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
+		/// </exception>
 		public virtual async Task<Post> PostShowAsync(uint postId)
 		{
 			var url = this.CreateBaseApiCall($"posts/{ postId }");

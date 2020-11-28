@@ -249,6 +249,9 @@ namespace BooruDex.Booru
 		/// <exception cref="TaskCanceledException">
 		///		The request failed due timeout.
 		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
+		/// </exception>
 		protected async Task<T> GetJsonResponseAsync<T>(string url)
 		{
 			try
@@ -540,6 +543,9 @@ namespace BooruDex.Booru
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Artist"/> is found.
 		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
+		/// </exception>
 		public virtual Task<Artist[]> ArtistListAsync(string name, uint page = 0, bool sort = false)
 		{
 			throw new NotImplementedException($"Method { nameof(ArtistListAsync) } is not implemented yet.");
@@ -571,6 +577,9 @@ namespace BooruDex.Booru
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Pool"/> is found.
 		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
+		/// </exception>
 		public virtual Task<Pool[]> PoolList(string title, uint page = 0)
 		{
 			throw new NotImplementedException($"Method { nameof(PoolList) } is not implemented yet.");
@@ -596,6 +605,9 @@ namespace BooruDex.Booru
 		/// </exception>
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Post"/> is found.
+		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
 		/// </exception>
 		public virtual Task<Post[]> PoolPostList(uint poolId)
 		{
@@ -631,6 +643,9 @@ namespace BooruDex.Booru
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Post"/> is found.
 		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
+		/// </exception>
 		public virtual Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
 		{
 			throw new NotImplementedException($"Method { nameof(PostListAsync) } is not implemented yet.");
@@ -658,6 +673,9 @@ namespace BooruDex.Booru
 		/// </exception>
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Post"/> is found.
+		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
 		/// </exception>
 		public virtual Task<Post> GetRandomPostAsync(string[] tags = null)
 		{
@@ -687,6 +705,9 @@ namespace BooruDex.Booru
 		/// </exception>
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Post"/> is found.
+		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
 		/// </exception>
 		public virtual Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
 		{
@@ -720,6 +741,9 @@ namespace BooruDex.Booru
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Tag"/> is found.
 		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
+		/// </exception>
 		public virtual Task<Tag[]> TagListAsync(string name)
 		{
 			throw new NotImplementedException($"Method { nameof(TagListAsync) } is not implemented yet.");
@@ -748,6 +772,9 @@ namespace BooruDex.Booru
 		/// </exception>
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="TagRelated"/> is found.
+		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
 		/// </exception>
 		public virtual Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
 		{
@@ -780,6 +807,9 @@ namespace BooruDex.Booru
 		/// </exception>
 		/// <exception cref="SearchNotFoundException">
 		///		The search result is empty. No <see cref="Wiki"/> is found.
+		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
 		/// </exception>
 		public virtual Task<Wiki[]> WikiListAsync(string title)
 		{
