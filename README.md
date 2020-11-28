@@ -1,3 +1,5 @@
+**This branch for archive only. Please use this [brach](https://github.com/Shiroechi/BooruDex/tree/main) for latest version**
+
 # BooruDex
 
 Library to access the booru website using public API. 
@@ -77,8 +79,8 @@ Refer to this [repository](https://github.com/Shiroechi/BooruDex.Test) for the b
 
 # Download
 
-[![Nuget](https://img.shields.io/nuget/v/BooruDex?label=BooruDex)](https://www.nuget.org/packages/BooruDex)
-[![Nuget](https://img.shields.io/nuget/v/Litdex.Security.RNG?label=Litdex.Security.RNG)](https://www.nuget.org/packages/Litdex.Security.RNG)
+[![Nuget](https://img.shields.io/nuget/v/BooruDex?label=BooruDex)](https://www.nuget.org/packages/BooruDex/1.0.0)
+[![Nuget](https://img.shields.io/nuget/v/Litdex.Security.RNG?label=Litdex.Security.RNG)](https://www.nuget.org/packages/Litdex.Security.RNG/2.1.0)
 
 # Example
 
