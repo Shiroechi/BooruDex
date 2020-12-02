@@ -44,14 +44,6 @@ namespace BooruDex.Booru.Template
 			this._ApiVersion = "";
 		}
 
-		/// <summary>
-		/// Release all resource that this object hold.
-		/// </summary>
-		~Danbooru()
-		{
-
-		}
-
 		#endregion Constructor & Destructor
 
 		#region Protected Overrride Method

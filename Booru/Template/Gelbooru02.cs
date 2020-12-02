@@ -46,14 +46,6 @@ namespace BooruDex.Booru.Template
 			this._PasswordSalt = "";
 		}
 
-		/// <summary>
-		/// Release all resource that this object hold.
-		/// </summary>
-		~Gelbooru02()
-		{
-
-		}
-
 		#endregion Constructor & Destructor
 
 		#region Protected Overrride Method
