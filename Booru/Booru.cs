@@ -421,6 +421,13 @@ namespace BooruDex.Booru
 			}
 		}
 
+		/// <summary>
+		/// Check pre-condition for the tags.
+		/// </summary>
+		/// <param name="tags">Tags to check.</param>
+		/// <exception cref="ArgumentOutOfRangeException">
+		///		The provided <see cref="Tag"/> is more than the limit.
+		/// </exception>
 		protected void CheckTagsLimit(string[] tags)
 		{
 			if ((this._TagsLimit != 0) &&
