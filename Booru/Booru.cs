@@ -421,6 +421,16 @@ namespace BooruDex.Booru
 			}
 		}
 
+		protected void CheckTagsLimit(string[] tags)
+		{
+			if ((this._TagsLimit != 0) &&
+				(tags != null) &&
+				(tags.Length > this._TagsLimit))
+			{
+				throw new ArgumentOutOfRangeException($"Tag can't more than { this._TagsLimit } tag.");
+			}
+		}
+
 		/// <summary>
 		/// Read <see cref="Artist"/> JSON search result.
 		/// </summary>
