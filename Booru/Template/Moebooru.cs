@@ -271,7 +271,7 @@ namespace BooruDex.Booru.Template
 
 			if (tags != null)
 			{
-				url += $"&tags ={ string.Join(" ", tags) }";
+				url += $"&tags={ string.Join(" ", tags) }";
 			}
 
 			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
