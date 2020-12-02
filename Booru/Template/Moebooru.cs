@@ -255,12 +255,7 @@ namespace BooruDex.Booru.Template
 		/// <inheritdoc/>
 		public override async Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
 		{
-			if ((this._TagsLimit != 0) && 
-				(tags != null) && 
-				(tags.Length > this._TagsLimit))
-			{
-				throw new ArgumentOutOfRangeException($"Tag can't more than { this._TagsLimit } tag.");
-			}
+			this.CheckTagsLimit(tags);
 
 			if (limit <= 0)
 			{
@@ -271,17 +266,12 @@ namespace BooruDex.Booru.Template
 				limit = this._PostLimit;
 			}
 
-			string url;
+			string url = this.CreateBaseApiCall("post") +
+				$"limit={ limit }&page={ page }";
 
-			if (tags == null)
+			if (tags != null)
 			{
-				url = this.CreateBaseApiCall("post") +
-					$"limit={ limit }&page={ page }";
-			}
-			else
-			{
-				url = this.CreateBaseApiCall("post") +
-					$"limit={ limit }&page={ page }&tags={ string.Join(" ", tags) }";
+				url += $"&tags ={ string.Join(" ", tags) }";
 			}
 
 			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
