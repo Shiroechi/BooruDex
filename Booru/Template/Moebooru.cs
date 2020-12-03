@@ -340,12 +340,7 @@ namespace BooruDex.Booru.Template
 		/// <inheritdoc/>
 		public async override Task<Post[]> GetRandomPostAsync(uint limit , string[] tags = null)
 		{
-			if ((this._TagsLimit != 0) &&
-				   (tags != null) &&
-				   (tags.Length > this._TagsLimit))
-			{
-				throw new ArgumentOutOfRangeException($"Tag can't more than { this._TagsLimit } tag.");
-			}
+			this.CheckTagsLimit(tags);
 
 			if (limit <= 0)
 			{
@@ -356,17 +351,12 @@ namespace BooruDex.Booru.Template
 				limit = this._PostLimit;
 			}
 
-			string url;
-
-			if (tags == null)
-			{
-				url = this.CreateBaseApiCall("post", false) +
+			string url = this.CreateBaseApiCall("post", false) +
 					$"limit={ 1 }&page={ 0 }";
-			}
-			else
+
+			if (tags != null)
 			{
-				url = this.CreateBaseApiCall("post", false) +
-					$"limit={ 1 }&page={ 0 }&tags={ string.Join(" ", tags) }";
+				url += $"&tags={ string.Join(" ", tags) }";
 			}
 
 			// get Post count in XML response.
