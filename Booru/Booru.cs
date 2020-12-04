@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -589,9 +590,56 @@ namespace BooruDex.Booru
 		/// <exception cref="JsonException">
 		///		The JSON is invalid.
 		/// </exception>
-		public virtual Task<Artist[]> ArtistListAsync(string name, uint page = 0, bool sort = false)
+		public virtual async Task<Artist[]> ArtistListAsync(string name, uint page = 0, bool sort = false)
 		{
-			throw new NotImplementedException($"Method { nameof(ArtistListAsync) } is not implemented yet.");
+			if (this.HasArtistApi == false)
+			{
+				throw new NotImplementedException($"Method { nameof(ArtistListAsync) } is not implemented yet.");
+			}
+
+			if (name == null || name.Trim() == "")
+			{
+				throw new ArgumentNullException(nameof(name), "Artist name can't null or empty.");
+			}
+
+			string url = "";
+			
+			if (this is Danbooru)
+			{
+				url = this.CreateBaseApiCall("artists") +
+					$"limit={ this._PostLimit }&page={ page }&search[any_name_matches]={ name }";
+
+				if (sort)
+				{
+					url += "&search[order]=name";
+				}
+			}
+			else if (this is Moebooru)
+			{
+				url = this.CreateBaseApiCall("artist") + 
+					$"page={ page }&name={ name }";
+
+				if (sort)
+				{
+					url += "&order=name";
+				}
+			}
+
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
+
+			if (jsonArray.GetArrayLength() == 0)
+			{
+				throw new SearchNotFoundException($"Can't find Artist with name \"{ name }\" at page { page }.");
+			}
+
+			var artists = new List<Artist>();
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				artists.Add(this.ReadArtist(item));
+			}
+
+			return artists.ToArray();
 		}
 
 		#endregion Artist

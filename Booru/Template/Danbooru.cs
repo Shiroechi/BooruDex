@@ -121,43 +121,6 @@ namespace BooruDex.Booru.Template
 
 		#region Public Method
 
-		#region Artist
-
-		/// <inheritdoc/>
-		public override async Task<Artist[]> ArtistListAsync(string name, uint page = 0, bool sort = false)
-		{
-			if (name == null || name.Trim() == "")
-			{
-				throw new ArgumentNullException(nameof(name), "Artist name can't null or empty");
-			}
-
-			string url = this.CreateBaseApiCall("artists") +
-				$"limit={ this._PostLimit }&page={ page }&search[any_name_matches]={ name }";
-
-			if (sort)
-			{
-				url += "&search[order]=name";
-			}
-
-			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
-
-			if (jsonArray.GetArrayLength() == 0)
-			{
-				throw new SearchNotFoundException($"Can't find Artist with name \"{ name }\" at page { page }.");
-			}
-
-			var artists = new List<Artist>();
-
-			foreach (var item in jsonArray.EnumerateArray())
-			{
-				artists.Add(this.ReadArtist(item));	
-			}
-
-			return artists.ToArray();
-		}
-
-		#endregion Artist
-
 		#region Pool
 
 		/// <inheritdoc/>
