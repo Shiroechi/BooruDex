@@ -54,6 +54,11 @@ namespace BooruDex.Booru
 		protected IRNG _RNG;
 
 		/// <summary>
+		/// Determine <see cref="Booru"/> API access.
+		/// </summary>
+		protected BooruApi _BooruApi;
+
+		/// <summary>
 		/// Your username of the site (Required only for 
 		/// functions that modify the content).
 		/// </summary>
@@ -86,31 +91,12 @@ namespace BooruDex.Booru
 		#region Constructor & Destructor
 
 		/// <summary>
-		/// Base object for booru client.
-		/// </summary>
-		/// <param name="domain">URL of booru based sites.</param>
-		public Booru(string domain) : this(domain, null, new SplitMix64())
-		{
-
-		}
-
-		/// <summary>
-		/// Base object for booru client.
-		/// </summary>
-		/// <param name="domain">URL of booru based sites.</param>
-		/// <param name="httpClient">Client for sending and receive http response.</param>
-		public Booru(string domain, HttpClient httpClient = null) : this(domain, httpClient, new SplitMix64())
-		{
-
-		}
-
-		/// <summary>
-		/// Base object for booru client.
+		/// Create base object for booru client.
 		/// </summary>
 		/// <param name="domain">URL of booru based sites.</param>
 		/// <param name="httpClient">Client for sending and receive http response.</param>
 		/// <param name="rng">Random generator for random post.</param>
-		public Booru(string domain, HttpClient httpClient, IRNG rng)
+		public Booru(string domain, HttpClient httpClient = null, IRNG rng = null)
 		{
 			this._BaseUrl = new Uri(domain, UriKind.Absolute);
 			this.HttpClient = httpClient;
