@@ -671,9 +671,46 @@ namespace BooruDex.Booru
 		/// <exception cref="JsonException">
 		///		The JSON is invalid.
 		/// </exception>
-		public virtual Task<Pool[]> PoolList(string title, uint page = 0)
+		public virtual async Task<Pool[]> PoolList(string title, uint page = 0)
 		{
-			throw new NotImplementedException($"Method { nameof(PoolList) } is not implemented yet.");
+			if (this.HasPoolApi == false)
+			{
+				throw new NotImplementedException($"Method { nameof(PoolList) } is not implemented yet.");
+			}
+
+			if (title == null || title.Trim() == "")
+			{
+				throw new ArgumentNullException(nameof(title), "Title can't null or empty.");
+			}
+
+			string url = "";
+
+			if (this is Danbooru)
+			{
+				url = this.CreateBaseApiCall("pools") +
+					$"limit={ this._PostLimit }&page={ page }&search[name_matches]={ title }";
+			}
+			else if (this  is Moebooru)
+			{
+				url = this.CreateBaseApiCall("pool") + 
+					$"page={ page }&query={ title }";
+			}
+
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
+
+			if (jsonArray.GetArrayLength() == 0)
+			{
+				throw new SearchNotFoundException($"Can't find Pool with title \"{ title }\".");
+			}
+
+			var pools = new List<Pool>();
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				pools.Add(this.ReadPool(item));
+			}
+
+			return pools.ToArray();
 		}
 
 		/// <summary>
@@ -700,9 +737,78 @@ namespace BooruDex.Booru
 		/// <exception cref="JsonException">
 		///		The JSON is invalid.
 		/// </exception>
-		public virtual Task<Post[]> PoolPostList(uint poolId)
+		public virtual async Task<Post[]> PoolPostList(uint poolId)
 		{
-			throw new NotImplementedException($"Method { nameof(PoolPostList) } is not implemented yet.");
+			if (this.HasPoolApi == false)
+			{
+				throw new NotImplementedException($"Method { nameof(PoolPostList) } is not implemented yet.");
+			}
+
+			string url = "";
+			JsonElement obj;
+			var posts = new List<Post>();
+
+			if (this is Danbooru)
+			{
+				url = this.CreateBaseApiCall($"pools/{ poolId }");
+
+				using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
+				{
+					obj = temp.RootElement.Clone();
+				}
+
+				// if Pool not found, it return JSON response
+				// containing a reason why it not found
+
+				if (obj.TryGetProperty("success", out _))
+				{
+					throw new SearchNotFoundException($"Can't find Pool with id { poolId }.");
+				}
+
+				// the JSON response only give the Post id
+				// so we need get the Post data from another API call.
+
+				var postIds = obj.GetProperty("post_ids");
+
+				if (postIds.GetArrayLength() == 0)
+				{
+					throw new SearchNotFoundException($"No Post inside Pool with id { poolId }.");
+				}
+
+				foreach (var id in postIds.EnumerateArray())
+				{
+					posts.Add(
+						new Post(
+							id.GetUInt32(),
+							this._BaseUrl + "posts/", "", "", Rating.None, "", 0, 0, 0, 0, 0, ""));
+				}
+			}
+			else if (this is Moebooru)
+			{
+				url = this.CreateBaseApiCall("pool/show") + 
+					$"id={ poolId }";
+
+				try
+				{
+					using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
+					{
+						obj = temp.RootElement.Clone();
+					}
+
+					foreach (var item in obj.GetProperty("posts").EnumerateArray())
+					{
+						posts.Add(this.ReadPost(item));
+					}
+				}
+				catch (Exception e)
+				{
+					// if pool not found, it will return to pool page 
+					// like yande.re/pool, not a empty JSON.
+					throw new SearchNotFoundException($"Can't find Pool with id { poolId }.", e);
+				}
+			}
+			
+			return posts.ToArray();
 		}
 
 		#endregion Pool
