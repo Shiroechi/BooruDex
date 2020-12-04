@@ -54,11 +54,6 @@ namespace BooruDex.Booru
 		protected IRNG _RNG;
 
 		/// <summary>
-		/// Determine <see cref="Booru"/> API access.
-		/// </summary>
-		protected BooruApi _BooruApi;
-
-		/// <summary>
 		/// Your username of the site (Required only for 
 		/// functions that modify the content).
 		/// </summary>
@@ -101,7 +96,7 @@ namespace BooruDex.Booru
 			this._BaseUrl = new Uri(domain, UriKind.Absolute);
 			this.HttpClient = httpClient;
 			this._RNG = rng is null ? new SplitMix64() : rng;
-			this._BooruApi = new BooruApi();
+			this.DefaultApiSettings();
 			this._Authentication = false;
 			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 		}
@@ -136,7 +131,7 @@ namespace BooruDex.Booru
 				else
 				{
 					this._HttpClient = value;
-					this.AddHttpHeader();
+					this.AddHttpUserAgent();
 				}
 			}
 			get
@@ -144,7 +139,7 @@ namespace BooruDex.Booru
 				if (this._HttpClient == null)
 				{
 					this._HttpClient = _LazyHttpClient.Value;
-					this.AddHttpHeader();
+					this.AddHttpUserAgent();
 				}
 				return this._HttpClient;
 			}
@@ -200,7 +195,7 @@ namespace BooruDex.Booru
 		/// <summary>
 		/// Detemine whether this booru has <see cref="Wiki"/> API or not.
 		/// </summary>
-		public bool WikiApi { protected set; get; }
+		public bool HasWikiApi { protected set; get; }
 
 		#endregion Booru API Settings
 
@@ -214,19 +209,14 @@ namespace BooruDex.Booru
 			return http;
 		});
 
-		public void AddHttpHeader()
+		private void DefaultApiSettings()
 		{
-			if (this._HttpClient == null)
-			{
-				return;
-			}
-
-			if (this._HttpClient.DefaultRequestHeaders.UserAgent.Count == 0)
-			{
-				this.HttpClient.DefaultRequestHeaders.Add(
-					"User-Agent",
-					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36");
-			}
+			this.HasPostApi = true;
+			this.HasArtistApi = 
+				this.HasPoolApi = 
+				this.HasTagApi = 
+				this.HasTagRelatedApi = 
+				this.HasWikiApi = false;
 		}
 
 		#endregion Private Method
@@ -527,6 +517,34 @@ namespace BooruDex.Booru
 		#endregion Protected Method
 
 		#region Public Method
+
+		/// <summary>
+		/// Add http user agent if not exist.
+		/// </summary>
+		/// <param name="userAgent">User Agrnt value.</param>
+		public void AddHttpUserAgent(string userAgent = "")
+		{
+			if (this._HttpClient == null)
+			{
+				return;
+			}
+
+			if (this._HttpClient.DefaultRequestHeaders.UserAgent.Count == 0)
+			{
+				if (userAgent == null | userAgent.Trim() == "")
+				{
+					this.HttpClient.DefaultRequestHeaders.Add(
+					"User-Agent",
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36");
+				}
+				else
+				{
+					this.HttpClient.DefaultRequestHeaders.Add(
+					"User-Agent",
+					userAgent);
+				}
+			}
+		}
 
 		/// <summary>
 		/// Login with booru username and password.
