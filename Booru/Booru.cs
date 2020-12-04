@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
 
+using BooruDex.Booru.Template;
 using BooruDex.Exceptions;
 using BooruDex.Models;
 
@@ -181,28 +182,6 @@ namespace BooruDex.Booru
 		/// Gets or sets whether this booru contains explicit content or not.
 		/// </summary>
 		public bool IsSafe { set; get; }
-
-		/// <summary>
-		/// Gets or sets maximum page number for booru.
-		/// </summary>
-		protected byte PageLimit
-		{
-			set
-			{
-				if (value < 10)
-				{
-					this._PageLimit = 10;
-				}
-				else
-				{
-					this._PageLimit = value;
-				}
-			}
-			get
-			{
-				return this._PageLimit;
-			}
-		}
 
 		#endregion Properties
 
