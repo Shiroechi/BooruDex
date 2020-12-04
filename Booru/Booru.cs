@@ -165,32 +165,44 @@ namespace BooruDex.Booru
 			}
 		}
 
+		#region Booru API Settings
+
 		/// <summary>
 		/// Gets or sets whether this booru contains explicit content or not.
 		/// </summary>
-		public bool IsSafe { set; get; }
+		public bool IsSafe { protected set; get; }
 
 		/// <summary>
-		/// Sets or gets booru API access.
+		/// Detemine whether this booru has <see cref="Artist"/> API or not.
 		/// </summary>
-		public BooruApi BooruApi
-		{
-			set 
-			{
-				if (value == null)
-				{
-					this._BooruApi = new BooruApi();
-				}
-				else
-				{
-					this._BooruApi = value;
-				}
-			}
-			get
-			{
-				return this._BooruApi;
-			}
-		}
+		public bool HasArtistApi { protected set; get; }
+
+		/// <summary>
+		/// Detemine whether this booru has <see cref="Pool"/> API or not.
+		/// </summary>
+		public bool HasPoolApi { protected set; get; }
+
+		/// <summary>
+		/// Detemine whether this booru has <see cref="Post"/> API or not.
+		/// </summary>
+		public bool HasPostApi { protected set; get; }
+
+		/// <summary>
+		/// Detemine whether this booru has <see cref="Tag"/> API or not.
+		/// </summary>
+		public bool HasTagApi { protected set; get; }
+
+		/// <summary>
+		/// Detemine whether this booru has <see cref="TagRelated"/> API or not.
+		/// </summary>
+		public bool HasTagRelatedApi { protected set; get; }
+
+		/// <summary>
+		/// Detemine whether this booru has <see cref="Wiki"/> API or not.
+		/// </summary>
+		public bool WikiApi { protected set; get; }
+
+		#endregion Booru API Settings
 
 		#endregion Properties
 
@@ -220,7 +232,7 @@ namespace BooruDex.Booru
 		#endregion Private Method
 
 		#region Protected Method
-		
+
 		/// <summary>
 		/// Create base API call url. 
 		/// </summary>
@@ -376,55 +388,7 @@ namespace BooruDex.Booru
 			}
 		}
 
-		/// <summary>
-		/// Check the property of JSON object exist or not.
-		/// </summary>
-		/// <param name="json">JSON object.</param>
-		/// <param name="propertyName">The name of the property to find.</param>
-		/// <returns>
-		///		<see langword="true"/> if the property was found; otherwise, <see langword="false"/>.
-		///	</returns>
-		protected bool PropertyExist(JsonElement json, string propertyName)
-		{
-			return json.TryGetProperty(propertyName, out _);
-		}
-
-		/// <summary>
-		/// Convert string rating to <see cref="Rating"/>.
-		/// </summary>
-		/// <param name="rating">String rating</param>
-		/// <returns></returns>
-		protected Rating ConvertRating(string rating)
-		{
-			switch (char.ToLower(rating[0]))
-			{
-				case 'e':
-					return Rating.Explicit;
-				case 'q':
-					return Rating.Questionable;
-				case 's':
-					return Rating.Safe;
-				default:
-					return Rating.Questionable;
-			}
-		}
-
-		/// <summary>
-		/// Check pre-condition for the tags.
-		/// </summary>
-		/// <param name="tags">Tags to check.</param>
-		/// <exception cref="ArgumentOutOfRangeException">
-		///		The provided <see cref="Tag"/> is more than the limit.
-		/// </exception>
-		protected void CheckTagsLimit(string[] tags)
-		{
-			if ((this._TagsLimit != 0) &&
-				(tags != null) &&
-				(tags.Length > this._TagsLimit))
-			{
-				throw new ArgumentOutOfRangeException($"Tag can't more than { this._TagsLimit } tag.");
-			}
-		}
+		#region Virtual Method
 
 		/// <summary>
 		/// Read <see cref="Artist"/> JSON search result.
@@ -503,6 +467,62 @@ namespace BooruDex.Booru
 		{
 			throw new NotImplementedException($"Method { nameof(ReadWiki) } is not implemented yet.");
 		}
+
+		#endregion Virtual Method
+
+		#region Helper Method
+
+		/// <summary>
+		/// Check the property of JSON object exist or not.
+		/// </summary>
+		/// <param name="json">JSON object.</param>
+		/// <param name="propertyName">The name of the property to find.</param>
+		/// <returns>
+		///		<see langword="true"/> if the property was found; otherwise, <see langword="false"/>.
+		///	</returns>
+		protected bool PropertyExist(JsonElement json, string propertyName)
+		{
+			return json.TryGetProperty(propertyName, out _);
+		}
+
+		/// <summary>
+		/// Convert string rating to <see cref="Rating"/>.
+		/// </summary>
+		/// <param name="rating">String rating</param>
+		/// <returns></returns>
+		protected Rating ConvertRating(string rating)
+		{
+			switch (char.ToLower(rating[0]))
+			{
+				case 'e':
+					return Rating.Explicit;
+				case 'q':
+					return Rating.Questionable;
+				case 's':
+					return Rating.Safe;
+				default:
+					return Rating.Questionable;
+			}
+		}
+
+		/// <summary>
+		/// Check pre-condition for the tags.
+		/// </summary>
+		/// <param name="tags">Tags to check.</param>
+		/// <exception cref="ArgumentOutOfRangeException">
+		///		The provided <see cref="Tag"/> is more than the limit.
+		/// </exception>
+		protected void CheckTagsLimit(string[] tags)
+		{
+			if ((this._TagsLimit != 0) &&
+				(tags != null) &&
+				(tags.Length > this._TagsLimit))
+			{
+				throw new ArgumentOutOfRangeException($"Tag can't more than { this._TagsLimit } tag.");
+			}
+		}
+
+		#endregion Helper Method
 
 		#endregion Protected Method
 
