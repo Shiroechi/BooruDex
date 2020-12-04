@@ -24,23 +24,18 @@ namespace BooruDex.Booru.Template
 		/// </summary>
 		/// <param name="domain">URL of booru based sites.</param>
 		/// <param name="httpClient">Client for sending and receive http response.</param>
-		public Moebooru(string domain, HttpClient httpClient = null) : this(domain, httpClient, new SplitMix64())
-		{
-
-		}
-
-		/// <summary>
-		/// <see cref="Moebooru"/> template for booru client.
-		/// </summary>
-		/// <param name="domain">URL of booru based sites.</param>
-		/// <param name="httpClient">Client for sending and receive http response.</param>
 		/// <param name="rng">Random generator for random post.</param>
-		public Moebooru(string domain, HttpClient httpClient, IRNG rng) : base(domain, httpClient, rng)
+		public Moebooru(string domain, HttpClient httpClient = null, IRNG rng = null) : base(domain, httpClient, rng == null ? new SplitMix64() : rng)
 		{
+			this.IsSafe = false;
+			this.HasArtistApi =
+				this.HasPoolApi =
+				this.HasTagApi =
+				this.HasTagApi =
+				this.HasWikiApi = true;
 			this._PostLimit = 100;
 			this._TagsLimit = 6;
 			this._PageLimit = 10;
-			this.IsSafe = false;
 			this._ApiVersion = "1.13.0+update.3";
 		}
 
