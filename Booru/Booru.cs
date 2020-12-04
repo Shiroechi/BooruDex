@@ -101,6 +101,7 @@ namespace BooruDex.Booru
 			this._BaseUrl = new Uri(domain, UriKind.Absolute);
 			this.HttpClient = httpClient;
 			this._RNG = rng is null ? new SplitMix64() : rng;
+			this._BooruApi = new BooruApi();
 			this._Authentication = false;
 			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 		}
@@ -168,6 +169,28 @@ namespace BooruDex.Booru
 		/// Gets or sets whether this booru contains explicit content or not.
 		/// </summary>
 		public bool IsSafe { set; get; }
+
+		/// <summary>
+		/// Sets or gets booru API access.
+		/// </summary>
+		public BooruApi BooruApi
+		{
+			set 
+			{
+				if (value == null)
+				{
+					this._BooruApi = new BooruApi();
+				}
+				else
+				{
+					this._BooruApi = value;
+				}
+			}
+			get
+			{
+				return this._BooruApi;
+			}
+		}
 
 		#endregion Properties
 
@@ -373,7 +396,7 @@ namespace BooruDex.Booru
 		/// <returns></returns>
 		protected Rating ConvertRating(string rating)
 		{
-			switch (rating.ToLower()[0])
+			switch (char.ToLower(rating[0]))
 			{
 				case 'e':
 					return Rating.Explicit;
