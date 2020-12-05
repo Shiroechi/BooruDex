@@ -361,8 +361,26 @@ namespace BooruDex.Booru
 		/// <exception cref="FormatException">
 		///		Can't convert to <see cref="uint"/>.
 		/// </exception>
-		protected async Task<uint> GetPostCountAsync(string url)
+		protected async Task<uint> GetPostCountAsync(string[] tags)
 		{
+			string url = "";
+
+			if (this is Gelbooru || this is Gelbooru02)
+			{
+				url = this.CreateBaseApiCall("post", false) +
+					$"&limit=0";
+			}
+			else if (this is Moebooru)
+			{
+				url = this.CreateBaseApiCall("post", false) +
+					$"limit=1";
+			}
+
+			if (tags != null)
+			{
+				url += $"&tags={ string.Join(" ", tags) }";
+			}
+
 			try
 			{
 				var xml = new XmlDocument();
@@ -843,9 +861,95 @@ namespace BooruDex.Booru
 		/// <exception cref="JsonException">
 		///		The JSON is invalid.
 		/// </exception>
-		public virtual Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
+		public virtual async Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
 		{
-			throw new NotImplementedException($"Method { nameof(PostListAsync) } is not implemented yet.");
+			if (this.HasPostApi == false)
+			{
+				throw new NotImplementedException($"Method { nameof(PostListAsync) } is not implemented yet.");
+			}
+
+			this.CheckTagsLimit(tags);
+
+			if (limit <= 0)
+			{
+				limit = 1;
+			}
+			else if (limit > this._PostLimit)
+			{
+				limit = this._PostLimit;
+			}
+
+			string url = "";
+
+			if (this is Danbooru)
+			{
+				url = this.CreateBaseApiCall("posts") +
+					$"limit={ limit }&page={ page }";
+			}
+			else if (this is Gelbooru || this is Gelbooru02)
+			{
+				if (page > 200000)
+				{
+					page = 200000;
+				}
+
+				url = this.CreateBaseApiCall("post") +
+					$"&limit={ limit }&pid={ page }";
+			}
+			else if (this is Moebooru)
+			{
+				url = this.CreateBaseApiCall("post") +
+					$"limit={ limit }&page={ page }";
+			}
+
+			if (tags != null)
+			{
+				url += $"&tags={ string.Join(" ", tags) }";
+			}
+
+			// get Post count in XML response.
+			// gelbooru and gelbooru beta 0.2 return empty page 
+			// if the request is json format.
+
+			if (this is Gelbooru || this is Gelbooru02)
+			{
+				var postCount = await this.GetPostCountAsync(tags);
+
+				if (postCount == 0)
+				{
+					if (tags == null || tags.Length <= 0)
+					{
+						throw new SearchNotFoundException($"No Post found with empty tags at page { page }.");
+					}
+					else
+					{
+						throw new SearchNotFoundException($"No Post found with tags { string.Join(", ", tags) } at page { page }.");
+					}
+				}
+			}
+
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
+
+			if (jsonArray.GetArrayLength() == 0)
+			{
+				if (tags == null || tags.Length <= 0)
+				{
+					throw new SearchNotFoundException($"No Post found with empty tags at page { page }.");
+				}
+				else
+				{
+					throw new SearchNotFoundException($"No Post found with tags { string.Join(", ", tags) } at page { page }.");
+				}
+			}
+
+			var posts = new List<Post>();
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				posts.Add(this.ReadPost(item));
+			}
+
+			return posts.ToArray();
 		}
 
 		/// <summary>
@@ -874,9 +978,46 @@ namespace BooruDex.Booru
 		/// <exception cref="JsonException">
 		///		The JSON is invalid.
 		/// </exception>
-		public virtual Task<Post> GetRandomPostAsync(string[] tags = null)
+		public virtual async Task<Post> GetRandomPostAsync(string[] tags = null)
 		{
-			throw new NotImplementedException($"Method { nameof(GetRandomPostAsync) } is not implemented yet.");
+			if (this.HasPostApi == false)
+			{
+				throw new NotImplementedException($"Method { nameof(GetRandomPostAsync) } is not implemented yet.");
+			}
+
+			this.CheckTagsLimit(tags);
+
+			// get Post count in XML response.
+
+			var postCount = await this.GetPostCountAsync(tags);
+
+			if (postCount == 0)
+			{
+				throw new SearchNotFoundException($"No post found with tags { string.Join(" ", tags) }.");
+			}
+
+			// there's a limit for page number
+			// more than that will return error 
+
+			int limitPageNumber = 0;
+
+			if (this is Gelbooru)
+			{
+				limitPageNumber = 20000;
+			}
+			else if (this is Gelbooru02)
+			{
+				limitPageNumber = 200000;
+			}
+
+			// get post with random the page number, each page 
+			// limited only with 1 post.
+
+			var pageNumber = (uint)(this._RNG.NextInt(1, postCount) % limitPageNumber);
+
+			var post = await this.PostListAsync(1, tags, pageNumber);
+
+			return post[0];
 		}
 
 		/// <summary>
@@ -906,9 +1047,67 @@ namespace BooruDex.Booru
 		/// <exception cref="JsonException">
 		///		The JSON is invalid.
 		/// </exception>
-		public virtual Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
+		public virtual async Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
 		{
-			throw new NotImplementedException($"Method { nameof(GetRandomPostAsync) } is not implemented yet.");
+			if (this.HasPostApi == false)
+			{
+				throw new NotImplementedException($"Method { nameof(GetRandomPostAsync) } is not implemented yet.");
+			}
+
+			// this algorithm for gelbooru, gelbooru beta 0.2 and moebooru
+
+			this.CheckTagsLimit(tags);
+
+			if (limit <= 0)
+			{
+				limit = 1;
+			}
+			else if (limit > this._PostLimit)
+			{
+				limit = this._PostLimit;
+			}
+
+			var postCount = await this.GetPostCountAsync(tags);
+
+			if (postCount == 0)
+			{
+				throw new SearchNotFoundException($"No post found with tags { string.Join(", ", tags) }.");
+			}
+			else if (postCount < limit)
+			{
+				throw new SearchNotFoundException($"The site only have { postCount } post with tags { string.Join(", ", tags) }.");
+			}
+
+			// there's a limit for page number
+			// more than that will return error 
+
+			int limitPageNumber = 0;
+
+			if (this is Gelbooru)
+			{
+				limitPageNumber = 20000;
+			}
+			else if ( this is Gelbooru02)
+			{
+				limitPageNumber = 200000;
+			}
+
+			var maxPageNumber = ((int)Math.Floor(postCount / limit * 1.0)) % limitPageNumber;
+
+			if (maxPageNumber == 1)
+			{
+				// get all post
+				return await this.PostListAsync(limit, tags);
+			}
+			else
+			{
+				// maxPageNumber - 1, to ensure the leftovers post
+				// in last page not included.
+
+				maxPageNumber -= 1;
+
+				return await this.PostListAsync(limit, tags, this._RNG.NextInt(1, (uint)maxPageNumber));
+			}
 		}
 
 		#endregion Post

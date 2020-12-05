@@ -164,64 +164,9 @@ namespace BooruDex.Booru.Template
 		}
 
 		/// <inheritdoc/>
-		public override async Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
-		{
-			this.CheckTagsLimit(tags);
-
-			if (limit <= 0)
-			{
-				limit = 1;
-			}
-			else if (limit > this._PostLimit)
-			{
-				limit = this._PostLimit;
-			}
-
-			string url = this.CreateBaseApiCall("posts") +
-					$"limit={ limit }&page={ page }";
-
-			if (tags != null)
-			{
-				url += $"&tags={ string.Join(" ", tags) }";
-			}
-
-			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
-
-			if (jsonArray.GetArrayLength() == 0)
-			{
-				if (tags == null || tags.Length <= 0)
-				{
-					throw new SearchNotFoundException($"No Post found with empty tags at page { page }.");
-				}
-				else
-				{
-					throw new SearchNotFoundException($"No Post found with tags { string.Join(", ", tags) } at page { page }.");
-				}
-			}
-
-			try
-			{
-				var posts = new List<Post>();
-
-				foreach (var item in jsonArray.EnumerateArray())
-				{
-					posts.Add(this.ReadPost(item));
-				}
-
-				return posts.ToArray();
-			}
-			catch (Exception e)
-			{
-				throw new SearchNotFoundException("Post is found but something happen when deserialize Post data.", e);
-			}
-		}
-
-		/// <inheritdoc/>
 		public override async Task<Post> GetRandomPostAsync(string[] tags = null)
 		{
-			return (await this.GetRandomPostAsync(
-					1,
-					tags))[0];
+			return (await this.GetRandomPostAsync(1, tags))[0];
 		}
 
 		/// <inheritdoc/>
@@ -238,7 +183,7 @@ namespace BooruDex.Booru.Template
 				limit = this._PostLimit;
 			}
 
-			string url = this.CreateBaseApiCall("posts") +
+			var url = this.CreateBaseApiCall("posts") +
 					$"limit={ limit }&random=true";
 
 			if (tags != null)
@@ -260,21 +205,14 @@ namespace BooruDex.Booru.Template
 				}
 			}
 
-			try
-			{
-				var posts = new List<Post>();
+			var posts = new List<Post>();
 
-				foreach (var item in jsonArray.EnumerateArray())
-				{
-					posts.Add(this.ReadPost(item));
-				}
-
-				return posts.ToArray();
-			}
-			catch (Exception e)
+			foreach (var item in jsonArray.EnumerateArray())
 			{
-				throw new SearchNotFoundException("Post is found but something happen when deserialize Post data.", e);
+				posts.Add(this.ReadPost(item));
 			}
+
+			return posts.ToArray();
 		}
 
 		#endregion Post
