@@ -996,24 +996,22 @@ namespace BooruDex.Booru
 				throw new SearchNotFoundException($"No post found with tags { string.Join(" ", tags) }.");
 			}
 
-			// there's a limit for page number
-			// more than that will return error 
-
-			int limitPageNumber = 0;
-
-			if (this is Gelbooru)
-			{
-				limitPageNumber = 20000;
-			}
-			else if (this is Gelbooru02)
-			{
-				limitPageNumber = 200000;
-			}
-
 			// get post with random the page number, each page 
 			// limited only with 1 post.
 
-			var pageNumber = (uint)(this._RNG.NextInt(1, postCount) % limitPageNumber);
+			var pageNumber = this._RNG.NextInt(1, postCount);
+
+			// there's a limit for page number
+			// more than that will return error 
+
+			if (this is Gelbooru)
+			{
+				pageNumber %= 20000;
+			}
+			else if (this is Gelbooru02)
+			{
+				pageNumber %= 200000;
+			}
 
 			var post = await this.PostListAsync(1, tags, pageNumber);
 
@@ -1078,21 +1076,19 @@ namespace BooruDex.Booru
 				throw new SearchNotFoundException($"The site only have { postCount } post with tags { string.Join(", ", tags) }.");
 			}
 
+			var maxPageNumber = (int)Math.Floor(postCount / limit * 1.0);
+
 			// there's a limit for page number
 			// more than that will return error 
 
-			int limitPageNumber = 0;
-
 			if (this is Gelbooru)
 			{
-				limitPageNumber = 20000;
+				maxPageNumber %= 20000;
 			}
 			else if ( this is Gelbooru02)
 			{
-				limitPageNumber = 200000;
+				maxPageNumber %= 200000;
 			}
-
-			var maxPageNumber = ((int)Math.Floor(postCount / limit * 1.0)) % limitPageNumber;
 
 			if (maxPageNumber == 1)
 			{
