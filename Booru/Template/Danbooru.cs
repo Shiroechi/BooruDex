@@ -220,34 +220,6 @@ namespace BooruDex.Booru.Template
 		#region Tag
 
 		/// <inheritdoc/>
-		public override async Task<Tag[]> TagListAsync(string name)
-		{
-			if (name == null || name.Trim() == "")
-			{
-				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
-			}
-
-			var url = this.CreateBaseApiCall("tags") +
-				$"limit={ this._PostLimit }&order=name&search[name_matches]={ name }";
-
-			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
-
-			if (jsonArray.GetArrayLength() == 0)
-			{
-				throw new SearchNotFoundException($"Can't find Tags with name \"{ name }\".");
-			}
-
-			var tags = new List<Tag>();
-
-			foreach (var item in jsonArray.EnumerateArray())
-			{
-				tags.Add(this.ReadTag(item));
-			}
-
-			return tags.ToArray();
-		}
-
-		/// <inheritdoc/>
 		public override async Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
 		{
 			if (name == null || name.Trim() == "")

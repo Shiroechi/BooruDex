@@ -30,7 +30,7 @@ namespace BooruDex.Booru.Template
 		{
 			this.IsSafe = false;
 			this.HasTagApi = true;
-			this._PostLimit = 100;
+			this._PostLimit = 100; // may increased up to 1000
 			this._TagsLimit = 0; // no tag limit
 			this._PageLimit = 10;
 			this._ApiVersion = "";
@@ -111,41 +111,5 @@ namespace BooruDex.Booru.Template
 		}
 
 		#endregion Protected Overrride Method
-
-		#region Public Method
-
-		#region Tag
-
-		/// <inheritdoc/>
-		public override async Task<Tag[]> TagListAsync(string name)
-		{
-			if (name == null || name.Trim() == "")
-			{
-				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
-			}
-
-			var url = this.CreateBaseApiCall("tag") +
-				$"&limit={ this._PostLimit }&orderby=name&name_pattern={ name }";
-
-			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
-
-			if (jsonArray.GetArrayLength() == 0)
-			{
-				throw new SearchNotFoundException($"Can't find Tags with name \"{ name }\".");
-			}
-
-			var tags = new List<Tag>();
-
-			foreach (var item in jsonArray.EnumerateArray())
-			{
-				tags.Add(this.ReadTag(item));
-			}
-
-			return tags.ToArray();
-		}
-
-		#endregion Tag
-
-		#endregion Public Method
 	}
 }

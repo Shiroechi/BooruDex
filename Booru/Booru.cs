@@ -15,6 +15,8 @@ using BooruDex.Models;
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
 
+using Microsoft.Win32.SafeHandles;
+
 namespace BooruDex.Booru
 {
 	/// <summary>
@@ -1138,9 +1140,51 @@ namespace BooruDex.Booru
 		/// <exception cref="JsonException">
 		///		The JSON is invalid.
 		/// </exception>
-		public virtual Task<Tag[]> TagListAsync(string name)
+		public virtual async Task<Tag[]> TagListAsync(string name)
 		{
-			throw new NotImplementedException($"Method { nameof(TagListAsync) } is not implemented yet.");
+			if (this.HasTagApi == false)
+			{
+				throw new NotImplementedException($"Method { nameof(TagListAsync) } is not implemented yet.");
+			}
+
+			if (name == null || name.Trim() == "")
+			{
+				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
+			}
+
+			string url = "";
+
+			if (this is Danbooru)
+			{
+				url = this.CreateBaseApiCall("tags") +
+					$"limit={ this._PostLimit }&order=name&search[name_matches]={ name }";
+			}
+			else if (this is Gelbooru)
+			{
+				url = this.CreateBaseApiCall("tag") + 
+					$"&limit={ this._PostLimit }&orderby=name&name_pattern={ name }";
+			}
+			else if (this is Moebooru)
+			{
+				url = this.CreateBaseApiCall("tag") + 
+					$"limit=0&order=name&name={ name }";
+			}
+
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
+
+			if (jsonArray.GetArrayLength() == 0)
+			{
+				throw new SearchNotFoundException($"Can't find Tags with name \"{ name }\".");
+			}
+
+			var tags = new List<Tag>();
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				tags.Add(this.ReadTag(item));
+			}
+
+			return tags.ToArray();
 		}
 
 		/// <summary>
@@ -1170,9 +1214,71 @@ namespace BooruDex.Booru
 		/// <exception cref="JsonException">
 		///		The JSON is invalid.
 		/// </exception>
-		public virtual Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
+		public virtual async Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
 		{
-			throw new NotImplementedException($"Method { nameof(TagRelatedAsync) } is not implemented yet.");
+			if (this.HasTagRelatedApi == false)
+			{
+				throw new NotImplementedException($"Method { nameof(TagRelatedAsync) } is not implemented yet.");
+			}
+
+			if (name == null || name.Trim() == "")
+			{
+				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
+			}
+
+			string url = "";
+
+			if (this is Danbooru)
+			{
+				url = this.CreateBaseApiCall("related_tag") + 
+					$"query={ name }&category={ type }";
+			}
+			else if (this is Moebooru)
+			{
+				url = this.CreateBaseApiCall("tag/related") +
+				   $"tags={ name }&type={ type }";
+			}
+
+			JsonElement obj;
+
+			using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
+			{
+				obj = temp.RootElement.Clone();
+			}
+
+			JsonElement jsonArray;
+
+			if (this is Danbooru)
+			{
+				jsonArray = obj.GetProperty("tags");
+			}
+			else 
+			{
+				// moebooru
+
+				if (this.PropertyExist(obj, name))
+				{
+					jsonArray = obj.GetProperty(name);
+				}
+				else
+				{
+					jsonArray = obj.GetProperty("useless_tags");
+				}
+			}
+
+			if (jsonArray.GetArrayLength() == 0)
+			{
+				throw new SearchNotFoundException($"Can't find related Tags with Tag name \"{ name }\".");
+			}
+
+			var tags = new List<TagRelated>();
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				tags.Add(this.ReadTagRelated(item));
+			}
+
+			return tags.ToArray();
 		}
 
 		#endregion Tag

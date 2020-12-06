@@ -33,7 +33,7 @@ namespace BooruDex.Booru.Template
 				this.HasTagApi =
 				this.HasTagApi =
 				this.HasWikiApi = true;
-			this._PostLimit = 100;
+			this._PostLimit = 100; // may increased up to 1000
 			this._TagsLimit = 6;
 			this._PageLimit = 10;
 			this._ApiVersion = "1.13.0+update.3";
@@ -145,34 +145,6 @@ namespace BooruDex.Booru.Template
 		#region Public Method
 
 		#region Tag
-
-		/// <inheritdoc/>
-		public override async Task<Tag[]> TagListAsync(string name)
-		{
-			if (name == null || name.Trim() == "")
-			{
-				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
-			}
-
-			var url = this.CreateBaseApiCall("tag") +
-				$"limit=0&order=name&name={ name }";
-
-			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
-
-			if (jsonArray.GetArrayLength() == 0)
-			{
-				throw new SearchNotFoundException($"Can't find Tags with name \"{ name }\".");
-			}
-
-			var tags = new List<Tag>();
-
-			foreach (var item in jsonArray.EnumerateArray())
-			{
-				tags.Add(this.ReadTag(item));
-			}
-
-			return tags.ToArray();
-		}
 
 		/// <inheritdoc/>
 		public override async Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
