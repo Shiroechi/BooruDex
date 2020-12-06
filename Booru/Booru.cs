@@ -15,8 +15,6 @@ using BooruDex.Models;
 using Litdex.Security.RNG;
 using Litdex.Security.RNG.PRNG;
 
-using Microsoft.Win32.SafeHandles;
-
 namespace BooruDex.Booru
 {
 	/// <summary>
@@ -1311,9 +1309,46 @@ namespace BooruDex.Booru
 		/// <exception cref="JsonException">
 		///		The JSON is invalid.
 		/// </exception>
-		public virtual Task<Wiki[]> WikiListAsync(string title)
+		public virtual async Task<Wiki[]> WikiListAsync(string title)
 		{
-			throw new NotImplementedException($"Method { nameof(WikiListAsync) } is not implemented yet.");
+			if (this.HasWikiApi == false)
+			{
+				throw new NotImplementedException($"Method { nameof(WikiListAsync) } is not implemented yet.");
+			}
+
+			if (title == null || title.Trim() == "")
+			{
+				throw new ArgumentNullException(nameof(title), "Title can't null or empty.");
+			}
+
+			string url = "";
+
+			if (this is Danbooru)
+			{
+				url = this.CreateBaseApiCall("wiki_pages") + 
+					$"search[order]=title&search[title]={ title }";
+			}
+			else if (this is Moebooru)
+			{
+				url = this.CreateBaseApiCall("wiki") + 
+					$"order=title&query={ title }";
+			}
+
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
+
+			if (jsonArray.GetArrayLength() == 0)
+			{
+				throw new SearchNotFoundException($"No Wiki found with title \"{ title }\"");
+			}
+
+			var wikis = new List<Wiki>();
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				wikis.Add(this.ReadWiki(item));
+			}
+
+			return wikis.ToArray();
 		}
 
 		#endregion Wiki

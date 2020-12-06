@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
-using System.Threading.Tasks;
 
-using BooruDex.Exceptions;
 using BooruDex.Models;
 
 using Litdex.Security.RNG;
@@ -31,7 +28,7 @@ namespace BooruDex.Booru.Template
 			this.HasArtistApi =
 				this.HasPoolApi =
 				this.HasTagApi =
-				this.HasTagApi =
+				this.HasTagRelatedApi =
 				this.HasWikiApi = true;
 			this._PostLimit = 100; // may increased up to 1000
 			this._TagsLimit = 6;
@@ -141,89 +138,5 @@ namespace BooruDex.Booru.Template
 		}
 
 		#endregion Protected Overrride Method
-
-		#region Public Method
-
-		#region Tag
-
-		/// <inheritdoc/>
-		public override async Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
-		{
-			if (name == null || name.Trim() == "")
-			{
-				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
-			}
-
-			var url = this.CreateBaseApiCall("tag/related") +
-				$"tags={ name }&type={ type }";
-			
-			JsonElement obj;
-
-			using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
-			{
-				obj = temp.RootElement.Clone();
-			}
-
-			JsonElement jsonArray;
-
-			if (this.PropertyExist(obj, name))
-			{
-				jsonArray = obj.GetProperty(name);
-			}
-			else
-			{
-				jsonArray = obj.GetProperty("useless_tags");
-			}
-
-			if (jsonArray.GetArrayLength() == 0)
-			{
-				throw new SearchNotFoundException($"Can't find related Tags with Tag name \"{ name }\".");
-			}
-
-			var tags = new List<TagRelated>();
-
-			foreach (var item in jsonArray.EnumerateArray())
-			{
-				tags.Add(this.ReadTagRelated(item));
-			}
-
-			return tags.ToArray();
-		}
-
-		#endregion Tag
-
-		#region Wiki
-
-		/// <inheritdoc/>
-		public override async Task<Wiki[]> WikiListAsync(string title)
-		{
-			if (title == null || title.Trim() == "")
-			{
-				throw new ArgumentNullException(nameof(title), "Title can't null or empty.");
-			}
-
-			var url = this.CreateBaseApiCall("wiki") +
-				$"order=title&query={ title }";
-
-			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
-
-			if (jsonArray.GetArrayLength() == 0)
-			{
-				throw new SearchNotFoundException($"No Wiki found with title \"{ title }\"");
-			}
-
-			var wikis = new List<Wiki>();
-
-			foreach (var item in jsonArray.EnumerateArray())
-			{
-				wikis.Add(this.ReadWiki(item));
-			}
-
-			return wikis.ToArray();
-		}
-
-		#endregion Wiki
-
-		#endregion Public Method
 	}
 }

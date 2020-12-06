@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -31,7 +30,7 @@ namespace BooruDex.Booru.Template
 			this.HasArtistApi =
 				this.HasPoolApi =
 				this.HasTagApi =
-				this.HasTagApi =
+				this.HasTagRelatedApi =
 				this.HasWikiApi = true;
 			this._PostLimit = 200;
 			this._TagsLimit = 2;
@@ -216,77 +215,6 @@ namespace BooruDex.Booru.Template
 		}
 
 		#endregion Post
-
-		#region Tag
-
-		/// <inheritdoc/>
-		public override async Task<TagRelated[]> TagRelatedAsync(string name, TagType type = TagType.General)
-		{
-			if (name == null || name.Trim() == "")
-			{
-				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
-			}
-
-			var url = this.CreateBaseApiCall("related_tag") +
-				$"query={ name }&category={ type }";
-
-			JsonElement obj;
-
-			using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
-			{
-				obj = temp.RootElement.Clone();
-			}
-
-			var jsonArray = obj.GetProperty("tags");
-
-			if (jsonArray.GetArrayLength() == 0)
-			{
-				throw new SearchNotFoundException($"Can't find related Tags with Tag name \"{ name }\".");
-			}
-
-			var tags = new List<TagRelated>();
-
-			foreach (var item in jsonArray.EnumerateArray())
-			{
-				tags.Add(this.ReadTagRelated(item));
-			}
-
-			return tags.ToArray();
-		}
-
-		#endregion Tag
-
-		#region Wiki
-
-		/// <inheritdoc/>
-		public override async Task<Wiki[]> WikiListAsync(string title)
-		{
-			if (title == null || title.Trim() == "")
-			{
-				throw new ArgumentNullException(nameof(title), "Title can't null or empty.");
-			}
-
-			var url = this.CreateBaseApiCall("wiki_pages") +
-				$"search[order]=title&search[title]={ title }";
-
-			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
-
-			if (jsonArray.GetArrayLength() == 0)
-			{
-				throw new SearchNotFoundException($"No Wiki found with title \"{ title }\"");
-			}
-
-			var wikis = new List<Wiki>();
-
-			foreach (var item in jsonArray.EnumerateArray())
-			{
-				wikis.Add(this.ReadWiki(item));
-			}
-
-			return wikis.ToArray();
-		}
-
-		#endregion Wiki
 
 		#endregion Public Method
 	}
