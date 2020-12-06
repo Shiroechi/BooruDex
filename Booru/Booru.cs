@@ -336,13 +336,13 @@ namespace BooruDex.Booru
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <returns><see cref="string"/> content.</returns>
-		protected Task<string> DeserializeStringFromStreamAsync(Stream stream)
+		protected async Task<string> DeserializeStringFromStreamAsync(Stream stream)
 		{
 			if (stream != null)
 			{
 				using (var sr = new StreamReader(stream, Encoding.UTF8))
 				{
-					return sr.ReadToEndAsync();
+					return await sr.ReadToEndAsync();
 				}
 			}
 
