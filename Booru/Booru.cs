@@ -985,6 +985,8 @@ namespace BooruDex.Booru
 				throw new NotImplementedException($"Method { nameof(GetRandomPostAsync) } is not implemented yet.");
 			}
 
+			// this algorithm for gelbooru, gelbooru beta 0.2 and moebooru
+
 			this.CheckTagsLimit(tags);
 
 			// get Post count in XML response.
