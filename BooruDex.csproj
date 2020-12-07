@@ -10,14 +10,14 @@
     <PackageTags>Imageboard Image Booru Danbooru Gelbooru Gelbooru02 Moebooru Yandere Konachan Safebooru Lolibooru Rule34 Behoimi Realbooru</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <Description>Library to access the booru website using public API. This library only support GET method, it means only listing and searching only.</Description>
-    <PackageReleaseNotes>- Migrate from Newtonsoft.Json to System.Text.Json.
-- Make the Models struct to readonly.
-- Fix bug error when parsing data from danbooru json response.
-- Change URL in Post from Uri to string.
-- Some bug fixes.</PackageReleaseNotes>
-    <Version>2.0.0</Version>
+    <PackageReleaseNotes>- Code refactor
+</PackageReleaseNotes>
+    <Version>2.1.0</Version>
     <AssemblyName>BooruDex</AssemblyName>
     <RootNamespace>BooruDex</RootNamespace>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Copyright>Shiroechi</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -31,8 +31,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Litdex.Security.RNG" Version="2.1.0" />
+    <PackageReference Include="Litdex.Security.RNG" Version="2.2.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
