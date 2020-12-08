@@ -16,7 +16,7 @@ namespace BooruDex.Booru.Client
 		/// <param name="httpClient">Http client for sending request and recieving response.</param>
 		public Realbooru(HttpClient httpClient = null) : base("https://realbooru.com/", httpClient)
 		{
-
+			this._PageLimit = 200000;
 		}
 
 		#endregion Constructor & Destructor
