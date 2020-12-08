@@ -47,7 +47,7 @@ namespace BooruDex.Booru
 		/// <summary>
 		/// Max page number.
 		/// </summary>
-		protected byte _PageLimit;
+		protected uint _PageLimit;
 
 		/// <summary>
 		/// Random generator.
@@ -531,6 +531,53 @@ namespace BooruDex.Booru
 			}
 		}
 
+		/// <summary>
+		/// Check pre-condition for page number.
+		/// </summary>
+		/// <param name="pageNumber">Page number to check.</param>
+		/// <returns>A valid page number that not lower or greater than required.</returns>
+		protected uint CheckPageLimit(uint pageNumber)
+		{
+			if (this._PageLimit == 0)
+			{
+				return pageNumber;
+			}
+
+			if (pageNumber <= 0)
+			{
+				return 1;
+			}
+			else if (pageNumber > this._PageLimit)
+			{
+				return this._PageLimit;
+			}
+			else
+			{
+				return pageNumber;
+			}
+		}
+
+		/// <summary>
+		/// Check pre-condition for number of requested post.
+		/// </summary>
+		/// <param name="postLimit">Number of post to check.</param>
+		/// <returns>A valid number of post that not lower or greater than required.</returns>
+		protected uint CheckPostLimit(uint postLimit)
+		{
+			if (postLimit <= 0)
+			{
+				return 1;
+			}
+			else if (postLimit > this._PostLimit)
+			{
+				return this._PostLimit;
+			}
+			else
+			{
+				return postLimit;
+			}
+		}
+
 		#endregion Helper Method
 
 		#endregion Protected Method
@@ -701,6 +748,8 @@ namespace BooruDex.Booru
 				throw new ArgumentNullException(nameof(title), "Title can't null or empty.");
 			}
 
+			page = this.CheckPageLimit(page);
+
 			string url = "";
 
 			if (this is Danbooru)
@@ -870,14 +919,9 @@ namespace BooruDex.Booru
 
 			this.CheckTagsLimit(tags);
 
-			if (limit <= 0)
-			{
-				limit = 1;
-			}
-			else if (limit > this._PostLimit)
-			{
-				limit = this._PostLimit;
-			}
+			page = this.CheckPageLimit(page);
+
+			limit = this.CheckPostLimit(limit);
 
 			string url = "";
 
@@ -888,11 +932,6 @@ namespace BooruDex.Booru
 			}
 			else if (this is Gelbooru || this is Gelbooru02)
 			{
-				if (page > 200000)
-				{
-					page = 200000;
-				}
-
 				url = this.CreateBaseApiCall("post") +
 					$"&limit={ limit }&pid={ page }";
 			}
@@ -1001,19 +1040,10 @@ namespace BooruDex.Booru
 			// get post with random the page number, each page 
 			// limited only with 1 post.
 
-			var pageNumber = this._RNG.NextInt(1, postCount);
-
 			// there's a limit for page number
 			// more than that will return error 
 
-			if (this is Gelbooru)
-			{
-				pageNumber %= 20000;
-			}
-			else if (this is Gelbooru02)
-			{
-				pageNumber %= 200000;
-			}
+			var pageNumber = this.CheckPageLimit(this._RNG.NextInt(1, postCount));
 
 			var post = await this.PostListAsync(1, tags, pageNumber);
 
@@ -1058,14 +1088,7 @@ namespace BooruDex.Booru
 
 			this.CheckTagsLimit(tags);
 
-			if (limit <= 0)
-			{
-				limit = 1;
-			}
-			else if (limit > this._PostLimit)
-			{
-				limit = this._PostLimit;
-			}
+			limit = this.CheckPostLimit(limit);
 
 			var postCount = await this.GetPostCountAsync(tags);
 
@@ -1078,19 +1101,10 @@ namespace BooruDex.Booru
 				throw new SearchNotFoundException($"The site only have { postCount } post with tags { string.Join(", ", tags) }.");
 			}
 
-			var maxPageNumber = (int)Math.Floor(postCount / limit * 1.0);
-
 			// there's a limit for page number
 			// more than that will return error 
 
-			if (this is Gelbooru)
-			{
-				maxPageNumber %= 20000;
-			}
-			else if ( this is Gelbooru02)
-			{
-				maxPageNumber %= 200000;
-			}
+			var maxPageNumber = this.CheckPageLimit((uint)Math.Floor(postCount / limit * 1.0));
 
 			if (maxPageNumber == 1)
 			{
@@ -1104,7 +1118,7 @@ namespace BooruDex.Booru
 
 				maxPageNumber -= 1;
 
-				return await this.PostListAsync(limit, tags, this._RNG.NextInt(1, (uint)maxPageNumber));
+				return await this.PostListAsync(limit, tags, this._RNG.NextInt(1, maxPageNumber));
 			}
 		}
 
