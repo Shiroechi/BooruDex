@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -61,6 +62,31 @@ namespace BooruDex.Booru.Template
 				new string[] { "" }); // no artist urls in JSON API response.
 		}
 
+		/// <summary>
+		/// Read JSON <see cref="Artist"/>.
+		/// </summary>
+		/// <param name="json">JSON object.</param>
+		/// <returns><see cref="Artist"/> object.</returns>
+		protected virtual Artist ReadArtistDetail(JsonElement json)
+		{
+			var array = json.GetProperty("urls");
+
+			var urls = new List<string>();
+
+			if (array.GetArrayLength() != 0)
+			{
+				foreach (var item in array.EnumerateArray())
+				{
+					urls.Add(item.GetString());
+				}
+			}
+
+			return new Artist(
+				json.GetProperty("artist_id").GetUInt32(),
+				json.GetProperty("name").GetString(),
+				urls);
+		}
+
 		/// <inheritdoc/>
 		protected override Pool ReadPool(JsonElement json)
 		{
@@ -119,6 +145,56 @@ namespace BooruDex.Booru.Template
 		#endregion Protected Overrride Method
 
 		#region Public Method
+
+		#region Artist
+
+		/// <summary>
+		/// Get <see cref="Artist"/> details.
+		/// </summary>
+		/// <param name="name">The exact name of the artist.</param>
+		/// <returns>Array of <see cref="Artist"/>.</returns>
+		/// <exception cref="ArgumentNullException">
+		///		One or more parameter is null or empty.
+		/// </exception>
+		/// <exception cref="HttpResponseException">
+		///		Unexpected error occured.
+		/// </exception>
+		/// <exception cref="HttpRequestException">
+		///		The request failed due to an underlying issue such as network connectivity, DNS
+		///     failure, server certificate validation or timeout.
+		/// </exception>
+		/// <exception cref="SearchNotFoundException">
+		///		The search result is empty. No <see cref="Artist"/> is found.
+		/// </exception>
+		/// <exception cref="JsonException">
+		///		The JSON is invalid.
+		/// </exception>
+		public virtual async Task<Artist> ArtistDetailAsync(string name)
+		{
+			if (name == null || name.Trim() == "")
+			{
+				throw new ArgumentNullException(nameof(name), "Artist name can't null or empty.");
+			}
+
+			var url = this.CreateBaseApiCall("artist_versions") +
+				$"limit=1&only=artist_id,name,urls&search[name]={ name }";
+
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
+
+			if (jsonArray.GetArrayLength() == 0)
+			{
+				throw new SearchNotFoundException($"Can't find Artist with name \"{ name }\".");
+			}
+
+			foreach (var item in jsonArray.EnumerateArray())
+			{
+				return this.ReadArtistDetail(item);
+			}
+
+			throw new SearchNotFoundException($"Can't find Artist with name \"{ name }\".");
+		}
+
+		#endregion Artist
 
 		#region Post
 
