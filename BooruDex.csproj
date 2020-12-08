@@ -11,7 +11,7 @@
     <NeutralLanguage>en</NeutralLanguage>
     <Description>Library to access the booru website using public API. This library only support GET method, it means only listing and searching only.</Description>
     <PackageReleaseNotes>- Code refactor
-</PackageReleaseNotes>
+- New method for danbooru template, ArtistDetailAsync.</PackageReleaseNotes>
     <Version>2.1.0</Version>
     <AssemblyName>BooruDex</AssemblyName>
     <RootNamespace>BooruDex</RootNamespace>
