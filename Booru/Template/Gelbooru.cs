@@ -29,7 +29,7 @@ namespace BooruDex.Booru.Template
 			this.HasTagApi = true;
 			this._PostLimit = 100; // may increased up to 1000
 			this._TagsLimit = 0; // no tag limit
-			this._PageLimit = 10;
+			this._PageLimit = 20000;
 			this._ApiVersion = "";
 			this._PasswordSalt = "";
 		}

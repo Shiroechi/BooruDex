@@ -34,7 +34,7 @@ namespace BooruDex.Booru.Template
 				this.HasWikiApi = true;
 			this._PostLimit = 200;
 			this._TagsLimit = 2;
-			this._PageLimit = 10;
+			this._PageLimit = 1000;
 			this._ApiVersion = "";
 		}
 

@@ -26,7 +26,6 @@ namespace BooruDex.Booru.Template
 		{
 			this._PostLimit = 100;
 			this._TagsLimit = 0; // no tag limit
-			this._PageLimit = 10;
 			this.IsSafe = false;
 			this._ApiVersion = "";
 			this._PasswordSalt = "";

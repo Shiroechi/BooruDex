@@ -32,7 +32,7 @@ namespace BooruDex.Booru.Template
 				this.HasWikiApi = true;
 			this._PostLimit = 100; // may increased up to 1000
 			this._TagsLimit = 6;
-			this._PageLimit = 10;
+			this._PageLimit = 0;
 			this._ApiVersion = "1.13.0+update.3";
 		}
 
