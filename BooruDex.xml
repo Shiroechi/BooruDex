@@ -278,6 +278,20 @@
             	The provided <see cref="T:BooruDex.Models.Tag"/> is more than the limit.
             </exception>
         </member>
+        <member name="M:BooruDex.Booru.Booru.CheckPageLimit(System.UInt32)">
+            <summary>
+            Check pre-condition for page number.
+            </summary>
+            <param name="pageNumber">Page number to check.</param>
+            <returns>A valid page number that not lower or greater than required.</returns>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.CheckPostLimit(System.UInt32)">
+            <summary>
+            Check pre-condition for number of requested post.
+            </summary>
+            <param name="postLimit">Number of post to check.</param>
+            <returns>A valid number of post that not lower or greater than required.</returns>
+        </member>
         <member name="M:BooruDex.Booru.Booru.AddHttpUserAgent(System.String)">
             <summary>
             Add http user agent if not exist.
@@ -659,6 +673,13 @@
         <member name="M:BooruDex.Booru.Template.Danbooru.ReadArtist(System.Text.Json.JsonElement)">
             <inheritdoc/>
         </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.ReadArtistDetail(System.Text.Json.JsonElement)">
+            <summary>
+            Read JSON <see cref="T:BooruDex.Models.Artist"/>.
+            </summary>
+            <param name="json">JSON object.</param>
+            <returns><see cref="T:BooruDex.Models.Artist"/> object.</returns>
+        </member>
         <member name="M:BooruDex.Booru.Template.Danbooru.ReadPool(System.Text.Json.JsonElement)">
             <inheritdoc/>
         </member>
@@ -673,6 +694,29 @@
         </member>
         <member name="M:BooruDex.Booru.Template.Danbooru.ReadWiki(System.Text.Json.JsonElement)">
             <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.ArtistDetailAsync(System.String)">
+            <summary>
+            Get <see cref="T:BooruDex.Models.Artist"/> details.
+            </summary>
+            <param name="name">The exact name of the artist.</param>
+            <returns>Array of <see cref="T:BooruDex.Models.Artist"/>.</returns>
+            <exception cref="T:System.ArgumentNullException">
+            	One or more parameter is null or empty.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.HttpResponseException">
+            	Unexpected error occured.
+            </exception>
+            <exception cref="T:System.Net.Http.HttpRequestException">
+            	The request failed due to an underlying issue such as network connectivity, DNS
+                failure, server certificate validation or timeout.
+            </exception>
+            <exception cref="T:BooruDex.Exceptions.SearchNotFoundException">
+            	The search result is empty. No <see cref="T:BooruDex.Models.Artist"/> is found.
+            </exception>
+            <exception cref="T:System.Text.Json.JsonException">
+            	The JSON is invalid.
+            </exception>
         </member>
         <member name="M:BooruDex.Booru.Template.Danbooru.PostShowAsync(System.UInt32)">
             <summary>
