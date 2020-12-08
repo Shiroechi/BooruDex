@@ -15,6 +15,7 @@ namespace BooruDex.Booru.Client
 		public Safebooru(HttpClient httpClient = null) : base("https://safebooru.org/", httpClient)
 		{
 			this.IsSafe = true;
+			this._PageLimit = 0; // no page limit
 		}
 
 		#endregion Constructor & Destructor
