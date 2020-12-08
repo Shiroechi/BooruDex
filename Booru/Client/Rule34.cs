@@ -14,7 +14,7 @@ namespace BooruDex.Booru.Client
 		/// <param name="httpClient">Http client for sending request and recieving response.</param>
 		public Rule34(HttpClient httpClient = null) : base("https://rule34.xxx/", httpClient)
 		{
-
+			this._PageLimit = 200000;
 		}
 
 		#endregion Constructor & Destructor

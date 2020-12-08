@@ -18,6 +18,7 @@ namespace BooruDex.Booru.Client
 		public Behoimi(HttpClient httpClient = null) : base("http://behoimi.org/", httpClient)
 		{
 			this._PasswordSalt = "meganekko-heaven--{}--";
+			this._PageLimit = 1000;
 		}
 
 		#endregion Constructor & Destructor
