@@ -5,7 +5,6 @@ using System.Text.Json;
 using BooruDex.Models;
 
 using Litdex.Security.RNG;
-using Litdex.Security.RNG.PRNG;
 
 namespace BooruDex.Booru.Template
 {
@@ -30,7 +29,7 @@ namespace BooruDex.Booru.Template
 				this.HasTagApi =
 				this.HasTagRelatedApi =
 				this.HasWikiApi = true;
-			this._PostLimit = 100; // may increased up to 1000
+			this._DefaultPostLimit = 100; // may increased up to 1000
 			this._TagsLimit = 6;
 			this._PageLimit = 0;
 			this._ApiVersion = "1.13.0+update.3";

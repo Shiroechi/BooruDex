@@ -8,7 +8,6 @@ using BooruDex.Exceptions;
 using BooruDex.Models;
 
 using Litdex.Security.RNG;
-using Litdex.Security.RNG.PRNG;
 
 namespace BooruDex.Booru.Template
 {
@@ -33,7 +32,7 @@ namespace BooruDex.Booru.Template
 				this.HasTagApi =
 				this.HasTagRelatedApi =
 				this.HasWikiApi = true;
-			this._PostLimit = 200;
+			this._DefaultPostLimit = 200;
 			this._TagsLimit = 2;
 			this._PageLimit = 1000;
 			this._ApiVersion = "";
@@ -253,9 +252,9 @@ namespace BooruDex.Booru.Template
 			{
 				limit = 1;
 			}
-			else if (limit > this._PostLimit)
+			else if (limit > this._DefaultPostLimit)
 			{
-				limit = this._PostLimit;
+				limit = this._DefaultPostLimit;
 			}
 
 			var url = this.CreateBaseApiCall("posts") +

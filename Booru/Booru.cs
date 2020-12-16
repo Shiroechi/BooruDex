@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -35,9 +34,9 @@ namespace BooruDex.Booru
 		protected Uri _BaseUrl;
 
 		/// <summary>
-		/// Max retrieved post for each request.
+		/// Default retrieved post for each request.
 		/// </summary>
-		protected byte _PostLimit;
+		protected ushort _DefaultPostLimit;
 
 		/// <summary>
 		/// Max allowed <see cref="Tag"/>s to use for search a <see cref="Post"/>. 
@@ -150,7 +149,7 @@ namespace BooruDex.Booru
 		/// </summary>
 		public string ApiVersion
 		{
-			private set
+			protected set
 			{
 				this._ApiVersion = value;
 			}
@@ -567,9 +566,9 @@ namespace BooruDex.Booru
 			{
 				return 1;
 			}
-			else if (postLimit > this._PostLimit)
+			else if (postLimit > this._DefaultPostLimit)
 			{
-				return this._PostLimit;
+				return this._DefaultPostLimit;
 			}
 			else
 			{
@@ -671,7 +670,7 @@ namespace BooruDex.Booru
 			if (this is Danbooru)
 			{
 				url = this.CreateBaseApiCall("artists") +
-					$"limit={ this._PostLimit }&page={ page }&search[any_name_matches]={ name }";
+					$"limit={ this._DefaultPostLimit }&page={ page }&search[any_name_matches]={ name }";
 
 				if (sort)
 				{
@@ -754,7 +753,7 @@ namespace BooruDex.Booru
 			if (this is Danbooru)
 			{
 				url = this.CreateBaseApiCall("pools") +
-					$"limit={ this._PostLimit }&page={ page }&search[name_matches]={ title }";
+					$"limit={ this._DefaultPostLimit }&page={ page }&search[name_matches]={ title }";
 			}
 			else if (this  is Moebooru)
 			{
@@ -1168,12 +1167,12 @@ namespace BooruDex.Booru
 			if (this is Danbooru)
 			{
 				url = this.CreateBaseApiCall("tags") +
-					$"limit={ this._PostLimit }&order=name&search[name_matches]={ name }";
+					$"limit={ this._DefaultPostLimit }&order=name&search[name_matches]={ name }";
 			}
 			else if (this is Gelbooru)
 			{
 				url = this.CreateBaseApiCall("tag") + 
-					$"&limit={ this._PostLimit }&orderby=name&name_pattern={ name }";
+					$"&limit={ this._DefaultPostLimit }&orderby=name&name_pattern={ name }";
 			}
 			else if (this is Moebooru)
 			{

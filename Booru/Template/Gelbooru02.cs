@@ -5,7 +5,6 @@ using System.Text.Json;
 using BooruDex.Models;
 
 using Litdex.Security.RNG;
-using Litdex.Security.RNG.PRNG;
 
 namespace BooruDex.Booru.Template
 {
@@ -24,7 +23,7 @@ namespace BooruDex.Booru.Template
 		/// <param name="rng">Random generator for random post.</param>
 		public Gelbooru02(string domain, HttpClient httpClient = null, IRNG rng = null) : base(domain, httpClient, rng)
 		{
-			this._PostLimit = 100;
+			this._DefaultPostLimit = 100;
 			this._TagsLimit = 0; // no tag limit
 			this.IsSafe = false;
 			this._ApiVersion = "";
