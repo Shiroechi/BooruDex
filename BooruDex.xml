@@ -19,9 +19,9 @@
             Base API request URL.
             </summary>
         </member>
-        <member name="F:BooruDex.Booru.Booru._PostLimit">
+        <member name="F:BooruDex.Booru.Booru._DefaultPostLimit">
             <summary>
-            Max retrieved post for each request.
+            Default retrieved post for each request.
             </summary>
         </member>
         <member name="F:BooruDex.Booru.Booru._TagsLimit">
