@@ -96,10 +96,9 @@ namespace BooruDex.Booru
 		{
 			this._BaseUrl = new Uri(domain, UriKind.Absolute);
 			this.HttpClient = httpClient;
-			this._RNG = rng is null ? new SplitMix64() : rng;
+			this._RNG = rng == null ? new SplitMix64() : rng;
 			this.DefaultApiSettings();
 			this._Authentication = false;
-			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 		}
 
 		/// <summary>
