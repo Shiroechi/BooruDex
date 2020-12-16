@@ -1249,46 +1249,44 @@ namespace BooruDex.Booru
 				   $"tags={ name }&type={ type }";
 			}
 
-			JsonElement obj;
-
 			using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
 			{
-				obj = temp.RootElement.Clone();
-			}
+				var obj = temp.RootElement;
 
-			JsonElement jsonArray;
+				JsonElement jsonArray;
 
-			if (this is Danbooru)
-			{
-				jsonArray = obj.GetProperty("tags");
-			}
-			else
-			{
-				// moebooru
-
-				if (this.PropertyExist(obj, name))
+				if (this is Danbooru)
 				{
-					jsonArray = obj.GetProperty(name);
+					jsonArray = obj.GetProperty("tags");
 				}
 				else
 				{
-					jsonArray = obj.GetProperty("useless_tags");
+					// moebooru
+
+					if (this.PropertyExist(obj, name))
+					{
+						jsonArray = obj.GetProperty(name);
+					}
+					else
+					{
+						jsonArray = obj.GetProperty("useless_tags");
+					}
 				}
+
+				if (jsonArray.GetArrayLength() == 0)
+				{
+					throw new SearchNotFoundException($"Can't find related Tags with Tag name \"{ name }\".");
+				}
+
+				var tags = new List<TagRelated>();
+
+				foreach (var item in jsonArray.EnumerateArray())
+				{
+					tags.Add(this.ReadTagRelated(item));
+				}
+
+				return tags.ToArray();
 			}
-
-			if (jsonArray.GetArrayLength() == 0)
-			{
-				throw new SearchNotFoundException($"Can't find related Tags with Tag name \"{ name }\".");
-			}
-
-			var tags = new List<TagRelated>();
-
-			foreach (var item in jsonArray.EnumerateArray())
-			{
-				tags.Add(this.ReadTagRelated(item));
-			}
-
-			return tags.ToArray();
 		}
 
 		#endregion Tag
