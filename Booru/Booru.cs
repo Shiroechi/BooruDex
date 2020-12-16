@@ -265,9 +265,9 @@ namespace BooruDex.Booru
 						{
 							return await JsonSerializer.DeserializeAsync<T>(stream);
 						}
-						catch (JsonException e)
+						catch (JsonException) 
 						{
-							throw e;
+							throw;
 						}
 					}
 
@@ -277,13 +277,13 @@ namespace BooruDex.Booru
 						$"Reason = { response.ReasonPhrase }.");
 				}
 			}
-			catch (HttpRequestException e)
+			catch (HttpRequestException)
 			{
-				throw e;
+				throw;
 			}
-			catch (TaskCanceledException e)
+			catch (TaskCanceledException)
 			{
-				throw e;
+				throw;
 			}
 		}
 
@@ -321,13 +321,13 @@ namespace BooruDex.Booru
 						$"Reason = { response.ReasonPhrase }.");
 				}
 			}
-			catch (HttpRequestException e)
+			catch (HttpRequestException) 
 			{
-				throw e;
+				throw;
 			}
-			catch (TaskCanceledException e)
+			catch (TaskCanceledException)
 			{
-				throw e;
+				throw;
 			}
 		}
 
@@ -387,13 +387,13 @@ namespace BooruDex.Booru
 				xml.LoadXml(await this.GetStringResponseAsync(url));
 				return uint.Parse(xml.ChildNodes.Item(1).Attributes[0].InnerXml);
 			}
-			catch (XmlException e)
+			catch (XmlException) 
 			{
-				throw e;
+				throw;
 			}
-			catch (FormatException e)
+			catch (FormatException) 
 			{
-				throw e;
+				throw;
 			}
 		}
 
