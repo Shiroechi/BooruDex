@@ -665,30 +665,30 @@ namespace BooruDex.Booru
 				throw new ArgumentNullException(nameof(name), "Artist name can't null or empty.");
 			}
 
-			var url = new StringBuilder();
+			string url = "";
 
 			if (this is Danbooru)
 			{
-				url.Append(this.CreateBaseApiCall("artists"));
-				url.Append($"limit={ this._DefaultPostLimit }&page={ page }&search[any_name_matches]={ name }");
+				url = this.CreateBaseApiCall("artists") +
+					$"limit={ this._DefaultPostLimit }&page={ page }&search[any_name_matches]={ name }";
 
 				if (sort)
 				{
-					url.Append("&search[order]=name");
+					url += "&search[order]=name";
 				}
 			}
 			else if (this is Moebooru)
 			{
-				url.Append(this.CreateBaseApiCall("artist"));
-				url.Append($"page={ page }&name={ name }");
+				url = this.CreateBaseApiCall("artist") +
+					$"page={ page }&name={ name }";
 
 				if (sort)
 				{
-					url.Append("&order=name");
+					url += "&order=name";
 				}
 			}
 
-			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url.ToString());
+			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
 
 			if (jsonArray.GetArrayLength() == 0)
 			{
