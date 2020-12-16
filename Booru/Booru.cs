@@ -254,7 +254,7 @@ namespace BooruDex.Booru
 			try
 			{
 				using (var request = new HttpRequestMessage(HttpMethod.Get, url))
-				using (var response = await this._HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+				using (var response = await this.HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
 				using (var stream = await response.Content.ReadAsStreamAsync())
 				{
 					if (response.IsSuccessStatusCode)
@@ -305,7 +305,7 @@ namespace BooruDex.Booru
 			try
 			{
 				using (var request = new HttpRequestMessage(HttpMethod.Get, url))
-				using (var response = await this._HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+				using (var response = await this.HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
 				using (var stream = await response.Content.ReadAsStreamAsync())
 				{
 					if (response.IsSuccessStatusCode)
