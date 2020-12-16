@@ -21,16 +21,16 @@
 		/// <param name="previewWidth">The width of the preview image, in pixels.</param>
 		/// <param name="source">The original source of the file.</param>
 		public Post(
-			uint id, 
+			uint id,
 			string postUrl,
 			string fileUrl,
-			string previewUrl, 
-			Rating rating, 
-			string tags, 
-			uint size, 
-			int height, 
-			int width, 
-			int? previewHeight, 
+			string previewUrl,
+			Rating rating,
+			string tags,
+			uint size,
+			int height,
+			int width,
+			int? previewHeight,
 			int? previewWidth,
 			string source)
 		{

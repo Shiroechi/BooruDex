@@ -41,7 +41,7 @@ namespace BooruDex.Booru.Template
 		protected override string CreateBaseApiCall(string query, bool json = true)
 		{
 			var sb = new StringBuilder($"{ this._BaseUrl.AbsoluteUri }index.php?page=dapi&s={ query }&q=index");
-			
+
 			if (json)
 			{
 				sb.Append("&json=1");

@@ -5,7 +5,7 @@ namespace BooruDex.Booru.Client
 	public class DanbooruDonmai : Template.Danbooru
 	{
 		#region Constructor & Destructor
-		
+
 		/// <summary>
 		/// Create <see cref="DanbooruDonmai"/> client object.
 		/// </summary>
@@ -14,7 +14,7 @@ namespace BooruDex.Booru.Client
 		{
 
 		}
-		
+
 		#endregion Constructor & Destructor
 	}
 }

@@ -106,9 +106,9 @@ namespace BooruDex.Booru
 		~Booru()
 		{
 			this._BaseUrl = null;
-			this._ApiVersion = 
-				this._Password = 
-				this._PasswordSalt = 
+			this._ApiVersion =
+				this._Password =
+				this._PasswordSalt =
 				this._Username = null;
 		}
 
@@ -211,10 +211,10 @@ namespace BooruDex.Booru
 		private void DefaultApiSettings()
 		{
 			this.HasPostApi = true;
-			this.HasArtistApi = 
-				this.HasPoolApi = 
-				this.HasTagApi = 
-				this.HasTagRelatedApi = 
+			this.HasArtistApi =
+				this.HasPoolApi =
+				this.HasTagApi =
+				this.HasTagRelatedApi =
 				this.HasWikiApi = false;
 		}
 
@@ -263,7 +263,7 @@ namespace BooruDex.Booru
 						{
 							return await JsonSerializer.DeserializeAsync<T>(stream);
 						}
-						catch (JsonException) 
+						catch (JsonException)
 						{
 							throw;
 						}
@@ -319,7 +319,7 @@ namespace BooruDex.Booru
 						$"Reason = { response.ReasonPhrase }.");
 				}
 			}
-			catch (HttpRequestException) 
+			catch (HttpRequestException)
 			{
 				throw;
 			}
@@ -385,11 +385,11 @@ namespace BooruDex.Booru
 				xml.LoadXml(await this.GetStringResponseAsync(url));
 				return uint.Parse(xml.ChildNodes.Item(1).Attributes[0].InnerXml);
 			}
-			catch (XmlException) 
+			catch (XmlException)
 			{
 				throw;
 			}
-			catch (FormatException) 
+			catch (FormatException)
 			{
 				throw;
 			}
@@ -666,7 +666,7 @@ namespace BooruDex.Booru
 			}
 
 			string url = "";
-			
+
 			if (this is Danbooru)
 			{
 				url = this.CreateBaseApiCall("artists") +
@@ -679,7 +679,7 @@ namespace BooruDex.Booru
 			}
 			else if (this is Moebooru)
 			{
-				url = this.CreateBaseApiCall("artist") + 
+				url = this.CreateBaseApiCall("artist") +
 					$"page={ page }&name={ name }";
 
 				if (sort)
@@ -755,9 +755,9 @@ namespace BooruDex.Booru
 				url = this.CreateBaseApiCall("pools") +
 					$"limit={ this._DefaultPostLimit }&page={ page }&search[name_matches]={ title }";
 			}
-			else if (this  is Moebooru)
+			else if (this is Moebooru)
 			{
-				url = this.CreateBaseApiCall("pool") + 
+				url = this.CreateBaseApiCall("pool") +
 					$"page={ page }&query={ title }";
 			}
 
@@ -850,7 +850,7 @@ namespace BooruDex.Booru
 			}
 			else if (this is Moebooru)
 			{
-				url = this.CreateBaseApiCall("pool/show") + 
+				url = this.CreateBaseApiCall("pool/show") +
 					$"id={ poolId }";
 
 				try
@@ -872,7 +872,7 @@ namespace BooruDex.Booru
 					throw new SearchNotFoundException($"Can't find Pool with id { poolId }.", e);
 				}
 			}
-			
+
 			return posts.ToArray();
 		}
 
@@ -1171,12 +1171,12 @@ namespace BooruDex.Booru
 			}
 			else if (this is Gelbooru)
 			{
-				url = this.CreateBaseApiCall("tag") + 
+				url = this.CreateBaseApiCall("tag") +
 					$"&limit={ this._DefaultPostLimit }&orderby=name&name_pattern={ name }";
 			}
 			else if (this is Moebooru)
 			{
-				url = this.CreateBaseApiCall("tag") + 
+				url = this.CreateBaseApiCall("tag") +
 					$"limit=0&order=name&name={ name }";
 			}
 
@@ -1240,7 +1240,7 @@ namespace BooruDex.Booru
 
 			if (this is Danbooru)
 			{
-				url = this.CreateBaseApiCall("related_tag") + 
+				url = this.CreateBaseApiCall("related_tag") +
 					$"query={ name }&category={ type }";
 			}
 			else if (this is Moebooru)
@@ -1262,7 +1262,7 @@ namespace BooruDex.Booru
 			{
 				jsonArray = obj.GetProperty("tags");
 			}
-			else 
+			else
 			{
 				// moebooru
 
@@ -1337,12 +1337,12 @@ namespace BooruDex.Booru
 
 			if (this is Danbooru)
 			{
-				url = this.CreateBaseApiCall("wiki_pages") + 
+				url = this.CreateBaseApiCall("wiki_pages") +
 					$"search[order]=title&search[title]={ title }";
 			}
 			else if (this is Moebooru)
 			{
-				url = this.CreateBaseApiCall("wiki") + 
+				url = this.CreateBaseApiCall("wiki") +
 					$"order=title&query={ title }";
 			}
 
