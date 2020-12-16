@@ -219,22 +219,18 @@ namespace BooruDex.Booru.Template
 		{
 			var url = this.CreateBaseApiCall($"posts/{ postId }");
 
-			JsonElement obj;
-
-			using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
+			using (var doc = await this.GetJsonResponseAsync<JsonDocument>(url))
 			{
-				obj = temp.RootElement.Clone();
+				// if Post is not found, it return JSON response
+				// containing error message
+
+				if (doc.RootElement.TryGetProperty("success", out _))
+				{
+					throw new SearchNotFoundException($"Post with id { postId } is not found.");
+				}
+
+				return this.ReadPost(doc.RootElement);
 			}
-
-			// if Post is not found, it return JSON response
-			// containing error message
-
-			if (obj.TryGetProperty("success", out _))
-			{
-				throw new SearchNotFoundException($"Post with id { postId } is not found.");
-			}
-
-			return this.ReadPost(obj);
 		}
 
 		/// <inheritdoc/>
