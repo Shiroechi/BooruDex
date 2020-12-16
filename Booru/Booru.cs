@@ -270,9 +270,7 @@ namespace BooruDex.Booru
 					}
 
 					throw new HttpResponseException(
-						$"Unexpected error occured.\n" +
-						$"Status code = { (int)response.StatusCode }\n" +
-						$"Reason = { response.ReasonPhrase }.");
+						$"Unexpected error occured.\nStatus code = { (int)response.StatusCode }\nReason = { response.ReasonPhrase }.");
 				}
 			}
 			catch (HttpRequestException)
@@ -314,9 +312,7 @@ namespace BooruDex.Booru
 					}
 
 					throw new HttpResponseException(
-						$"Unexpected error occured.\n" +
-						$"Status code = { (int)response.StatusCode }\n" +
-						$"Reason = { response.ReasonPhrase }.");
+						$"Unexpected error occured.\nStatus code = { (int)response.StatusCode }\nReason = { response.ReasonPhrase }.");
 				}
 			}
 			catch (HttpRequestException)
@@ -817,14 +813,12 @@ namespace BooruDex.Booru
 			{
 				url = this.CreateBaseApiCall($"pools/{ poolId }");
 
-				using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
+				using (var obj = await this.GetJsonResponseAsync<JsonDocument>(url))
 				{
-					var obj = temp.RootElement;
-
 					// if Pool not found, it return JSON response
 					// containing a reason why it not found
 
-					if (obj.TryGetProperty("success", out _))
+					if (obj.RootElement.TryGetProperty("success", out _))
 					{
 						throw new SearchNotFoundException($"Can't find Pool with id { poolId }.");
 					}
@@ -832,7 +826,7 @@ namespace BooruDex.Booru
 					// the JSON response only give the Post id
 					// so we need get the Post data from another API call.
 
-					var postIds = obj.GetProperty("post_ids");
+					var postIds = obj.RootElement.GetProperty("post_ids");
 
 					if (postIds.GetArrayLength() == 0)
 					{
@@ -855,11 +849,9 @@ namespace BooruDex.Booru
 
 				try
 				{
-					using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
+					using (var doc = await this.GetJsonResponseAsync<JsonDocument>(url))
 					{
-						var obj = temp.RootElement;
-
-						foreach (var item in obj.GetProperty("posts").EnumerateArray())
+						foreach (var item in doc.RootElement.GetProperty("posts").EnumerateArray())
 						{
 							posts.Add(this.ReadPost(item));
 						}
@@ -1249,9 +1241,9 @@ namespace BooruDex.Booru
 				   $"tags={ name }&type={ type }";
 			}
 
-			using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
+			using (var doc = await this.GetJsonResponseAsync<JsonDocument>(url))
 			{
-				var obj = temp.RootElement;
+				var obj = doc.RootElement;
 
 				JsonElement jsonArray;
 
