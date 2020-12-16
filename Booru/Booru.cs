@@ -1243,25 +1243,23 @@ namespace BooruDex.Booru
 
 			using (var doc = await this.GetJsonResponseAsync<JsonDocument>(url))
 			{
-				var obj = doc.RootElement;
-
 				JsonElement jsonArray;
 
 				if (this is Danbooru)
 				{
-					jsonArray = obj.GetProperty("tags");
+					jsonArray = doc.RootElement.GetProperty("tags");
 				}
 				else
 				{
 					// moebooru
 
-					if (this.PropertyExist(obj, name))
+					if (this.PropertyExist(doc.RootElement, name))
 					{
-						jsonArray = obj.GetProperty(name);
+						jsonArray = doc.RootElement.GetProperty(name);
 					}
 					else
 					{
-						jsonArray = obj.GetProperty("useless_tags");
+						jsonArray = doc.RootElement.GetProperty("useless_tags");
 					}
 				}
 
