@@ -810,7 +810,7 @@ namespace BooruDex.Booru
 			}
 
 			string url = "";
-			JsonElement obj;
+
 			var posts = new List<Post>();
 
 			if (this is Danbooru)
@@ -819,33 +819,33 @@ namespace BooruDex.Booru
 
 				using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
 				{
-					obj = temp.RootElement.Clone();
-				}
+					var obj = temp.RootElement;
 
-				// if Pool not found, it return JSON response
-				// containing a reason why it not found
+					// if Pool not found, it return JSON response
+					// containing a reason why it not found
 
-				if (obj.TryGetProperty("success", out _))
-				{
-					throw new SearchNotFoundException($"Can't find Pool with id { poolId }.");
-				}
+					if (obj.TryGetProperty("success", out _))
+					{
+						throw new SearchNotFoundException($"Can't find Pool with id { poolId }.");
+					}
 
-				// the JSON response only give the Post id
-				// so we need get the Post data from another API call.
+					// the JSON response only give the Post id
+					// so we need get the Post data from another API call.
 
-				var postIds = obj.GetProperty("post_ids");
+					var postIds = obj.GetProperty("post_ids");
 
-				if (postIds.GetArrayLength() == 0)
-				{
-					throw new SearchNotFoundException($"No Post inside Pool with id { poolId }.");
-				}
+					if (postIds.GetArrayLength() == 0)
+					{
+						throw new SearchNotFoundException($"No Post inside Pool with id { poolId }.");
+					}
 
-				foreach (var id in postIds.EnumerateArray())
-				{
-					posts.Add(
-						new Post(
-							id.GetUInt32(),
-							this._BaseUrl + "posts/", "", "", Rating.None, "", 0, 0, 0, 0, 0, ""));
+					foreach (var id in postIds.EnumerateArray())
+					{
+						posts.Add(
+							new Post(
+								id.GetUInt32(),
+								this._BaseUrl + "posts/", "", "", Rating.None, "", 0, 0, 0, 0, 0, ""));
+					}
 				}
 			}
 			else if (this is Moebooru)
@@ -857,12 +857,12 @@ namespace BooruDex.Booru
 				{
 					using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
 					{
-						obj = temp.RootElement.Clone();
-					}
+						var obj = temp.RootElement;
 
-					foreach (var item in obj.GetProperty("posts").EnumerateArray())
-					{
-						posts.Add(this.ReadPost(item));
+						foreach (var item in obj.GetProperty("posts").EnumerateArray())
+						{
+							posts.Add(this.ReadPost(item));
+						}
 					}
 				}
 				catch (Exception e)
