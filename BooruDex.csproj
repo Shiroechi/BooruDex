@@ -10,14 +10,17 @@
     <PackageTags>Imageboard Image Booru Danbooru Gelbooru Gelbooru02 Moebooru Yandere Konachan Safebooru Lolibooru Rule34 Behoimi Realbooru</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <Description>Library to access the booru website using public API. This library only support GET method, it means only listing and searching only.</Description>
-    <PackageReleaseNotes>- Code refactor
-- New method for danbooru template, ArtistDetailAsync.</PackageReleaseNotes>
-    <Version>2.1.0</Version>
+    <PackageReleaseNotes>- Remove re-throw
+- Refactor code
+- Fix issue NULL HttpClient
+- Enhancement some method behavior
+</PackageReleaseNotes>
+    <Version>2.1.1</Version>
     <AssemblyName>BooruDex</AssemblyName>
     <RootNamespace>BooruDex</RootNamespace>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Copyright>Shiroechi</Copyright>
+    <PackageId>BooruDex</PackageId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -28,6 +31,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>D:\Project\C#\API\BooruDex\BooruDex.xml</DocumentationFile>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
   <ItemGroup>
