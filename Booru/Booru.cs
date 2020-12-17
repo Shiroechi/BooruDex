@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -30,14 +29,19 @@ namespace BooruDex.Booru
 		private HttpClient _HttpClient;
 
 		/// <summary>
+		/// <see langword="true"/> if <see cref="HttpClient"/> is supplied by user; <see langword="false"/> otherwise.
+		/// </summary>
+		private bool _HttpClientSupplied;
+
+		/// <summary>
 		/// Base API request URL.
 		/// </summary>
 		protected Uri _BaseUrl;
 
 		/// <summary>
-		/// Max retrieved post for each request.
+		/// Default retrieved post for each request.
 		/// </summary>
-		protected byte _PostLimit;
+		protected byte _DefaultPostLimit;
 
 		/// <summary>
 		/// Max allowed <see cref="Tag"/>s to use for search a <see cref="Post"/>. 
@@ -96,10 +100,9 @@ namespace BooruDex.Booru
 		{
 			this._BaseUrl = new Uri(domain, UriKind.Absolute);
 			this.HttpClient = httpClient;
-			this._RNG = rng is null ? new SplitMix64() : rng;
+			this._RNG = rng == null ? new SplitMix64() : rng;
 			this.DefaultApiSettings();
 			this._Authentication = false;
-			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 		}
 
 		/// <summary>
@@ -107,10 +110,15 @@ namespace BooruDex.Booru
 		/// </summary>
 		~Booru()
 		{
+			if (this._HttpClientSupplied == false)
+			{
+				this.HttpClient.Dispose();
+			}
+
 			this._BaseUrl = null;
-			this._ApiVersion = 
-				this._Password = 
-				this._PasswordSalt = 
+			this._ApiVersion =
+				this._Password =
+				this._PasswordSalt =
 				this._Username = null;
 		}
 
@@ -132,6 +140,7 @@ namespace BooruDex.Booru
 				else
 				{
 					this._HttpClient = value;
+					this._HttpClientSupplied = true;
 					this.AddHttpUserAgent();
 				}
 			}
@@ -140,6 +149,7 @@ namespace BooruDex.Booru
 				if (this._HttpClient == null)
 				{
 					this._HttpClient = _LazyHttpClient.Value;
+					this._HttpClientSupplied = false;
 					this.AddHttpUserAgent();
 				}
 				return this._HttpClient;
@@ -151,7 +161,7 @@ namespace BooruDex.Booru
 		/// </summary>
 		public string ApiVersion
 		{
-			private set
+			protected set
 			{
 				this._ApiVersion = value;
 			}
@@ -206,17 +216,16 @@ namespace BooruDex.Booru
 
 		private static readonly Lazy<HttpClient> _LazyHttpClient = new Lazy<HttpClient>(() =>
 		{
-			var http = new HttpClient();
-			return http;
+			return new HttpClient();
 		});
 
 		private void DefaultApiSettings()
 		{
 			this.HasPostApi = true;
-			this.HasArtistApi = 
-				this.HasPoolApi = 
-				this.HasTagApi = 
-				this.HasTagRelatedApi = 
+			this.HasArtistApi =
+				this.HasPoolApi =
+				this.HasTagApi =
+				this.HasTagRelatedApi =
 				this.HasWikiApi = false;
 		}
 
@@ -256,7 +265,7 @@ namespace BooruDex.Booru
 			try
 			{
 				using (var request = new HttpRequestMessage(HttpMethod.Get, url))
-				using (var response = await this._HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+				using (var response = await this.HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
 				using (var stream = await response.Content.ReadAsStreamAsync())
 				{
 					if (response.IsSuccessStatusCode)
@@ -265,25 +274,23 @@ namespace BooruDex.Booru
 						{
 							return await JsonSerializer.DeserializeAsync<T>(stream);
 						}
-						catch (JsonException e)
+						catch (JsonException)
 						{
-							throw e;
+							throw;
 						}
 					}
 
 					throw new HttpResponseException(
-						$"Unexpected error occured.\n" +
-						$"Status code = { (int)response.StatusCode }\n" +
-						$"Reason = { response.ReasonPhrase }.");
+						$"Unexpected error occured.\nStatus code = { (int)response.StatusCode }\nReason = { response.ReasonPhrase }.");
 				}
 			}
-			catch (HttpRequestException e)
+			catch (HttpRequestException)
 			{
-				throw e;
+				throw;
 			}
-			catch (TaskCanceledException e)
+			catch (TaskCanceledException)
 			{
-				throw e;
+				throw;
 			}
 		}
 
@@ -307,7 +314,7 @@ namespace BooruDex.Booru
 			try
 			{
 				using (var request = new HttpRequestMessage(HttpMethod.Get, url))
-				using (var response = await this._HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+				using (var response = await this.HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
 				using (var stream = await response.Content.ReadAsStreamAsync())
 				{
 					if (response.IsSuccessStatusCode)
@@ -316,18 +323,16 @@ namespace BooruDex.Booru
 					}
 
 					throw new HttpResponseException(
-						$"Unexpected error occured.\n" +
-						$"Status code = { (int)response.StatusCode }\n" +
-						$"Reason = { response.ReasonPhrase }.");
+						$"Unexpected error occured.\nStatus code = { (int)response.StatusCode }\nReason = { response.ReasonPhrase }.");
 				}
 			}
-			catch (HttpRequestException e)
+			catch (HttpRequestException)
 			{
-				throw e;
+				throw;
 			}
-			catch (TaskCanceledException e)
+			catch (TaskCanceledException)
 			{
-				throw e;
+				throw;
 			}
 		}
 
@@ -350,11 +355,15 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Get max number of <see cref="Post"/> with 
-		/// the given <see cref="Tag"/> the site have.
+		///		Get max number of <see cref="Post"/> with 
+		///		the given <see cref="Tag"/> the site have.
 		/// </summary>
-		/// <param name="url">Url of the requested <see cref="Post"/>.</param>
-		/// <returns>Number of <see cref="Post"/>.</returns>
+		/// <param name="tags">
+		///		<see cref="Tag"/> of the requested <see cref="Post"/>.
+		///	</param>
+		/// <returns>
+		///		Number of <see cref="Post"/>.
+		/// </returns>
 		/// <exception cref="XmlException">
 		///		There is a load or parse error in the XML.
 		/// </exception>
@@ -387,13 +396,13 @@ namespace BooruDex.Booru
 				xml.LoadXml(await this.GetStringResponseAsync(url));
 				return uint.Parse(xml.ChildNodes.Item(1).Attributes[0].InnerXml);
 			}
-			catch (XmlException e)
+			catch (XmlException)
 			{
-				throw e;
+				throw;
 			}
-			catch (FormatException e)
+			catch (FormatException)
 			{
-				throw e;
+				throw;
 			}
 		}
 
@@ -562,15 +571,15 @@ namespace BooruDex.Booru
 		/// </summary>
 		/// <param name="postLimit">Number of post to check.</param>
 		/// <returns>A valid number of post that not lower or greater than required.</returns>
-		protected uint CheckPostLimit(uint postLimit)
+		protected byte CheckPostLimit(byte postLimit)
 		{
 			if (postLimit <= 0)
 			{
 				return 1;
 			}
-			else if (postLimit > this._PostLimit)
+			else if (postLimit > this._DefaultPostLimit)
 			{
-				return this._PostLimit;
+				return this._DefaultPostLimit;
 			}
 			else
 			{
@@ -655,7 +664,7 @@ namespace BooruDex.Booru
 		/// <exception cref="JsonException">
 		///		The JSON is invalid.
 		/// </exception>
-		public virtual async Task<Artist[]> ArtistListAsync(string name, uint page = 0, bool sort = false)
+		public virtual async Task<Artist[]> ArtistListAsync(string name, ushort page = 0, bool sort = false)
 		{
 			if (this.HasArtistApi == false)
 			{
@@ -668,11 +677,11 @@ namespace BooruDex.Booru
 			}
 
 			string url = "";
-			
+
 			if (this is Danbooru)
 			{
 				url = this.CreateBaseApiCall("artists") +
-					$"limit={ this._PostLimit }&page={ page }&search[any_name_matches]={ name }";
+					$"limit={ this._DefaultPostLimit }&page={ page }&search[any_name_matches]={ name }";
 
 				if (sort)
 				{
@@ -681,7 +690,7 @@ namespace BooruDex.Booru
 			}
 			else if (this is Moebooru)
 			{
-				url = this.CreateBaseApiCall("artist") + 
+				url = this.CreateBaseApiCall("artist") +
 					$"page={ page }&name={ name }";
 
 				if (sort)
@@ -755,11 +764,11 @@ namespace BooruDex.Booru
 			if (this is Danbooru)
 			{
 				url = this.CreateBaseApiCall("pools") +
-					$"limit={ this._PostLimit }&page={ page }&search[name_matches]={ title }";
+					$"limit={ this._DefaultPostLimit }&page={ page }&search[name_matches]={ title }";
 			}
-			else if (this  is Moebooru)
+			else if (this is Moebooru)
 			{
-				url = this.CreateBaseApiCall("pool") + 
+				url = this.CreateBaseApiCall("pool") +
 					$"page={ page }&query={ title }";
 			}
 
@@ -812,59 +821,55 @@ namespace BooruDex.Booru
 			}
 
 			string url = "";
-			JsonElement obj;
+
 			var posts = new List<Post>();
 
 			if (this is Danbooru)
 			{
 				url = this.CreateBaseApiCall($"pools/{ poolId }");
 
-				using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
+				using (var obj = await this.GetJsonResponseAsync<JsonDocument>(url))
 				{
-					obj = temp.RootElement.Clone();
-				}
+					// if Pool not found, it return JSON response
+					// containing a reason why it not found
 
-				// if Pool not found, it return JSON response
-				// containing a reason why it not found
+					if (obj.RootElement.TryGetProperty("success", out _))
+					{
+						throw new SearchNotFoundException($"Can't find Pool with id { poolId }.");
+					}
 
-				if (obj.TryGetProperty("success", out _))
-				{
-					throw new SearchNotFoundException($"Can't find Pool with id { poolId }.");
-				}
+					// the JSON response only give the Post id
+					// so we need get the Post data from another API call.
 
-				// the JSON response only give the Post id
-				// so we need get the Post data from another API call.
+					var postIds = obj.RootElement.GetProperty("post_ids");
 
-				var postIds = obj.GetProperty("post_ids");
+					if (postIds.GetArrayLength() == 0)
+					{
+						throw new SearchNotFoundException($"No Post inside Pool with id { poolId }.");
+					}
 
-				if (postIds.GetArrayLength() == 0)
-				{
-					throw new SearchNotFoundException($"No Post inside Pool with id { poolId }.");
-				}
-
-				foreach (var id in postIds.EnumerateArray())
-				{
-					posts.Add(
-						new Post(
-							id.GetUInt32(),
-							this._BaseUrl + "posts/", "", "", Rating.None, "", 0, 0, 0, 0, 0, ""));
+					foreach (var id in postIds.EnumerateArray())
+					{
+						posts.Add(
+							new Post(
+								id.GetUInt32(),
+								this._BaseUrl + "posts/", "", "", Rating.None, "", 0, 0, 0, 0, 0, ""));
+					}
 				}
 			}
 			else if (this is Moebooru)
 			{
-				url = this.CreateBaseApiCall("pool/show") + 
+				url = this.CreateBaseApiCall("pool/show") +
 					$"id={ poolId }";
 
 				try
 				{
-					using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
+					using (var doc = await this.GetJsonResponseAsync<JsonDocument>(url))
 					{
-						obj = temp.RootElement.Clone();
-					}
-
-					foreach (var item in obj.GetProperty("posts").EnumerateArray())
-					{
-						posts.Add(this.ReadPost(item));
+						foreach (var item in doc.RootElement.GetProperty("posts").EnumerateArray())
+						{
+							posts.Add(this.ReadPost(item));
+						}
 					}
 				}
 				catch (Exception e)
@@ -874,7 +879,7 @@ namespace BooruDex.Booru
 					throw new SearchNotFoundException($"Can't find Pool with id { poolId }.", e);
 				}
 			}
-			
+
 			return posts.ToArray();
 		}
 
@@ -910,7 +915,7 @@ namespace BooruDex.Booru
 		/// <exception cref="JsonException">
 		///		The JSON is invalid.
 		/// </exception>
-		public virtual async Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
+		public virtual async Task<Post[]> PostListAsync(byte limit, string[] tags, uint page = 0)
 		{
 			if (this.HasPostApi == false)
 			{
@@ -1077,7 +1082,7 @@ namespace BooruDex.Booru
 		/// <exception cref="JsonException">
 		///		The JSON is invalid.
 		/// </exception>
-		public virtual async Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
+		public virtual async Task<Post[]> GetRandomPostAsync(byte limit, string[] tags = null)
 		{
 			if (this.HasPostApi == false)
 			{
@@ -1169,16 +1174,16 @@ namespace BooruDex.Booru
 			if (this is Danbooru)
 			{
 				url = this.CreateBaseApiCall("tags") +
-					$"limit={ this._PostLimit }&order=name&search[name_matches]={ name }";
+					$"limit={ this._DefaultPostLimit }&order=name&search[name_matches]={ name }";
 			}
 			else if (this is Gelbooru)
 			{
-				url = this.CreateBaseApiCall("tag") + 
-					$"&limit={ this._PostLimit }&orderby=name&name_pattern={ name }";
+				url = this.CreateBaseApiCall("tag") +
+					$"&limit={ this._DefaultPostLimit }&orderby=name&name_pattern={ name }";
 			}
 			else if (this is Moebooru)
 			{
-				url = this.CreateBaseApiCall("tag") + 
+				url = this.CreateBaseApiCall("tag") +
 					$"limit=0&order=name&name={ name }";
 			}
 
@@ -1242,7 +1247,7 @@ namespace BooruDex.Booru
 
 			if (this is Danbooru)
 			{
-				url = this.CreateBaseApiCall("related_tag") + 
+				url = this.CreateBaseApiCall("related_tag") +
 					$"query={ name }&category={ type }";
 			}
 			else if (this is Moebooru)
@@ -1251,46 +1256,42 @@ namespace BooruDex.Booru
 				   $"tags={ name }&type={ type }";
 			}
 
-			JsonElement obj;
-
-			using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
+			using (var doc = await this.GetJsonResponseAsync<JsonDocument>(url))
 			{
-				obj = temp.RootElement.Clone();
-			}
+				JsonElement jsonArray;
 
-			JsonElement jsonArray;
-
-			if (this is Danbooru)
-			{
-				jsonArray = obj.GetProperty("tags");
-			}
-			else 
-			{
-				// moebooru
-
-				if (this.PropertyExist(obj, name))
+				if (this is Danbooru)
 				{
-					jsonArray = obj.GetProperty(name);
+					jsonArray = doc.RootElement.GetProperty("tags");
 				}
 				else
 				{
-					jsonArray = obj.GetProperty("useless_tags");
+					// moebooru
+
+					if (this.PropertyExist(doc.RootElement, name))
+					{
+						jsonArray = doc.RootElement.GetProperty(name);
+					}
+					else
+					{
+						jsonArray = doc.RootElement.GetProperty("useless_tags");
+					}
 				}
+
+				if (jsonArray.GetArrayLength() == 0)
+				{
+					throw new SearchNotFoundException($"Can't find related Tags with Tag name \"{ name }\".");
+				}
+
+				var tags = new List<TagRelated>();
+
+				foreach (var item in jsonArray.EnumerateArray())
+				{
+					tags.Add(this.ReadTagRelated(item));
+				}
+
+				return tags.ToArray();
 			}
-
-			if (jsonArray.GetArrayLength() == 0)
-			{
-				throw new SearchNotFoundException($"Can't find related Tags with Tag name \"{ name }\".");
-			}
-
-			var tags = new List<TagRelated>();
-
-			foreach (var item in jsonArray.EnumerateArray())
-			{
-				tags.Add(this.ReadTagRelated(item));
-			}
-
-			return tags.ToArray();
 		}
 
 		#endregion Tag
@@ -1339,12 +1340,12 @@ namespace BooruDex.Booru
 
 			if (this is Danbooru)
 			{
-				url = this.CreateBaseApiCall("wiki_pages") + 
+				url = this.CreateBaseApiCall("wiki_pages") +
 					$"search[order]=title&search[title]={ title }";
 			}
 			else if (this is Moebooru)
 			{
-				url = this.CreateBaseApiCall("wiki") + 
+				url = this.CreateBaseApiCall("wiki") +
 					$"order=title&query={ title }";
 			}
 

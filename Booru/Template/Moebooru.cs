@@ -5,7 +5,6 @@ using System.Text.Json;
 using BooruDex.Models;
 
 using Litdex.Security.RNG;
-using Litdex.Security.RNG.PRNG;
 
 namespace BooruDex.Booru.Template
 {
@@ -22,7 +21,7 @@ namespace BooruDex.Booru.Template
 		/// <param name="domain">URL of booru based sites.</param>
 		/// <param name="httpClient">Client for sending and receive http response.</param>
 		/// <param name="rng">Random generator for random post.</param>
-		public Moebooru(string domain, HttpClient httpClient = null, IRNG rng = null) : base(domain, httpClient, rng == null ? new SplitMix64() : rng)
+		public Moebooru(string domain, HttpClient httpClient = null, IRNG rng = null) : base(domain, httpClient, rng)
 		{
 			this.IsSafe = false;
 			this.HasArtistApi =
@@ -30,7 +29,7 @@ namespace BooruDex.Booru.Template
 				this.HasTagApi =
 				this.HasTagRelatedApi =
 				this.HasWikiApi = true;
-			this._PostLimit = 100; // may increased up to 1000
+			this._DefaultPostLimit = 100; // may increased up to 1000
 			this._TagsLimit = 6;
 			this._PageLimit = 0;
 			this._ApiVersion = "1.13.0+update.3";

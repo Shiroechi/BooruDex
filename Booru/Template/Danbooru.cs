@@ -8,7 +8,6 @@ using BooruDex.Exceptions;
 using BooruDex.Models;
 
 using Litdex.Security.RNG;
-using Litdex.Security.RNG.PRNG;
 
 namespace BooruDex.Booru.Template
 {
@@ -25,7 +24,7 @@ namespace BooruDex.Booru.Template
 		/// <param name="domain">URL of booru based sites.</param>
 		/// <param name="httpClient">Client for sending and receive http response.</param>
 		/// <param name="rng">Random generator for random post.</param>
-		public Danbooru(string domain, HttpClient httpClient = null, IRNG rng = null) : base(domain, httpClient, rng == null ? new SplitMix64() : rng)
+		public Danbooru(string domain, HttpClient httpClient = null, IRNG rng = null) : base(domain, httpClient, rng)
 		{
 			this.IsSafe = false;
 			this.HasArtistApi =
@@ -33,7 +32,7 @@ namespace BooruDex.Booru.Template
 				this.HasTagApi =
 				this.HasTagRelatedApi =
 				this.HasWikiApi = true;
-			this._PostLimit = 200;
+			this._DefaultPostLimit = 200;
 			this._TagsLimit = 2;
 			this._PageLimit = 1000;
 			this._ApiVersion = "";
@@ -220,22 +219,18 @@ namespace BooruDex.Booru.Template
 		{
 			var url = this.CreateBaseApiCall($"posts/{ postId }");
 
-			JsonElement obj;
-
-			using (var temp = await this.GetJsonResponseAsync<JsonDocument>(url))
+			using (var doc = await this.GetJsonResponseAsync<JsonDocument>(url))
 			{
-				obj = temp.RootElement.Clone();
+				// if Post is not found, it return JSON response
+				// containing error message
+
+				if (doc.RootElement.TryGetProperty("success", out _))
+				{
+					throw new SearchNotFoundException($"Post with id { postId } is not found.");
+				}
+
+				return this.ReadPost(doc.RootElement);
 			}
-
-			// if Post is not found, it return JSON response
-			// containing error message
-
-			if (obj.TryGetProperty("success", out _))
-			{
-				throw new SearchNotFoundException($"Post with id { postId } is not found.");
-			}
-
-			return this.ReadPost(obj);
 		}
 
 		/// <inheritdoc/>
@@ -245,7 +240,7 @@ namespace BooruDex.Booru.Template
 		}
 
 		/// <inheritdoc/>
-		public override async Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
+		public override async Task<Post[]> GetRandomPostAsync(byte limit, string[] tags = null)
 		{
 			this.CheckTagsLimit(tags);
 
@@ -253,9 +248,9 @@ namespace BooruDex.Booru.Template
 			{
 				limit = 1;
 			}
-			else if (limit > this._PostLimit)
+			else if (limit > this._DefaultPostLimit)
 			{
-				limit = this._PostLimit;
+				limit = this._DefaultPostLimit;
 			}
 
 			var url = this.CreateBaseApiCall("posts") +
