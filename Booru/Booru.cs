@@ -29,6 +29,11 @@ namespace BooruDex.Booru
 		private HttpClient _HttpClient;
 
 		/// <summary>
+		/// <see langword="true"/> if <see cref="HttpClient"/> is supplied by user; <see langword="false"/> otherwise.
+		/// </summary>
+		private bool _HttpClientSupplied;
+
+		/// <summary>
 		/// Base API request URL.
 		/// </summary>
 		protected Uri _BaseUrl;
@@ -36,7 +41,7 @@ namespace BooruDex.Booru
 		/// <summary>
 		/// Default retrieved post for each request.
 		/// </summary>
-		protected ushort _DefaultPostLimit;
+		protected byte _DefaultPostLimit;
 
 		/// <summary>
 		/// Max allowed <see cref="Tag"/>s to use for search a <see cref="Post"/>. 
@@ -105,6 +110,11 @@ namespace BooruDex.Booru
 		/// </summary>
 		~Booru()
 		{
+			if (this._HttpClientSupplied == false)
+			{
+				this.HttpClient.Dispose();
+			}
+
 			this._BaseUrl = null;
 			this._ApiVersion =
 				this._Password =
@@ -130,6 +140,7 @@ namespace BooruDex.Booru
 				else
 				{
 					this._HttpClient = value;
+					this._HttpClientSupplied = true;
 					this.AddHttpUserAgent();
 				}
 			}
@@ -138,6 +149,7 @@ namespace BooruDex.Booru
 				if (this._HttpClient == null)
 				{
 					this._HttpClient = _LazyHttpClient.Value;
+					this._HttpClientSupplied = false;
 					this.AddHttpUserAgent();
 				}
 				return this._HttpClient;
@@ -204,8 +216,7 @@ namespace BooruDex.Booru
 
 		private static readonly Lazy<HttpClient> _LazyHttpClient = new Lazy<HttpClient>(() =>
 		{
-			var http = new HttpClient();
-			return http;
+			return new HttpClient();
 		});
 
 		private void DefaultApiSettings()
