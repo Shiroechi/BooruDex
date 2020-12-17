@@ -4,14 +4,11 @@ Library to access the booru website using public API.
 This library only support GET method, it means only listing and searching only. 
 For other method like POST, contributions are welcomed.
 
-# Badges
-
-[![CodeFactor](https://www.codefactor.io/repository/github/shiroechi/boorudex/badge)](https://www.codefactor.io/repository/github/shiroechi/boorudex)
+[![CodeFactor](https://www.codefactor.io/repository/github/shiroechi/boorudex/badge?style=for-the-badge)](https://www.codefactor.io/repository/github/shiroechi/boorudex)
 
 # Download
 
-[![Nuget](https://img.shields.io/nuget/v/BooruDex?label=BooruDex)](https://www.nuget.org/packages/BooruDex)
-[![Nuget](https://img.shields.io/nuget/v/Litdex.Security.RNG?label=Litdex.Security.RNG)](https://www.nuget.org/packages/Litdex.Security.RNG)
+[![Nuget](https://img.shields.io/nuget/v/BooruDex?style=for-the-badge)](https://www.nuget.org/packages/BooruDex)
 
 # Overview 
 
