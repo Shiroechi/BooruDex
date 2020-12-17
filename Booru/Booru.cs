@@ -355,11 +355,15 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Get max number of <see cref="Post"/> with 
-		/// the given <see cref="Tag"/> the site have.
+		///		Get max number of <see cref="Post"/> with 
+		///		the given <see cref="Tag"/> the site have.
 		/// </summary>
-		/// <param name="url">Url of the requested <see cref="Post"/>.</param>
-		/// <returns>Number of <see cref="Post"/>.</returns>
+		/// <param name="tags">
+		///		<see cref="Tag"/> of the requested <see cref="Post"/>.
+		///	</param>
+		/// <returns>
+		///		Number of <see cref="Post"/>.
+		/// </returns>
 		/// <exception cref="XmlException">
 		///		There is a load or parse error in the XML.
 		/// </exception>
@@ -567,7 +571,7 @@ namespace BooruDex.Booru
 		/// </summary>
 		/// <param name="postLimit">Number of post to check.</param>
 		/// <returns>A valid number of post that not lower or greater than required.</returns>
-		protected uint CheckPostLimit(uint postLimit)
+		protected byte CheckPostLimit(byte postLimit)
 		{
 			if (postLimit <= 0)
 			{
@@ -660,7 +664,7 @@ namespace BooruDex.Booru
 		/// <exception cref="JsonException">
 		///		The JSON is invalid.
 		/// </exception>
-		public virtual async Task<Artist[]> ArtistListAsync(string name, uint page = 0, bool sort = false)
+		public virtual async Task<Artist[]> ArtistListAsync(string name, ushort page = 0, bool sort = false)
 		{
 			if (this.HasArtistApi == false)
 			{
@@ -911,7 +915,7 @@ namespace BooruDex.Booru
 		/// <exception cref="JsonException">
 		///		The JSON is invalid.
 		/// </exception>
-		public virtual async Task<Post[]> PostListAsync(uint limit, string[] tags, uint page = 0)
+		public virtual async Task<Post[]> PostListAsync(byte limit, string[] tags, uint page = 0)
 		{
 			if (this.HasPostApi == false)
 			{
@@ -1078,7 +1082,7 @@ namespace BooruDex.Booru
 		/// <exception cref="JsonException">
 		///		The JSON is invalid.
 		/// </exception>
-		public virtual async Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
+		public virtual async Task<Post[]> GetRandomPostAsync(byte limit, string[] tags = null)
 		{
 			if (this.HasPostApi == false)
 			{
