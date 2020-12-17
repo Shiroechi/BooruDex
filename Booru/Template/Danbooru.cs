@@ -240,7 +240,7 @@ namespace BooruDex.Booru.Template
 		}
 
 		/// <inheritdoc/>
-		public override async Task<Post[]> GetRandomPostAsync(uint limit, string[] tags = null)
+		public override async Task<Post[]> GetRandomPostAsync(byte limit, string[] tags = null)
 		{
 			this.CheckTagsLimit(tags);
 
