@@ -24,7 +24,7 @@ namespace BooruDex.Booru
 		#region Member
 
 		/// <summary>
-		/// Http client to send reuquest and receive response.
+		/// Http client to send request and receive response.
 		/// </summary>
 		private HttpClient _HttpClient;
 
