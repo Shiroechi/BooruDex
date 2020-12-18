@@ -10,17 +10,14 @@
     <PackageTags>Imageboard Image Booru Danbooru Gelbooru Gelbooru02 Moebooru Yandere Konachan Safebooru Lolibooru Rule34 Behoimi Realbooru</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <Description>Library to access the booru website using public API. This library only support GET method, it means only listing and searching only.</Description>
-    <PackageReleaseNotes>- Remove re-throw
-- Refactor code
-- Fix issue NULL HttpClient
-- Enhancement some method behavior
-</PackageReleaseNotes>
-    <Version>2.1.1</Version>
+    <PackageReleaseNotes>- Update dependency</PackageReleaseNotes>
+    <Version>2.1.2</Version>
     <AssemblyName>BooruDex</AssemblyName>
     <RootNamespace>BooruDex</RootNamespace>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Copyright>Shiroechi</Copyright>
     <PackageId>BooruDex</PackageId>
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -36,7 +33,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Litdex.Security.RNG" Version="2.2.0" />
+    <PackageReference Include="Litdex.Security.RNG" Version="2.3.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.0" />
   </ItemGroup>
 
