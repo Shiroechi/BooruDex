@@ -28,7 +28,7 @@ namespace BooruDex.Booru.Template
 		///		Client for sending and receive http response.
 		///	</param>
 		/// <param name="rng">
-		///		Random generator for random post.
+		///		Random generator for random <see cref="Post"/>.
 		///	</param>
 		public Danbooru(string domain, HttpClient httpClient = null, IRNG rng = null) : base(domain, httpClient, rng)
 		{
