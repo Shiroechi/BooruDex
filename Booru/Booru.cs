@@ -1305,6 +1305,16 @@ namespace BooruDex.Booru
 		/// </returns>
 		public async Task<bool> IsTagExistAsync(string tag)
 		{
+			if (this.HasTagApi == false)
+			{
+				throw new NotImplementedException($"Method { nameof(TagListAsync) } is not implemented yet.");
+			}
+
+			if (tag == null || tag.Trim() == "")
+			{
+				throw new ArgumentNullException(nameof(tag), "Tag name can't null or empty.");
+			}
+
 			try
 			{
 				var tags = await this.TagListAsync(tag);
