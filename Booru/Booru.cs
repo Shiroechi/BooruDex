@@ -1294,6 +1294,35 @@ namespace BooruDex.Booru
 			}
 		}
 
+		/// <summary>
+		///		Check if the <see cref="Tag"/> is exist (available) or not in the booru.
+		/// </summary>
+		/// <param name="tag">
+		///		<see cref="Tag"/> name to check.
+		/// </param>
+		/// <returns>
+		///		<see langword="true"></see> if the <see cref="Tag"/> name is exist or availabe in the booru.
+		/// </returns>
+		public async Task<bool> IsTagExistAsync(string tag)
+		{
+			try
+			{
+				var tags = await this.TagListAsync(tag);
+				foreach (var item in tags)
+				{
+					if (item.Name.Equals(tag, StringComparison.CurrentCultureIgnoreCase))
+					{
+						return true;
+					}
+				}
+				return false;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
 		#endregion Tag
 
 		#region Wiki
