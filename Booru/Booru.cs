@@ -234,19 +234,31 @@ namespace BooruDex.Booru
 		#region Protected Method
 
 		/// <summary>
-		/// Create base API call url. 
+		///		Create base API call url. 
 		/// </summary>
-		/// <param name="query">Categories.</param>
-		/// <param name="json">Create JSON API or not. <see langword="true"/> for JSON.</param>
-		/// <returns></returns>
+		/// <param name="query">
+		///		Categories.
+		///	</param>
+		/// <param name="json">
+		///		Create JSON API or not. <see langword="true"/> for JSON.
+		///	</param>
+		/// <returns>
+		///		URL of API request.
+		/// </returns>
 		protected abstract string CreateBaseApiCall(string query, bool json = true);
 
 		/// <summary>
-		/// Get JSON response from url.
+		///		Get JSON response from url.
 		/// </summary>
-		/// <typeparam name="T">The type of the object to deserialize.</typeparam>
-		/// <param name="url"></param>
-		/// <returns>The instance of <typeparamref name="T"/> being deserialized.</returns>
+		/// <typeparam name="T">
+		///		The type of the object to deserialize.
+		///	</typeparam>
+		/// <param name="url">
+		///		URL of the request. 
+		/// </param>
+		/// <returns>
+		///		The instance of <typeparamref name="T"/> being deserialized.
+		///	</returns>
 		/// <exception cref="HttpResponseException">
 		///		Unexpected error occured.
 		/// </exception>
@@ -295,10 +307,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Get <see cref="string"/> response from url.
+		///		Get <see cref="string"/> response from url.
 		/// </summary>
-		/// <param name="url"></param>
-		/// <returns><see cref="string"/> response.</returns>
+		/// <param name="url">
+		///		URL of request.
+		/// </param>
+		/// <returns>
+		///		<see cref="string"/> response.
+		///	</returns>
 		/// <exception cref="HttpResponseException">
 		///		Unexpected error occured.
 		/// </exception>
@@ -337,10 +353,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Deserializes response into string.
+		///		Deserializes response into string.
 		/// </summary>
-		/// <param name="stream"></param>
-		/// <returns><see cref="string"/> content.</returns>
+		/// <param name="stream">
+		///		
+		/// </param>
+		/// <returns>
+		///		<see cref="string"/> content.
+		///	</returns>
 		protected async Task<string> DeserializeStringFromStreamAsync(Stream stream)
 		{
 			if (stream != null)
