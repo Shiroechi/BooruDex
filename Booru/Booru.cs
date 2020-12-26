@@ -671,7 +671,7 @@ namespace BooruDex.Booru
 				throw new NotImplementedException($"Method { nameof(ArtistListAsync) } is not implemented yet.");
 			}
 
-			if (name == null || name.Trim() == "")
+			if (string.IsNullOrWhiteSpace(name))
 			{
 				throw new ArgumentNullException(nameof(name), "Artist name can't null or empty.");
 			}
