@@ -429,10 +429,14 @@ namespace BooruDex.Booru
 		#region Virtual Method
 
 		/// <summary>
-		/// Read <see cref="Artist"/> JSON search result.
+		///		Read <see cref="Artist"/> JSON search result.
 		/// </summary>
-		/// <param name="json">JSON object.</param>
-		/// <returns><see cref="Artist"/> object.</returns>
+		/// <param name="json">
+		///		JSON object.
+		///	</param>
+		/// <returns>
+		///		<see cref="Artist"/> object.
+		///	</returns>
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
@@ -442,10 +446,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Read <see cref="Pool"/> JSON search result.
+		///		Read <see cref="Pool"/> JSON search result.
 		/// </summary>
-		/// <param name="json">JSON object.</param>
-		/// <returns><see cref="Pool"/> object.</returns>
+		/// <param name="json">
+		///		JSON object.
+		///	</param>
+		/// <returns>
+		///		<see cref="Pool"/> object.
+		///	</returns>
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
@@ -455,10 +463,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Read <see cref="Post"/> JSON search result.
+		///		Read <see cref="Post"/> JSON search result.
 		/// </summary>
-		/// <param name="json">JSON object.</param>
-		/// <returns><see cref="Post"/> object.</returns>
+		/// <param name="json">
+		///		JSON object.
+		///	</param>
+		/// <returns>
+		///		<see cref="Post"/> object.
+		/// </returns>
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
@@ -468,10 +480,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Read <see cref="Tag"/> JSON search result.
+		///		Read <see cref="Tag"/> JSON search result.
 		/// </summary>
-		/// <param name="json">JSON object.</param>
-		/// <returns><see cref="Tag"/> object.</returns>
+		/// <param name="json">
+		///		JSON object.
+		///	</param>
+		/// <returns>
+		///		<see cref="Tag"/> object.
+		///	</returns>
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
@@ -481,10 +497,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Read <see cref="TagRelated"/> JSON search result.
+		///		Read <see cref="TagRelated"/> JSON search result.
 		/// </summary>
-		/// <param name="json">JSON object.</param>
-		/// <returns><see cref="TagRelated"/> object.</returns>
+		/// <param name="json">
+		///		JSON object.
+		///	</param>
+		/// <returns>
+		///		<see cref="TagRelated"/> object.
+		///	</returns>
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
@@ -494,10 +514,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Read <see cref="Wiki"/> JSON search result.
+		///		Read <see cref="Wiki"/> JSON search result.
 		/// </summary>
-		/// <param name="json">JSON object.</param>
-		/// <returns><see cref="Wiki"/> object.</returns>
+		/// <param name="json">
+		///		JSON object.
+		///	</param>
+		/// <returns>
+		///		<see cref="Wiki"/> object.
+		/// </returns>
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
