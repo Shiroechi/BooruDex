@@ -929,11 +929,17 @@ namespace BooruDex.Booru
 		#region Post
 
 		/// <summary>
-		/// Get a list of the latest <see cref="Post"/>.
+		///		Get a list of the latest <see cref="Post"/>.
 		/// </summary>
-		/// <param name="limit">How many <see cref="Post"/> to retrieve.</param>
-		/// <param name="page">The page number.</param>
-		/// <param name="tags">The tags to search for.</param>
+		/// <param name="limit">
+		///		How many <see cref="Post"/> to retrieve.
+		/// </param>
+		/// <param name="page">
+		///		The page number.
+		/// </param>
+		/// <param name="tags">
+		///		The tags to search for.
+		/// </param>
 		/// <returns>
 		///		Array of <see cref="Post"/>.
 		/// </returns>
@@ -1038,9 +1044,11 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Get a single random <see cref="Post"/> with the given tags.
+		///		Get a single random <see cref="Post"/> with the given tags.
 		/// </summary>
-		/// <param name="tags"><see cref="Tag"/> to search.</param>
+		/// <param name="tags">
+		///		<see cref="Tag"/> to search.
+		///	</param>
 		/// <returns>
 		///		A random <see cref="Post"/>.
 		/// </returns>
@@ -1097,10 +1105,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Get multiple random <see cref="Post"/> with the given tags.
+		///		Get multiple random <see cref="Post"/> with the given tags.
 		/// </summary>
-		/// <param name="tags"><see cref="Tag"/> to search.</param>
-		/// <param name="limit">How many post to retrieve.</param>
+		/// <param name="tags">
+		///		<see cref="Tag"/> to search.
+		///	</param>
+		/// <param name="limit">
+		///		How many post to retrieve.
+		///	</param>
 		/// <returns>
 		///		Array of <see cref="Post"/>.
 		/// </returns>
