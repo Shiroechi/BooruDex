@@ -1164,7 +1164,7 @@ namespace BooruDex.Booru
 				throw new NotImplementedException($"Method { nameof(TagListAsync) } is not implemented yet.");
 			}
 
-			if (name == null || name.Trim() == "")
+			if (string.IsNullOrWhiteSpace(name))
 			{
 				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
 			}
@@ -1238,7 +1238,7 @@ namespace BooruDex.Booru
 				throw new NotImplementedException($"Method { nameof(TagRelatedAsync) } is not implemented yet.");
 			}
 
-			if (name == null || name.Trim() == "")
+			if (string.IsNullOrWhiteSpace(name))
 			{
 				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
 			}
@@ -1310,7 +1310,7 @@ namespace BooruDex.Booru
 				throw new NotImplementedException($"Method { nameof(TagListAsync) } is not implemented yet.");
 			}
 
-			if (tag == null || tag.Trim() == "")
+			if (string.IsNullOrWhiteSpace(tag))
 			{
 				throw new ArgumentNullException(nameof(tag), "Tag name can't null or empty.");
 			}
