@@ -540,6 +540,17 @@
             	The JSON is invalid.
             </exception>
         </member>
+        <member name="M:BooruDex.Booru.Booru.IsTagExistAsync(System.String)">
+            <summary>
+            	Check if the <see cref="T:BooruDex.Models.Tag"/> is exist (available) or not in the booru.
+            </summary>
+            <param name="tag">
+            	<see cref="T:BooruDex.Models.Tag"/> name to check.
+            </param>
+            <returns>
+            	<see langword="true"></see> if the <see cref="T:BooruDex.Models.Tag"/> name is exist or availabe in the booru.
+            </returns>
+        </member>
         <member name="M:BooruDex.Booru.Booru.WikiListAsync(System.String)">
             <summary>
             Search for <see cref="T:BooruDex.Models.Wiki"/> by title.
