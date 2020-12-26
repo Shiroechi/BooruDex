@@ -9,18 +9,24 @@ using Litdex.Security.RNG;
 namespace BooruDex.Booru.Template
 {
 	/// <summary>
-	/// Moebooru, a fork of Danbooru1 that has been heavily modified.
+	///		Moebooru, a fork of Danbooru1 that has been heavily modified.
 	/// </summary>
 	public abstract class Moebooru : Booru
 	{
 		#region Constructor & Destructor
 
 		/// <summary>
-		/// <see cref="Moebooru"/> template for booru client.
+		///		<see cref="Moebooru"/> template for booru client.
 		/// </summary>
-		/// <param name="domain">URL of booru based sites.</param>
-		/// <param name="httpClient">Client for sending and receive http response.</param>
-		/// <param name="rng">Random generator for random post.</param>
+		/// <param name="domain">
+		///		URL of booru based sites.
+		///	</param>
+		/// <param name="httpClient">
+		///		Client for sending and receive http response.
+		///	</param>
+		/// <param name="rng">
+		///		Random generator for random <see cref="Post"/>.
+		/// </param>
 		public Moebooru(string domain, HttpClient httpClient = null, IRNG rng = null) : base(domain, httpClient, rng)
 		{
 			this.IsSafe = false;
