@@ -1185,9 +1185,11 @@ namespace BooruDex.Booru
 		#region Tag
 
 		/// <summary>
-		/// Search for <see cref="Tag"/> with the name is similiar or alike.
+		///		Search for <see cref="Tag"/> with the name is similiar or alike.
 		/// </summary>
-		/// <param name="name">The <see cref="Tag"/> name.</param>
+		/// <param name="name">
+		///		The <see cref="Tag"/> name.
+		///	</param>
 		/// <returns>
 		///		Array of <see cref="Tag"/>.
 		/// </returns>
@@ -1258,10 +1260,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Search for <see cref="Tag"/> that related with other <see cref="Tag"/>.	
+		///		Search for <see cref="Tag"/> that related with other <see cref="Tag"/>.	
 		/// </summary>
-		/// <param name="name">The <see cref="Tag"/> name.</param>
-		/// <param name="type">Restrict results to search by <see cref="TagType"/> (can be general, artist, copyright, or character).</param>
+		/// <param name="name">
+		///		The <see cref="Tag"/> name.
+		///	</param>
+		/// <param name="type">
+		///		Restrict results to search by <see cref="TagType"/> (can be general, artist, copyright, or character).
+		///	</param>
 		/// <returns>
 		///		Array of <see cref="TagRelated"/>.
 		/// </returns>
