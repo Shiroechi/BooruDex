@@ -1370,7 +1370,7 @@ namespace BooruDex.Booru
 				throw new NotImplementedException($"Method { nameof(WikiListAsync) } is not implemented yet.");
 			}
 
-			if (title == null || title.Trim() == "")
+			if (string.IsNullOrWhiteSpace(title))
 			{
 				throw new ArgumentNullException(nameof(title), "Title can't null or empty.");
 			}
