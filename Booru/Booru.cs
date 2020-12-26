@@ -1397,9 +1397,11 @@ namespace BooruDex.Booru
 		#region Wiki
 
 		/// <summary>
-		/// Search for <see cref="Wiki"/> by title.
+		///		Search for <see cref="Wiki"/> by title.
 		/// </summary>
-		/// <param name="title"><see cref="Wiki"/> title.</param>
+		/// <param name="title">
+		///		<see cref="Wiki"/> title.
+		///	</param>
 		/// <returns>
 		///		Array of <see cref="Wiki"/>.
 		/// </returns>
