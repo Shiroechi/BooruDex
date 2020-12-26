@@ -39,7 +39,7 @@
 		///		There's something wrong with the post.
 		/// </summary>
 		Faults = 6,
-		
+
 		/// <summary>
 		///		Circle tags are meta-copyrights. 
 		///		Most are artist circles (artist collectives) or studios 
@@ -49,7 +49,7 @@
 		///		unless otherwise stated in the wiki (eg. Nintendo is an exception).
 		/// </summary>
 		Circle = 5,
-		
+
 		/// <summary>
 		///		Tag not recognizable.
 		/// </summary>
