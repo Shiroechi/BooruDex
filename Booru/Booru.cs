@@ -491,10 +491,14 @@ namespace BooruDex.Booru
 		#region Helper Method
 
 		/// <summary>
-		/// Check the property of JSON object exist or not.
+		///		Check the property of JSON object exist or not.
 		/// </summary>
-		/// <param name="json">JSON object.</param>
-		/// <param name="propertyName">The name of the property to find.</param>
+		/// <param name="json">
+		///		JSON object.
+		///	</param>
+		/// <param name="propertyName">
+		///		The name of the property to find.
+		///	</param>
 		/// <returns>
 		///		<see langword="true"/> if the property was found; otherwise, <see langword="false"/>.
 		///	</returns>
@@ -504,10 +508,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Convert string rating to <see cref="Rating"/>.
+		///		Convert string rating to <see cref="Rating"/>.
 		/// </summary>
-		/// <param name="rating">String rating</param>
-		/// <returns></returns>
+		/// <param name="rating">
+		///		String rating
+		/// </param>
+		/// <returns>
+		///		<see cref="Rating"/> based on <paramref name="rating"/>.
+		/// </returns>
 		protected Rating ConvertRating(string rating)
 		{
 			switch (char.ToLower(rating[0]))
@@ -524,9 +532,11 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Check pre-condition for the tags.
+		///		Check pre-condition for the tags.
 		/// </summary>
-		/// <param name="tags">Tags to check.</param>
+		/// <param name="tags">
+		///		Tags to check.
+		///	</param>
 		/// <exception cref="ArgumentOutOfRangeException">
 		///		The provided <see cref="Tag"/> is more than the limit.
 		/// </exception>
@@ -541,10 +551,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Check pre-condition for page number.
+		///		Check pre-condition for page number.
 		/// </summary>
-		/// <param name="pageNumber">Page number to check.</param>
-		/// <returns>A valid page number that not lower or greater than required.</returns>
+		/// <param name="pageNumber">
+		///		Page number to check.
+		///	</param>
+		/// <returns>
+		///		A valid page number that not lower or greater than required.
+		///	</returns>
 		protected uint CheckPageLimit(uint pageNumber)
 		{
 			if (this._PageLimit == 0)
@@ -567,10 +581,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Check pre-condition for number of requested post.
+		///		Check pre-condition for number of requested <see cref="Post"/>.
 		/// </summary>
-		/// <param name="postLimit">Number of post to check.</param>
-		/// <returns>A valid number of post that not lower or greater than required.</returns>
+		/// <param name="postLimit">
+		///		Number of post to check.
+		///	</param>
+		/// <returns>
+		///		A valid number of retrieved <see cref="Post"/> that not lower or greater than required.
+		///	</returns>
 		protected byte CheckPostLimit(byte postLimit)
 		{
 			if (postLimit <= 0)
@@ -594,9 +612,14 @@ namespace BooruDex.Booru
 		#region Public Method
 
 		/// <summary>
-		/// Add http user agent if not exist.
+		///		Add http user agent if not exist.
 		/// </summary>
-		/// <param name="userAgent">User Agrnt value.</param>
+		/// <remarks>
+		///		by default using browser user agent.
+		/// </remarks>
+		/// <param name="userAgent">
+		///		User Agrnt value.
+		///	</param>
 		public void AddHttpUserAgent(string userAgent = "")
 		{
 			if (this._HttpClient == null)
@@ -639,12 +662,20 @@ namespace BooruDex.Booru
 		#region Artist
 
 		/// <summary>
-		/// Search <see cref="Artist"/> by name.
+		///		Search <see cref="Artist"/> by name.
 		/// </summary>
-		/// <param name="name">The name (or a fragment of the name) of the artist.</param>
-		/// <param name="page">The page number.</param>
-		/// <param name="sort">Sort the search result by <see cref="Artist"/> name. Default <see langword="false"/>.</param>
-		/// <returns>Array of <see cref="Artist"/>.</returns>
+		/// <param name="name">
+		///		The name (or a fragment of the name) of the artist.
+		///	</param>
+		/// <param name="page">
+		///		The page number.
+		///	</param>
+		/// <param name="sort">
+		///		Sort the search result by <see cref="Artist"/> name. Default <see langword="false"/>.
+		/// </param>
+		/// <returns>
+		///		Array of <see cref="Artist"/>.
+		/// </returns>
 		/// <exception cref="ArgumentNullException">
 		///		One or more parameter is null or empty.
 		/// </exception>
@@ -721,11 +752,17 @@ namespace BooruDex.Booru
 		#region Pool
 
 		/// <summary>
-		/// Search <see cref="Pool"/> by title.
+		///		Search <see cref="Pool"/> by title.
 		/// </summary>
-		/// <param name="title">The title of <see cref="Pool"/>.</param>
-		/// <param name="page">The page number.</param>
-		/// <returns>Array of <see cref="Pool"/>.</returns>
+		/// <param name="title">
+		///		The title of <see cref="Pool"/>.
+		///	</param>
+		/// <param name="page">
+		///		The page number.
+		///	</param>
+		/// <returns>
+		///		Array of <see cref="Pool"/>.
+		///	</returns>
 		/// <exception cref="ArgumentNullException">
 		///		The <see cref="Pool"/> title or name can't null or empty.
 		/// </exception>
@@ -790,10 +827,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Get all <see cref="Post"/> inside the <see cref="Pool"/>.
+		///		Get all <see cref="Post"/> inside the <see cref="Pool"/>.
 		/// </summary>
-		/// <param name="poolId">The <see cref="Pool"/> id.</param>
-		/// <returns>Array of <see cref="Post"/> from <see cref="Pool"/>.</returns>
+		/// <param name="poolId">
+		///		The <see cref="Pool"/> id.
+		///	</param>
+		/// <returns>
+		///		Array of <see cref="Post"/> from <see cref="Pool"/>.
+		///	</returns>
 		/// <exception cref="ArgumentNullException">
 		///		One or more parameter is null or empty.
 		/// </exception>
