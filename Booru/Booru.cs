@@ -174,37 +174,37 @@ namespace BooruDex.Booru
 		#region Booru API Settings
 
 		/// <summary>
-		/// Gets or sets whether this booru contains explicit content or not.
+		///		Gets or sets whether this booru contains explicit content or not.
 		/// </summary>
 		public bool IsSafe { protected set; get; }
 
 		/// <summary>
-		/// Detemine whether this booru has <see cref="Artist"/> API or not.
+		///		Detemine whether this booru has <see cref="Artist"/> API or not.
 		/// </summary>
 		public bool HasArtistApi { protected set; get; }
 
 		/// <summary>
-		/// Detemine whether this booru has <see cref="Pool"/> API or not.
+		///		Detemine whether this booru has <see cref="Pool"/> API or not.
 		/// </summary>
 		public bool HasPoolApi { protected set; get; }
 
 		/// <summary>
-		/// Detemine whether this booru has <see cref="Post"/> API or not.
+		///		Detemine whether this booru has <see cref="Post"/> API or not.
 		/// </summary>
 		public bool HasPostApi { protected set; get; }
 
 		/// <summary>
-		/// Detemine whether this booru has <see cref="Tag"/> API or not.
+		///		Detemine whether this booru has <see cref="Tag"/> API or not.
 		/// </summary>
 		public bool HasTagApi { protected set; get; }
 
 		/// <summary>
-		/// Detemine whether this booru has <see cref="TagRelated"/> API or not.
+		///		Detemine whether this booru has <see cref="TagRelated"/> API or not.
 		/// </summary>
 		public bool HasTagRelatedApi { protected set; get; }
 
 		/// <summary>
-		/// Detemine whether this booru has <see cref="Wiki"/> API or not.
+		///		Detemine whether this booru has <see cref="Wiki"/> API or not.
 		/// </summary>
 		public bool HasWikiApi { protected set; get; }
 
