@@ -1,25 +1,49 @@
 ﻿namespace BooruDex.Models
 {
 	/// <summary>
-	/// Represents a Post object.
+	///		Represents a Post object.
 	/// </summary>
 	readonly public struct Post
 	{
 		/// <summary>
-		/// Create <see cref="Post"/> object.
+		///		Initialize <see cref="Post"/> instance.
 		/// </summary>
-		/// <param name="id">The ID of the post.</param>
-		/// <param name="postUrl">The URI of the post.</param>
-		/// <param name="fileUrl">The URI of the file.</param>
-		/// <param name="previewUrl">The URI of the preview image.</param>
-		/// <param name="rating">The post's rating.</param>
-		/// <param name="tags">The array containing all the tags associated with the file.</param>
-		/// <param name="size">The size of the file, in bytes.</param>
-		/// <param name="height">The height of the image, in pixels.</param>
-		/// <param name="width">The width of the image, in pixels.</param>
-		/// <param name="previewHeight">The height of the preview image, in pixels.</param>
-		/// <param name="previewWidth">The width of the preview image, in pixels.</param>
-		/// <param name="source">The original source of the file.</param>
+		/// <param name="id">
+		///		The ID of the <see cref="Post"/>.
+		/// </param>
+		/// <param name="postUrl">
+		///		The URL of the <see cref="Post"/>.
+		/// </param>
+		/// <param name="fileUrl">
+		///		The URL of the file.
+		/// </param>
+		/// <param name="previewUrl">
+		///		The URL of the preview image.
+		/// </param>
+		/// <param name="rating">
+		///		The <see cref="Post"/>'s <see cref="Rating"/>.
+		/// </param>
+		/// <param name="tags">
+		///		The array containing all the <see cref="Tag"/> associated with the file.
+		/// </param>
+		/// <param name="size">
+		///		The size of the file, in bytes.
+		/// </param>
+		/// <param name="height">
+		///		The height of the image, in pixels.
+		/// </param>
+		/// <param name="width">
+		///		The width of the image, in pixels.
+		/// </param>
+		/// <param name="previewHeight">
+		///		The height of the preview image, in pixels.
+		/// </param>
+		/// <param name="previewWidth">
+		///		The width of the preview image, in pixels.
+		/// </param>
+		/// <param name="source">
+		///		The URL of the original file.
+		/// </param>
 		public Post(
 			uint id,
 			string postUrl,
@@ -54,60 +78,60 @@
 		public uint ID { get; }
 
 		/// <summary>
-		/// Gets the URI of the post.
+		///		Gets the URI of the <see cref="Post"/>.
 		/// </summary>
 		public string PostUrl { get; }
 
 		/// <summary>
-		/// Gets the URI of the file.
+		///		Gets the URL of the file.
 		/// </summary>
 		public string FileUrl { get; }
 
 		/// <summary>
-		/// Gets the URI of the preview image.
+		///		Gets the URL of the preview image.
 		/// </summary>
 		public string PreviewUrl { get; }
 
 		/// <summary>
-		/// Gets the post's rating.
+		///		Gets the <see cref="Post"/>'s <see cref="Rating"/>.
 		/// </summary>
 		public Rating Rating { get; }
 
 		/// <summary>
-		/// Gets the collection containing all the tags associated with the file.
+		///		Gets the collection containing all the <see cref="Tag"/> associated with the file.
 		/// </summary>
 		public string Tags { get; }
 
 		/// <summary>
-		/// Gets the size of the file, in bytes, or
-		/// <see langword="null"/> if file size is unknown.
+		///		Gets the size of the file, in bytes, or
+		///		<see langword="null"/> if file size is unknown.
 		/// </summary>
 		public uint Size { get; }
 
 		/// <summary>
-		/// Gets the height of the image, in pixels.
+		///		Gets the height of the image, in pixels.
 		/// </summary>
 		public int Height { get; }
 
 		/// <summary>
-		/// Gets the width of the image, in pixels.
+		///		Gets the width of the image, in pixels.
 		/// </summary>
 		public int Width { get; }
 
 		/// <summary>
-		/// Gets the height of the preview image, in pixels,
-		/// or <see langword="null"/> if the height is unknown.
+		///		Gets the height of the preview image, in pixels,
+		///		or <see langword="null"/> if the height is unknown.
 		/// </summary>
 		public int? PreviewHeight { get; }
 
 		/// <summary>
-		/// Gets the width of the preview image, in pixels,
-		/// or <see langword="null"/> if the width is unknown.
+		///		Gets the width of the preview image, in pixels,
+		///		or <see langword="null"/> if the width is unknown.
 		/// </summary>
 		public int? PreviewWidth { get; }
 
 		/// <summary>
-		/// Gets the original source of the file.
+		///		Gets URL of original file.
 		/// </summary>
 		public string Source { get; }
 

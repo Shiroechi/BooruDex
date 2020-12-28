@@ -9,18 +9,24 @@ using Litdex.Security.RNG;
 namespace BooruDex.Booru.Template
 {
 	/// <summary>
-	/// Gelbooru beta version 0.2.0.
+	///		Gelbooru beta version 0.2.0.
 	/// </summary>
 	public abstract class Gelbooru02 : Booru
 	{
 		#region Constructor & Destructor
 
 		/// <summary>
-		/// <see cref="Gelbooru02"/> template for booru client.
+		///		<see cref="Gelbooru02"/> template for booru client.
 		/// </summary>
-		/// <param name="domain">URL of booru based sites.</param>
-		/// <param name="httpClient">Client for sending and receive http response.</param>
-		/// <param name="rng">Random generator for random post.</param>
+		/// <param name="domain">
+		///		URL of booru based sites.
+		///	</param>
+		/// <param name="httpClient">
+		///		Client for sending and receive http response.
+		///	</param>
+		/// <param name="rng">
+		///		Random generator for random <see cref="Post"/>.
+		/// </param>
 		public Gelbooru02(string domain, HttpClient httpClient = null, IRNG rng = null) : base(domain, httpClient, rng)
 		{
 			this._DefaultPostLimit = 100;

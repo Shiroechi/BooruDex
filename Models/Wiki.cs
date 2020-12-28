@@ -1,16 +1,22 @@
 ﻿namespace BooruDex.Models
 {
 	/// <summary>
-	/// Represent Wiki entry. 
+	///		Represent Wiki entry. 
 	/// </summary>
 	public struct Wiki
 	{
 		/// <summary>
-		/// Create a instance of <see cref="Wiki"/>.
+		///		Initialize <see cref="Wiki"/> instance.
 		/// </summary>
-		/// <param name="id">The ID of the wiki entry.</param>
-		/// <param name="title">The name of the wiki</param>
-		/// <param name="body">The wiki description.</param>
+		/// <param name="id">
+		///		The ID of the <see cref="Wiki"/> entry.
+		///	</param>
+		/// <param name="title">
+		///		The name or title of the <see cref="Wiki"/>.
+		///	</param>
+		/// <param name="body">
+		///		The <see cref="Wiki"/> description.
+		///	</param>
 		public Wiki(uint id, string title, string body)
 		{
 			this.ID = id;
@@ -19,17 +25,17 @@
 		}
 
 		/// <summary>
-		/// Gets the ID of the wiki entry.
+		///		Gets the ID of the <see cref="Wiki"/> entry.
 		/// </summary>
 		public uint ID { private set; get; }
 
 		/// <summary>
-		/// Gets the name of the described tag.
+		///		Gets the name ot title of the <see cref="Wiki"/>.
 		/// </summary>
 		public string Title { private set; get; }
 
 		/// <summary>
-		/// Gets the tag description.
+		///		Gets the <see cref="Wiki"/> description.
 		/// </summary>
 		public string Body { private set; get; }
 

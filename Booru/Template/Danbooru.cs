@@ -12,18 +12,24 @@ using Litdex.Security.RNG;
 namespace BooruDex.Booru.Template
 {
 	/// <summary>
-	/// Danbooru, A taggable image board.
+	///		Danbooru, A taggable image board.
 	/// </summary>
 	public abstract class Danbooru : Booru
 	{
 		#region Constructor & Destructor
 
 		/// <summary>
-		/// <see cref="Danbooru"/> template for booru client.
+		///		<see cref="Danbooru"/> template for booru client.
 		/// </summary>
-		/// <param name="domain">URL of booru based sites.</param>
-		/// <param name="httpClient">Client for sending and receive http response.</param>
-		/// <param name="rng">Random generator for random post.</param>
+		/// <param name="domain">
+		///		URL of booru based sites.
+		///	</param>
+		/// <param name="httpClient">
+		///		Client for sending and receive http response.
+		///	</param>
+		/// <param name="rng">
+		///		Random generator for random <see cref="Post"/>.
+		///	</param>
 		public Danbooru(string domain, HttpClient httpClient = null, IRNG rng = null) : base(domain, httpClient, rng)
 		{
 			this.IsSafe = false;
@@ -62,10 +68,14 @@ namespace BooruDex.Booru.Template
 		}
 
 		/// <summary>
-		/// Read JSON <see cref="Artist"/>.
+		///		Read JSON <see cref="Artist"/>.
 		/// </summary>
-		/// <param name="json">JSON object.</param>
-		/// <returns><see cref="Artist"/> object.</returns>
+		/// <param name="json">
+		///		JSON object.
+		///	</param>
+		/// <returns>
+		///		<see cref="Artist"/> object.
+		///	</returns>
 		protected virtual Artist ReadArtistDetail(JsonElement json)
 		{
 			var array = json.GetProperty("urls");
@@ -148,10 +158,14 @@ namespace BooruDex.Booru.Template
 		#region Artist
 
 		/// <summary>
-		/// Get <see cref="Artist"/> details.
+		///		Get <see cref="Artist"/> details.
 		/// </summary>
-		/// <param name="name">The exact name of the artist.</param>
-		/// <returns>Array of <see cref="Artist"/>.</returns>
+		/// <param name="name">
+		///		The exact name of the artist.
+		///	</param>
+		/// <returns>
+		///		Array of <see cref="Artist"/>.
+		///	</returns>
 		/// <exception cref="ArgumentNullException">
 		///		One or more parameter is null or empty.
 		/// </exception>
@@ -198,10 +212,14 @@ namespace BooruDex.Booru.Template
 		#region Post
 
 		/// <summary>
-		/// Show a detailed information of the <see cref="Post"/>.
+		///		Show a detailed information of the <see cref="Post"/>.
 		/// </summary>
-		/// <param name="postId">Id of the <see cref="Post"/>.</param>
-		/// <returns><see cref="Post"/>.</returns>
+		/// <param name="postId">
+		///		Id of the <see cref="Post"/>.
+		///	</param>
+		/// <returns>
+		///		<see cref="Post"/>.
+		///	</returns>
 		/// <exception cref="HttpResponseException">
 		///		Unexpected error occured.
 		/// </exception>

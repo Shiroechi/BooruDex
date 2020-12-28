@@ -10,18 +10,24 @@ using Litdex.Security.RNG;
 namespace BooruDex.Booru.Template
 {
 	/// <summary>
-	/// Gelbooru.
+	///		Gelbooru.
 	/// </summary>
 	public abstract class Gelbooru : Booru
 	{
 		#region Constructor & Destructor
 
 		/// <summary>
-		/// <see cref="Gelbooru"/> template for booru client.
+		///		<see cref="Gelbooru"/> template for booru client.
 		/// </summary>
-		/// <param name="domain">URL of booru based sites.</param>
-		/// <param name="httpClient">Client for sending and receive http response.</param>
-		/// <param name="rng">Random generator for random post.</param>
+		/// <param name="domain">	
+		///		URL of booru based sites.
+		///	</param>
+		/// <param name="httpClient">
+		///		Client for sending and receive http response.
+		///	</param>
+		/// <param name="rng">
+		///		Random generator for random <see cref="Post"/>.
+		///	</param>
 		public Gelbooru(string domain, HttpClient httpClient = null, IRNG rng = null) : base(domain, httpClient, rng)
 		{
 			this.IsSafe = false;
@@ -79,12 +85,14 @@ namespace BooruDex.Booru.Template
 		}
 
 		/// <summary>
-		/// Convert string "type" from tag JSON to <see cref="TagType"/>.
+		///		Convert string "type" from tag JSON to <see cref="TagType"/>.
 		/// </summary>
-		/// <param name="tagTypeName">Tag type name.</param>
+		/// <param name="tagTypeName">
+		///		Tag type name.
+		///	</param>
 		/// <returns>
-		/// <see cref="TagType"/> based on the name or 
-		/// <see cref="TagType.Undefined"/> if "type" from tag JSON is not recognizable.
+		///		<see cref="TagType"/> based on the name or 
+		///		<see cref="TagType.Undefined"/> if "type" from tag JSON is not recognizable.
 		/// </returns>
 		protected virtual TagType ToTagType(string tagTypeName)
 		{

@@ -9,9 +9,11 @@ namespace BooruDex.Booru.Client
 		#region Constructor & Destructor
 
 		/// <summary>
-		/// Create <see cref="KonachanNet"/> client object.
+		///		Create <see cref="KonachanNet"/> client object.
 		/// </summary>
-		/// <param name="httpClient">Http client for sending request and recieving response.</param>
+		/// <param name="httpClient">
+		///		Http client for sending request and recieving response.
+		///	</param>
 		public KonachanNet(HttpClient httpClient = null) : base("https://konachan.net/", httpClient)
 		{
 			this.IsSafe = true;

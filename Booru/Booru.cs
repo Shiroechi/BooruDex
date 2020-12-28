@@ -17,7 +17,7 @@ using Litdex.Security.RNG.PRNG;
 namespace BooruDex.Booru
 {
 	/// <summary>
-	/// Base class for all booru client.
+	///		Base class for all booru client.
 	/// </summary>
 	public abstract class Booru
 	{
@@ -127,7 +127,7 @@ namespace BooruDex.Booru
 		#region Properties
 
 		/// <summary>
-		/// For sending HTTP requests and receiving HTTP responses.
+		///		Client for sending HTTP requests and receiving HTTP responses.
 		/// </summary>
 		public HttpClient HttpClient
 		{
@@ -157,7 +157,7 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Gets or sets Booru API version.
+		///		Gets or sets Booru API version.
 		/// </summary>
 		public string ApiVersion
 		{
@@ -171,40 +171,55 @@ namespace BooruDex.Booru
 			}
 		}
 
+		/// <summary>
+		///		Gets or sets how many <see cref="Tag"/> this booru can process for each request..
+		/// </summary>
+		public byte TagsLimit
+		{
+			protected set
+			{
+				this._TagsLimit = value;
+			}
+			get
+			{
+				return this._TagsLimit;
+			}
+		}
+
 		#region Booru API Settings
 
 		/// <summary>
-		/// Gets or sets whether this booru contains explicit content or not.
+		///		Gets or sets whether this booru contains explicit content or not.
 		/// </summary>
 		public bool IsSafe { protected set; get; }
 
 		/// <summary>
-		/// Detemine whether this booru has <see cref="Artist"/> API or not.
+		///		Detemine whether this booru has <see cref="Artist"/> API or not.
 		/// </summary>
 		public bool HasArtistApi { protected set; get; }
 
 		/// <summary>
-		/// Detemine whether this booru has <see cref="Pool"/> API or not.
+		///		Detemine whether this booru has <see cref="Pool"/> API or not.
 		/// </summary>
 		public bool HasPoolApi { protected set; get; }
 
 		/// <summary>
-		/// Detemine whether this booru has <see cref="Post"/> API or not.
+		///		Detemine whether this booru has <see cref="Post"/> API or not.
 		/// </summary>
 		public bool HasPostApi { protected set; get; }
 
 		/// <summary>
-		/// Detemine whether this booru has <see cref="Tag"/> API or not.
+		///		Detemine whether this booru has <see cref="Tag"/> API or not.
 		/// </summary>
 		public bool HasTagApi { protected set; get; }
 
 		/// <summary>
-		/// Detemine whether this booru has <see cref="TagRelated"/> API or not.
+		///		Detemine whether this booru has <see cref="TagRelated"/> API or not.
 		/// </summary>
 		public bool HasTagRelatedApi { protected set; get; }
 
 		/// <summary>
-		/// Detemine whether this booru has <see cref="Wiki"/> API or not.
+		///		Detemine whether this booru has <see cref="Wiki"/> API or not.
 		/// </summary>
 		public bool HasWikiApi { protected set; get; }
 
@@ -234,19 +249,31 @@ namespace BooruDex.Booru
 		#region Protected Method
 
 		/// <summary>
-		/// Create base API call url. 
+		///		Create base API call url. 
 		/// </summary>
-		/// <param name="query">Categories.</param>
-		/// <param name="json">Create JSON API or not. <see langword="true"/> for JSON.</param>
-		/// <returns></returns>
+		/// <param name="query">
+		///		Categories.
+		///	</param>
+		/// <param name="json">
+		///		Create JSON API or not. <see langword="true"/> for JSON.
+		///	</param>
+		/// <returns>
+		///		URL of API request.
+		/// </returns>
 		protected abstract string CreateBaseApiCall(string query, bool json = true);
 
 		/// <summary>
-		/// Get JSON response from url.
+		///		Get JSON response from url.
 		/// </summary>
-		/// <typeparam name="T">The type of the object to deserialize.</typeparam>
-		/// <param name="url"></param>
-		/// <returns>The instance of <typeparamref name="T"/> being deserialized.</returns>
+		/// <typeparam name="T">
+		///		The type of the object to deserialize.
+		///	</typeparam>
+		/// <param name="url">
+		///		URL of the request. 
+		/// </param>
+		/// <returns>
+		///		The instance of <typeparamref name="T"/> being deserialized.
+		///	</returns>
 		/// <exception cref="HttpResponseException">
 		///		Unexpected error occured.
 		/// </exception>
@@ -295,10 +322,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Get <see cref="string"/> response from url.
+		///		Get <see cref="string"/> response from url.
 		/// </summary>
-		/// <param name="url"></param>
-		/// <returns><see cref="string"/> response.</returns>
+		/// <param name="url">
+		///		URL of request.
+		/// </param>
+		/// <returns>
+		///		<see cref="string"/> response.
+		///	</returns>
 		/// <exception cref="HttpResponseException">
 		///		Unexpected error occured.
 		/// </exception>
@@ -337,10 +368,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Deserializes response into string.
+		///		Deserializes response into string.
 		/// </summary>
-		/// <param name="stream"></param>
-		/// <returns><see cref="string"/> content.</returns>
+		/// <param name="stream">
+		///		
+		/// </param>
+		/// <returns>
+		///		<see cref="string"/> content.
+		///	</returns>
 		protected async Task<string> DeserializeStringFromStreamAsync(Stream stream)
 		{
 			if (stream != null)
@@ -409,10 +444,14 @@ namespace BooruDex.Booru
 		#region Virtual Method
 
 		/// <summary>
-		/// Read <see cref="Artist"/> JSON search result.
+		///		Read <see cref="Artist"/> JSON search result.
 		/// </summary>
-		/// <param name="json">JSON object.</param>
-		/// <returns><see cref="Artist"/> object.</returns>
+		/// <param name="json">
+		///		JSON object.
+		///	</param>
+		/// <returns>
+		///		<see cref="Artist"/> object.
+		///	</returns>
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
@@ -422,10 +461,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Read <see cref="Pool"/> JSON search result.
+		///		Read <see cref="Pool"/> JSON search result.
 		/// </summary>
-		/// <param name="json">JSON object.</param>
-		/// <returns><see cref="Pool"/> object.</returns>
+		/// <param name="json">
+		///		JSON object.
+		///	</param>
+		/// <returns>
+		///		<see cref="Pool"/> object.
+		///	</returns>
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
@@ -435,10 +478,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Read <see cref="Post"/> JSON search result.
+		///		Read <see cref="Post"/> JSON search result.
 		/// </summary>
-		/// <param name="json">JSON object.</param>
-		/// <returns><see cref="Post"/> object.</returns>
+		/// <param name="json">
+		///		JSON object.
+		///	</param>
+		/// <returns>
+		///		<see cref="Post"/> object.
+		/// </returns>
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
@@ -448,10 +495,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Read <see cref="Tag"/> JSON search result.
+		///		Read <see cref="Tag"/> JSON search result.
 		/// </summary>
-		/// <param name="json">JSON object.</param>
-		/// <returns><see cref="Tag"/> object.</returns>
+		/// <param name="json">
+		///		JSON object.
+		///	</param>
+		/// <returns>
+		///		<see cref="Tag"/> object.
+		///	</returns>
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
@@ -461,10 +512,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Read <see cref="TagRelated"/> JSON search result.
+		///		Read <see cref="TagRelated"/> JSON search result.
 		/// </summary>
-		/// <param name="json">JSON object.</param>
-		/// <returns><see cref="TagRelated"/> object.</returns>
+		/// <param name="json">
+		///		JSON object.
+		///	</param>
+		/// <returns>
+		///		<see cref="TagRelated"/> object.
+		///	</returns>
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
@@ -474,10 +529,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Read <see cref="Wiki"/> JSON search result.
+		///		Read <see cref="Wiki"/> JSON search result.
 		/// </summary>
-		/// <param name="json">JSON object.</param>
-		/// <returns><see cref="Wiki"/> object.</returns>
+		/// <param name="json">
+		///		JSON object.
+		///	</param>
+		/// <returns>
+		///		<see cref="Wiki"/> object.
+		/// </returns>
 		/// <exception cref="NotImplementedException">
 		///		Method is not implemented yet.
 		/// </exception>
@@ -491,10 +550,14 @@ namespace BooruDex.Booru
 		#region Helper Method
 
 		/// <summary>
-		/// Check the property of JSON object exist or not.
+		///		Check the property of JSON object exist or not.
 		/// </summary>
-		/// <param name="json">JSON object.</param>
-		/// <param name="propertyName">The name of the property to find.</param>
+		/// <param name="json">
+		///		JSON object.
+		///	</param>
+		/// <param name="propertyName">
+		///		The name of the property to find.
+		///	</param>
 		/// <returns>
 		///		<see langword="true"/> if the property was found; otherwise, <see langword="false"/>.
 		///	</returns>
@@ -504,10 +567,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Convert string rating to <see cref="Rating"/>.
+		///		Convert string rating to <see cref="Rating"/>.
 		/// </summary>
-		/// <param name="rating">String rating</param>
-		/// <returns></returns>
+		/// <param name="rating">
+		///		String rating
+		/// </param>
+		/// <returns>
+		///		<see cref="Rating"/> based on <paramref name="rating"/>.
+		/// </returns>
 		protected Rating ConvertRating(string rating)
 		{
 			switch (char.ToLower(rating[0]))
@@ -524,9 +591,11 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Check pre-condition for the tags.
+		///		Check pre-condition for the tags.
 		/// </summary>
-		/// <param name="tags">Tags to check.</param>
+		/// <param name="tags">
+		///		Tags to check.
+		///	</param>
 		/// <exception cref="ArgumentOutOfRangeException">
 		///		The provided <see cref="Tag"/> is more than the limit.
 		/// </exception>
@@ -541,10 +610,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Check pre-condition for page number.
+		///		Check pre-condition for page number.
 		/// </summary>
-		/// <param name="pageNumber">Page number to check.</param>
-		/// <returns>A valid page number that not lower or greater than required.</returns>
+		/// <param name="pageNumber">
+		///		Page number to check.
+		///	</param>
+		/// <returns>
+		///		A valid page number that not lower or greater than required.
+		///	</returns>
 		protected uint CheckPageLimit(uint pageNumber)
 		{
 			if (this._PageLimit == 0)
@@ -567,10 +640,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Check pre-condition for number of requested post.
+		///		Check pre-condition for number of requested <see cref="Post"/>.
 		/// </summary>
-		/// <param name="postLimit">Number of post to check.</param>
-		/// <returns>A valid number of post that not lower or greater than required.</returns>
+		/// <param name="postLimit">
+		///		Number of post to check.
+		///	</param>
+		/// <returns>
+		///		A valid number of retrieved <see cref="Post"/> that not lower or greater than required.
+		///	</returns>
 		protected byte CheckPostLimit(byte postLimit)
 		{
 			if (postLimit <= 0)
@@ -594,9 +671,14 @@ namespace BooruDex.Booru
 		#region Public Method
 
 		/// <summary>
-		/// Add http user agent if not exist.
+		///		Add http user agent if not exist.
 		/// </summary>
-		/// <param name="userAgent">User Agrnt value.</param>
+		/// <remarks>
+		///		by default using browser user agent.
+		/// </remarks>
+		/// <param name="userAgent">
+		///		User Agrnt value.
+		///	</param>
 		public void AddHttpUserAgent(string userAgent = "")
 		{
 			if (this._HttpClient == null)
@@ -639,12 +721,20 @@ namespace BooruDex.Booru
 		#region Artist
 
 		/// <summary>
-		/// Search <see cref="Artist"/> by name.
+		///		Search <see cref="Artist"/> by name.
 		/// </summary>
-		/// <param name="name">The name (or a fragment of the name) of the artist.</param>
-		/// <param name="page">The page number.</param>
-		/// <param name="sort">Sort the search result by <see cref="Artist"/> name. Default <see langword="false"/>.</param>
-		/// <returns>Array of <see cref="Artist"/>.</returns>
+		/// <param name="name">
+		///		The name (or a fragment of the name) of the artist.
+		///	</param>
+		/// <param name="page">
+		///		The page number.
+		///	</param>
+		/// <param name="sort">
+		///		Sort the search result by <see cref="Artist"/> name. Default <see langword="false"/>.
+		/// </param>
+		/// <returns>
+		///		Array of <see cref="Artist"/>.
+		/// </returns>
 		/// <exception cref="ArgumentNullException">
 		///		One or more parameter is null or empty.
 		/// </exception>
@@ -671,7 +761,7 @@ namespace BooruDex.Booru
 				throw new NotImplementedException($"Method { nameof(ArtistListAsync) } is not implemented yet.");
 			}
 
-			if (name == null || name.Trim() == "")
+			if (string.IsNullOrWhiteSpace(name))
 			{
 				throw new ArgumentNullException(nameof(name), "Artist name can't null or empty.");
 			}
@@ -721,11 +811,17 @@ namespace BooruDex.Booru
 		#region Pool
 
 		/// <summary>
-		/// Search <see cref="Pool"/> by title.
+		///		Search <see cref="Pool"/> by title.
 		/// </summary>
-		/// <param name="title">The title of <see cref="Pool"/>.</param>
-		/// <param name="page">The page number.</param>
-		/// <returns>Array of <see cref="Pool"/>.</returns>
+		/// <param name="title">
+		///		The title of <see cref="Pool"/>.
+		///	</param>
+		/// <param name="page">
+		///		The page number.
+		///	</param>
+		/// <returns>
+		///		Array of <see cref="Pool"/>.
+		///	</returns>
 		/// <exception cref="ArgumentNullException">
 		///		The <see cref="Pool"/> title or name can't null or empty.
 		/// </exception>
@@ -752,7 +848,7 @@ namespace BooruDex.Booru
 				throw new NotImplementedException($"Method { nameof(PoolList) } is not implemented yet.");
 			}
 
-			if (title == null || title.Trim() == "")
+			if (string.IsNullOrWhiteSpace(title))
 			{
 				throw new ArgumentNullException(nameof(title), "Title can't null or empty.");
 			}
@@ -790,10 +886,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Get all <see cref="Post"/> inside the <see cref="Pool"/>.
+		///		Get all <see cref="Post"/> inside the <see cref="Pool"/>.
 		/// </summary>
-		/// <param name="poolId">The <see cref="Pool"/> id.</param>
-		/// <returns>Array of <see cref="Post"/> from <see cref="Pool"/>.</returns>
+		/// <param name="poolId">
+		///		The <see cref="Pool"/> id.
+		///	</param>
+		/// <returns>
+		///		Array of <see cref="Post"/> from <see cref="Pool"/>.
+		///	</returns>
 		/// <exception cref="ArgumentNullException">
 		///		One or more parameter is null or empty.
 		/// </exception>
@@ -888,11 +988,17 @@ namespace BooruDex.Booru
 		#region Post
 
 		/// <summary>
-		/// Get a list of the latest <see cref="Post"/>.
+		///		Get a list of the latest <see cref="Post"/>.
 		/// </summary>
-		/// <param name="limit">How many <see cref="Post"/> to retrieve.</param>
-		/// <param name="page">The page number.</param>
-		/// <param name="tags">The tags to search for.</param>
+		/// <param name="limit">
+		///		How many <see cref="Post"/> to retrieve.
+		/// </param>
+		/// <param name="page">
+		///		The page number.
+		/// </param>
+		/// <param name="tags">
+		///		The tags to search for.
+		/// </param>
 		/// <returns>
 		///		Array of <see cref="Post"/>.
 		/// </returns>
@@ -997,9 +1103,11 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Get a single random <see cref="Post"/> with the given tags.
+		///		Get a single random <see cref="Post"/> with the given tags.
 		/// </summary>
-		/// <param name="tags"><see cref="Tag"/> to search.</param>
+		/// <param name="tags">
+		///		<see cref="Tag"/> to search.
+		///	</param>
 		/// <returns>
 		///		A random <see cref="Post"/>.
 		/// </returns>
@@ -1056,10 +1164,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Get multiple random <see cref="Post"/> with the given tags.
+		///		Get multiple random <see cref="Post"/> with the given tags.
 		/// </summary>
-		/// <param name="tags"><see cref="Tag"/> to search.</param>
-		/// <param name="limit">How many post to retrieve.</param>
+		/// <param name="tags">
+		///		<see cref="Tag"/> to search.
+		///	</param>
+		/// <param name="limit">
+		///		How many post to retrieve.
+		///	</param>
 		/// <returns>
 		///		Array of <see cref="Post"/>.
 		/// </returns>
@@ -1132,9 +1244,11 @@ namespace BooruDex.Booru
 		#region Tag
 
 		/// <summary>
-		/// Search for <see cref="Tag"/> with the name is similiar or alike.
+		///		Search for <see cref="Tag"/> with the name is similiar or alike.
 		/// </summary>
-		/// <param name="name">The <see cref="Tag"/> name.</param>
+		/// <param name="name">
+		///		The <see cref="Tag"/> name.
+		///	</param>
 		/// <returns>
 		///		Array of <see cref="Tag"/>.
 		/// </returns>
@@ -1164,7 +1278,7 @@ namespace BooruDex.Booru
 				throw new NotImplementedException($"Method { nameof(TagListAsync) } is not implemented yet.");
 			}
 
-			if (name == null || name.Trim() == "")
+			if (string.IsNullOrWhiteSpace(name))
 			{
 				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
 			}
@@ -1205,10 +1319,14 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Search for <see cref="Tag"/> that related with other <see cref="Tag"/>.	
+		///		Search for <see cref="Tag"/> that related with other <see cref="Tag"/>.	
 		/// </summary>
-		/// <param name="name">The <see cref="Tag"/> name.</param>
-		/// <param name="type">Restrict results to search by <see cref="TagType"/> (can be general, artist, copyright, or character).</param>
+		/// <param name="name">
+		///		The <see cref="Tag"/> name.
+		///	</param>
+		/// <param name="type">
+		///		Restrict results to search by <see cref="TagType"/> (can be general, artist, copyright, or character).
+		///	</param>
 		/// <returns>
 		///		Array of <see cref="TagRelated"/>.
 		/// </returns>
@@ -1238,7 +1356,7 @@ namespace BooruDex.Booru
 				throw new NotImplementedException($"Method { nameof(TagRelatedAsync) } is not implemented yet.");
 			}
 
-			if (name == null || name.Trim() == "")
+			if (string.IsNullOrWhiteSpace(name))
 			{
 				throw new ArgumentNullException(nameof(name), "Tag name can't null or empty.");
 			}
@@ -1294,14 +1412,55 @@ namespace BooruDex.Booru
 			}
 		}
 
+		/// <summary>
+		///		Check if the <see cref="Tag"/> is exist (available) or not in the booru.
+		/// </summary>
+		/// <param name="tag">
+		///		<see cref="Tag"/> name to check.
+		/// </param>
+		/// <returns>
+		///		<see langword="true"></see> if the <see cref="Tag"/> name is exist or availabe in the booru.
+		/// </returns>
+		public async Task<bool> IsTagExistAsync(string tag)
+		{
+			if (this.HasTagApi == false)
+			{
+				throw new NotImplementedException($"Method { nameof(TagListAsync) } is not implemented yet.");
+			}
+
+			if (string.IsNullOrWhiteSpace(tag))
+			{
+				throw new ArgumentNullException(nameof(tag), "Tag name can't null or empty.");
+			}
+
+			try
+			{
+				var tags = await this.TagListAsync(tag);
+				foreach (var item in tags)
+				{
+					if (item.Name.Equals(tag, StringComparison.CurrentCultureIgnoreCase))
+					{
+						return true;
+					}
+				}
+				return false;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
 		#endregion Tag
 
 		#region Wiki
 
 		/// <summary>
-		/// Search for <see cref="Wiki"/> by title.
+		///		Search for <see cref="Wiki"/> by title.
 		/// </summary>
-		/// <param name="title"><see cref="Wiki"/> title.</param>
+		/// <param name="title">
+		///		<see cref="Wiki"/> title.
+		///	</param>
 		/// <returns>
 		///		Array of <see cref="Wiki"/>.
 		/// </returns>
@@ -1331,7 +1490,7 @@ namespace BooruDex.Booru
 				throw new NotImplementedException($"Method { nameof(WikiListAsync) } is not implemented yet.");
 			}
 
-			if (title == null || title.Trim() == "")
+			if (string.IsNullOrWhiteSpace(title))
 			{
 				throw new ArgumentNullException(nameof(title), "Title can't null or empty.");
 			}
