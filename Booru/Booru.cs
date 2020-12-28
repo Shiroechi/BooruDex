@@ -17,7 +17,7 @@ using Litdex.Security.RNG.PRNG;
 namespace BooruDex.Booru
 {
 	/// <summary>
-	/// Base class for all booru client.
+	///		Base class for all booru client.
 	/// </summary>
 	public abstract class Booru
 	{
