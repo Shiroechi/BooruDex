@@ -9,9 +9,11 @@ namespace BooruDex.Booru.Client
 		#region Constructor & Destructor
 
 		/// <summary>
-		/// Create <see cref="Xbooru"/> client object.
+		///		Create <see cref="Xbooru"/> client object.
 		/// </summary>
-		/// <param name="httpClient">Http client for sending request and recieving response.</param>
+		/// <param name="httpClient">
+		///		Http client for sending request and recieving response.
+		///	</param>
 		public Xbooru(HttpClient httpClient = null) : base("https://xbooru.com/", httpClient)
 		{
 			this._PageLimit = 0; // no page limit
