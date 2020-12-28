@@ -12,9 +12,11 @@ namespace BooruDex.Booru.Client
 		#region Constructor & Destructor
 
 		/// <summary>
-		/// Create <see cref="Lolibooru"/> client object.
+		///		Create <see cref="Lolibooru"/> client object.
 		/// </summary>
-		/// <param name="httpClient">Http client for sending request and recieving response.</param>
+		/// <param name="httpClient">
+		///		Http client for sending request and recieving response.
+		///	</param>
 		public Lolibooru(HttpClient httpClient = null) : base("https://lolibooru.moe/", httpClient)
 		{
 			this._TagsLimit = 0; // not tag limit
