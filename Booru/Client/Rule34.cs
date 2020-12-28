@@ -9,9 +9,11 @@ namespace BooruDex.Booru.Client
 		#region Constructor & Destructor
 
 		/// <summary>
-		/// Create <see cref="Rule34"/> client object.
+		///		Create <see cref="Rule34"/> client object.
 		/// </summary>
-		/// <param name="httpClient">Http client for sending request and recieving response.</param>
+		/// <param name="httpClient">
+		///		Http client for sending request and recieving response.
+		///	</param>
 		public Rule34(HttpClient httpClient = null) : base("https://rule34.xxx/", httpClient)
 		{
 			this._PageLimit = 200000;
