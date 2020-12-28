@@ -9,9 +9,11 @@ namespace BooruDex.Booru.Client
 		#region Constructor & Destructor
 
 		/// <summary>
-		/// Create <see cref="Safebooru"/> client object.
+		///		Create <see cref="Safebooru"/> client object.
 		/// </summary>
-		/// <param name="httpClient">Http client for sending request and recieving response.</param>
+		/// <param name="httpClient">
+		///		Http client for sending request and recieving response.
+		///	</param>
 		public Safebooru(HttpClient httpClient = null) : base("https://safebooru.org/", httpClient)
 		{
 			this.IsSafe = true;
