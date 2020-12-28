@@ -171,6 +171,21 @@ namespace BooruDex.Booru
 			}
 		}
 
+		/// <summary>
+		///		Gets or sets how many <see cref="Tag"/> this booru can process for each request..
+		/// </summary>
+		public byte TagsLimit
+		{
+			protected set
+			{
+				this._TagsLimit = value;
+			}
+			get
+			{
+				return this._TagsLimit;
+			}
+		}
+
 		#region Booru API Settings
 
 		/// <summary>
