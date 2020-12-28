@@ -7,9 +7,11 @@ namespace BooruDex.Booru.Client
 		#region Constructor & Destructor
 
 		/// <summary>
-		/// Create <see cref="DanbooruDonmai"/> client object.
+		///		Create <see cref="DanbooruDonmai"/> client object.
 		/// </summary>
-		/// <param name="httpClient">Http client for sending request and recieving response.</param>
+		/// <param name="httpClient">
+		///		Http client for sending request and recieving response.
+		///	</param>
 		public DanbooruDonmai(HttpClient httpClient = null) : base("https://danbooru.donmai.us/", httpClient)
 		{
 
