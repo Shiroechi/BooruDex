@@ -127,7 +127,7 @@ namespace BooruDex.Booru
 		#region Properties
 
 		/// <summary>
-		/// For sending HTTP requests and receiving HTTP responses.
+		///		Client for sending HTTP requests and receiving HTTP responses.
 		/// </summary>
 		public HttpClient HttpClient
 		{
@@ -157,7 +157,7 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Gets or sets Booru API version.
+		///		Gets or sets Booru API version.
 		/// </summary>
 		public string ApiVersion
 		{
