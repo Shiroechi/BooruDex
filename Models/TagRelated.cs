@@ -3,7 +3,7 @@
 	/// <summary>
 	///		Represent a Tag Related object.
 	/// </summary>
-	readonly public struct TagRelated
+	public class TagRelated
 	{
 		/// <summary>
 		///		Initialize <see cref="TagRelated"/> instance.
@@ -14,7 +14,7 @@
 		/// <param name="count">
 		///		The number of occurences of the <see cref="Tag"/>.
 		///	</param>
-		public TagRelated(string name, uint count)
+		public TagRelated(string name = "", uint count = 0)
 		{
 			this.Name = name;
 			this.Count = count;
@@ -23,12 +23,12 @@
 		/// <summary>
 		///		Gets the name of the <see cref="Tag"/>.
 		/// </summary>
-		public string Name { get; }
+		public string Name { internal set; get; }
 
 		/// <summary>
 		///		Gets the number of occurences of the <see cref="Tag"/>.
 		/// </summary>
-		public uint Count { get; }
+		public uint Count { internal set; get; }
 
 		/// <inheritdoc/>
 		public override string ToString()
