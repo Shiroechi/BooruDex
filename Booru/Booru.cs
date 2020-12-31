@@ -1156,7 +1156,7 @@ namespace BooruDex.Booru
 				throw new SearchNotFoundException($"No post found with tags { string.Join(" ", tags) }.");
 			}
 
-			// get post with random the page number, each page 
+			// get random post with random the page number, each page 
 			// limited only with 1 post.
 
 			// there's a limit for page number
