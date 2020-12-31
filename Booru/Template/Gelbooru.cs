@@ -59,29 +59,33 @@ namespace BooruDex.Booru.Template
 		/// <inheritdoc/>
 		protected override Post ReadPost(JsonElement json)
 		{
-			return new Post(
-				json.GetProperty("id").GetUInt32(),
-				this._BaseUrl + "index.php?page=post&s=view&id=",
-				json.GetProperty("file_url").GetString(),
-				this._BaseUrl + "thumbnails/" + json.GetProperty("directory").GetString() + "/thumbnail_" + json.GetProperty("hash").GetString() + ".jpg",
-				this.ConvertRating(json.GetProperty("rating").GetString()),
-				json.GetProperty("tags").GetString(),
-				0,
-				json.GetProperty("height").GetInt32(),
-				json.GetProperty("width").GetInt32(),
-				0,
-				0,
-				json.GetProperty("source").GetString());
+			return new Post
+			{
+				ID = json.GetProperty("id").GetUInt32(),
+				PostUrl = this._BaseUrl + "index.php?page=post&s=view&id=",
+				FileUrl = json.GetProperty("file_url").GetString(),
+				PreviewUrl = this._BaseUrl + "thumbnails/" + json.GetProperty("directory").GetString() + "/thumbnail_" + json.GetProperty("hash").GetString() + ".jpg",
+				Rating = this.ConvertRating(json.GetProperty("rating").GetString()),
+				Tags = json.GetProperty("tags").GetString(),
+				Size = 0,
+				Height = json.GetProperty("height").GetInt32(),
+				Width = json.GetProperty("width").GetInt32(),
+				PreviewHeight = 0,
+				PreviewWidth = 0,
+				Source = json.GetProperty("source").GetString()
+			};
 		}
 
 		/// <inheritdoc/>
 		protected override Tag ReadTag(JsonElement json)
 		{
-			return new Tag(
-				uint.Parse(json.GetProperty("id").GetString()),
-				json.GetProperty("tag").GetString(),
-				this.ToTagType(json.GetProperty("type").GetString()),
-				uint.Parse(json.GetProperty("count").GetString()));
+			return new Tag
+			{
+				ID = uint.Parse(json.GetProperty("id").GetString()),
+				Name = json.GetProperty("tag").GetString(),
+				Type = this.ToTagType(json.GetProperty("type").GetString()),
+				Count = uint.Parse(json.GetProperty("count").GetString())
+			};
 		}
 
 		/// <summary>
