@@ -17,7 +17,7 @@
 		/// <param name="body">
 		///		The <see cref="Wiki"/> description.
 		///	</param>
-		public Wiki(uint id, string title, string body)
+		public Wiki(uint id = 0, string title = "", string body = "")
 		{
 			this.ID = id;
 			this.Title = title;
@@ -27,17 +27,17 @@
 		/// <summary>
 		///		Gets the ID of the <see cref="Wiki"/> entry.
 		/// </summary>
-		public uint ID { private set; get; }
+		public uint ID { internal set; get; }
 
 		/// <summary>
 		///		Gets the name ot title of the <see cref="Wiki"/>.
 		/// </summary>
-		public string Title { private set; get; }
+		public string Title { internal set; get; }
 
 		/// <summary>
 		///		Gets the <see cref="Wiki"/> description.
 		/// </summary>
-		public string Body { private set; get; }
+		public string Body { internal set; get; }
 
 		/// <inheritdoc/>
 		public override string ToString()
