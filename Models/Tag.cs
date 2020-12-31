@@ -3,7 +3,7 @@
 	/// <summary>
 	///		Represent a Tag object.
 	/// </summary>
-	readonly public struct Tag
+	public class Tag
 	{
 		/// <summary>
 		///		Initialize <see cref="Tag"/> instance
@@ -20,7 +20,7 @@
 		/// <param name="count">
 		///		The number of occurences of the <see cref="Tag"/>.
 		/// </param>
-		public Tag(uint id, string name, TagType type, uint count)
+		public Tag(uint id = 0, string name = "", TagType type = TagType.Undefined, uint count = 0)
 		{
 			this.ID = id;
 			this.Name = name;
@@ -31,22 +31,22 @@
 		/// <summary>
 		///		Gets the ID of the <see cref="Tag"/>.
 		/// </summary>
-		public uint ID { get; }
+		public uint ID { internal set; get; }
 
 		/// <summary>
 		///		Gets the name of the <see cref="Tag"/>.
 		/// </summary>
-		public string Name { get; }
+		public string Name { internal set; get; }
 
 		/// <summary>
 		///		Gets the type of the <see cref="Tag"/>.
 		/// </summary>
-		public TagType Type { get; }
+		public TagType Type { internal set; get; }
 
 		/// <summary>
 		///		Gets the number of occurences of the <see cref="Tag"/>.
 		/// </summary>
-		public uint Count { get; }
+		public uint Count { internal set; get; }
 
 		/// <inheritdoc/>
 		public override string ToString()
