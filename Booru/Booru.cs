@@ -91,22 +91,28 @@ namespace BooruDex.Booru
 		#region Constructor & Destructor
 
 		/// <summary>
-		/// Create base object for booru client.
+		///		Create base object for booru client.
 		/// </summary>
-		/// <param name="domain">URL of booru based sites.</param>
-		/// <param name="httpClient">Client for sending and receive http response.</param>
-		/// <param name="rng">Random generator for random post.</param>
+		/// <param name="domain">
+		///		URL of booru based sites.
+		///	</param>
+		/// <param name="httpClient">
+		///		Client for sending and receive http response.
+		///	</param>
+		/// <param name="rng">
+		///		Random generator for determine random <see cref="Post"/>.
+		///	</param>
 		public Booru(string domain, HttpClient httpClient = null, IRNG rng = null)
 		{
 			this._BaseUrl = new Uri(domain, UriKind.Absolute);
 			this.HttpClient = httpClient;
-			this._RNG = rng == null ? new SplitMix64() : rng;
+			this._RNG = rng ?? new SplitMix64();
 			this.DefaultApiSettings();
 			this._Authentication = false;
 		}
 
 		/// <summary>
-		/// Release all resource that this object hold.
+		///		Release all resource that this object hold.
 		/// </summary>
 		~Booru()
 		{
@@ -172,7 +178,7 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		///		Gets or sets how many <see cref="Tag"/> this booru can process for each request..
+		///		Gets maximum <see cref="Tag"/> that this booru can process for each request.
 		/// </summary>
 		public byte TagsLimit
 		{
