@@ -11,6 +11,14 @@ namespace BooruDex.Models
 		/// <summary>
 		///		Initialize <see cref="Artist"/> instance.
 		/// </summary>
+		public Artist()
+		{
+
+		}
+
+		/// <summary>
+		///		Initialize <see cref="Artist"/> instance.
+		/// </summary>
 		/// <param name="id">
 		///		The <see cref="Artist"/> id.
 		///	</param>
