@@ -24,65 +24,65 @@ namespace BooruDex.Booru
 		#region Member
 
 		/// <summary>
-		/// Http client to send request and receive response.
+		///		Http client to send request and receive response.
 		/// </summary>
 		private HttpClient _HttpClient;
 
 		/// <summary>
-		/// <see langword="true"/> if <see cref="HttpClient"/> is supplied by user; <see langword="false"/> otherwise.
+		///		<see langword="true"/> if <see cref="HttpClient"/> is supplied by user; <see langword="false"/> otherwise.
 		/// </summary>
 		private bool _HttpClientSupplied;
 
 		/// <summary>
-		/// Base API request URL.
+		///		Base API request URL.
 		/// </summary>
 		protected Uri _BaseUrl;
 
 		/// <summary>
-		/// Default retrieved post for each request.
+		///		Default retrieved post for each request.
 		/// </summary>
 		protected byte _DefaultPostLimit;
 
 		/// <summary>
-		/// Max allowed <see cref="Tag"/>s to use for search a <see cref="Post"/>. 
+		///		Max allowed <see cref="Tag"/> to use for search a <see cref="Post"/>. 
 		/// </summary>
 		protected byte _TagsLimit;
 
 		/// <summary>
-		/// Max page number.
+		///		Max page number.
 		/// </summary>
 		protected uint _PageLimit;
 
 		/// <summary>
-		/// Random generator.
+		///		Random generator.
 		/// </summary>
 		protected IRNG _RNG;
 
 		/// <summary>
-		/// Your username of the site (Required only for 
-		/// functions that modify the content).
+		///		Your username of the site (Required only for 
+		///		functions that modify the content).
 		/// </summary>
 		protected string _Username;
 
 		/// <summary>
-		///  Your user password in plain text (Required only 
-		///  for functions that modify the content).
+		///		Your user password in plain text (Required only 
+		///		for functions that modify the content).
 		/// </summary>
 		protected string _Password;
 
 		/// <summary>
-		/// String that is append to password (required to login). 
-		/// (See the API documentation of the site for more information).
+		///		String that is append to password (required to login). 
+		///		(See the API documentation of the site for more information).
 		/// </summary>
 		protected string _PasswordSalt;
 
 		/// <summary>
-		/// Version of Booru API.
+		///		Version of Booru API.
 		/// </summary>
 		protected string _ApiVersion;
 
 		/// <summary>
-		/// Authentication check.
+		///		Authentication check.
 		/// </summary>
 		protected bool _Authentication;
 
