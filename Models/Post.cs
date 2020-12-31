@@ -3,7 +3,7 @@
 	/// <summary>
 	///		Represents a Post object.
 	/// </summary>
-	readonly public struct Post
+	public class Post
 	{
 		/// <summary>
 		///		Initialize <see cref="Post"/> instance.
@@ -45,18 +45,18 @@
 		///		The URL of the original file.
 		/// </param>
 		public Post(
-			uint id,
-			string postUrl,
-			string fileUrl,
-			string previewUrl,
-			Rating rating,
-			string tags,
-			uint size,
-			int height,
-			int width,
-			int? previewHeight,
-			int? previewWidth,
-			string source)
+			uint id = 0,
+			string postUrl = "",
+			string fileUrl = "",
+			string previewUrl = "",
+			Rating rating = Rating.None,
+			string tags = "",
+			uint size = 0,
+			int height = 0,
+			int width = 0,
+			int? previewHeight = 0,
+			int? previewWidth = 0,
+			string source = "")
 		{
 			this.ID = id;
 			this.FileUrl = fileUrl;
@@ -75,65 +75,65 @@
 		/// <summary>
 		/// Gets the ID of the post.
 		/// </summary>
-		public uint ID { get; }
+		public uint ID { internal set; get; }
 
 		/// <summary>
 		///		Gets the URI of the <see cref="Post"/>.
 		/// </summary>
-		public string PostUrl { get; }
+		public string PostUrl { internal set; get; }
 
 		/// <summary>
 		///		Gets the URL of the file.
 		/// </summary>
-		public string FileUrl { get; }
+		public string FileUrl { internal set; get; }
 
 		/// <summary>
 		///		Gets the URL of the preview image.
 		/// </summary>
-		public string PreviewUrl { get; }
+		public string PreviewUrl { internal set; get; }
 
 		/// <summary>
 		///		Gets the <see cref="Post"/>'s <see cref="Rating"/>.
 		/// </summary>
-		public Rating Rating { get; }
+		public Rating Rating { internal set; get; }
 
 		/// <summary>
 		///		Gets the collection containing all the <see cref="Tag"/> associated with the file.
 		/// </summary>
-		public string Tags { get; }
+		public string Tags { internal set; get; }
 
 		/// <summary>
 		///		Gets the size of the file, in bytes, or
 		///		<see langword="null"/> if file size is unknown.
 		/// </summary>
-		public uint Size { get; }
+		public uint Size { internal set; get; }
 
 		/// <summary>
 		///		Gets the height of the image, in pixels.
 		/// </summary>
-		public int Height { get; }
+		public int Height { internal set; get; }
 
 		/// <summary>
 		///		Gets the width of the image, in pixels.
 		/// </summary>
-		public int Width { get; }
+		public int Width { internal set; get; }
 
 		/// <summary>
 		///		Gets the height of the preview image, in pixels,
 		///		or <see langword="null"/> if the height is unknown.
 		/// </summary>
-		public int? PreviewHeight { get; }
+		public int? PreviewHeight { internal set; get; }
 
 		/// <summary>
 		///		Gets the width of the preview image, in pixels,
 		///		or <see langword="null"/> if the width is unknown.
 		/// </summary>
-		public int? PreviewWidth { get; }
+		public int? PreviewWidth { internal set; get; }
 
 		/// <summary>
 		///		Gets URL of original file.
 		/// </summary>
-		public string Source { get; }
+		public string Source { internal set; get; }
 
 		/// <inheritdoc/>
 		public override string ToString()
