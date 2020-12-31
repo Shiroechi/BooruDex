@@ -11,78 +11,84 @@
         </member>
         <member name="F:BooruDex.Booru.Booru._HttpClient">
             <summary>
-            Http client to send request and receive response.
+            	Http client to send request and receive response.
             </summary>
         </member>
         <member name="F:BooruDex.Booru.Booru._HttpClientSupplied">
             <summary>
-            <see langword="true"/> if <see cref="P:BooruDex.Booru.Booru.HttpClient"/> is supplied by user; <see langword="false"/> otherwise.
+            	<see langword="true"/> if <see cref="P:BooruDex.Booru.Booru.HttpClient"/> is supplied by user; <see langword="false"/> otherwise.
             </summary>
         </member>
         <member name="F:BooruDex.Booru.Booru._BaseUrl">
             <summary>
-            Base API request URL.
+            	Base API request URL.
             </summary>
         </member>
         <member name="F:BooruDex.Booru.Booru._DefaultPostLimit">
             <summary>
-            Default retrieved post for each request.
+            	Default retrieved post for each request.
             </summary>
         </member>
         <member name="F:BooruDex.Booru.Booru._TagsLimit">
             <summary>
-            Max allowed <see cref="T:BooruDex.Models.Tag"/>s to use for search a <see cref="T:BooruDex.Models.Post"/>. 
+            	Max allowed <see cref="T:BooruDex.Models.Tag"/> to use for search a <see cref="T:BooruDex.Models.Post"/>. 
             </summary>
         </member>
         <member name="F:BooruDex.Booru.Booru._PageLimit">
             <summary>
-            Max page number.
+            	Max page number.
             </summary>
         </member>
         <member name="F:BooruDex.Booru.Booru._RNG">
             <summary>
-            Random generator.
+            	Random generator.
             </summary>
         </member>
         <member name="F:BooruDex.Booru.Booru._Username">
             <summary>
-            Your username of the site (Required only for 
-            functions that modify the content).
+            	Your username of the site (Required only for 
+            	functions that modify the content).
             </summary>
         </member>
         <member name="F:BooruDex.Booru.Booru._Password">
             <summary>
-             Your user password in plain text (Required only 
-             for functions that modify the content).
+            	Your user password in plain text (Required only 
+            	for functions that modify the content).
             </summary>
         </member>
         <member name="F:BooruDex.Booru.Booru._PasswordSalt">
             <summary>
-            String that is append to password (required to login). 
-            (See the API documentation of the site for more information).
+            	String that is append to password (required to login). 
+            	(See the API documentation of the site for more information).
             </summary>
         </member>
         <member name="F:BooruDex.Booru.Booru._ApiVersion">
             <summary>
-            Version of Booru API.
+            	Version of Booru API.
             </summary>
         </member>
         <member name="F:BooruDex.Booru.Booru._Authentication">
             <summary>
-            Authentication check.
+            	Authentication check.
             </summary>
         </member>
         <member name="M:BooruDex.Booru.Booru.#ctor(System.String,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
             <summary>
-            Create base object for booru client.
+            	Create base object for booru client.
             </summary>
-            <param name="domain">URL of booru based sites.</param>
-            <param name="httpClient">Client for sending and receive http response.</param>
-            <param name="rng">Random generator for random post.</param>
+            <param name="domain">
+            	URL of booru based sites.
+            </param>
+            <param name="httpClient">
+            	Client for sending and receive http response.
+            </param>
+            <param name="rng">
+            	Random generator for determine random <see cref="T:BooruDex.Models.Post"/>.
+            </param>
         </member>
         <member name="M:BooruDex.Booru.Booru.Finalize">
             <summary>
-            Release all resource that this object hold.
+            	Release all resource that this object hold.
             </summary>
         </member>
         <member name="P:BooruDex.Booru.Booru.HttpClient">
@@ -97,7 +103,7 @@
         </member>
         <member name="P:BooruDex.Booru.Booru.TagsLimit">
             <summary>
-            	Gets or sets how many <see cref="T:BooruDex.Models.Tag"/> this booru can process for each request..
+            	Gets maximum <see cref="T:BooruDex.Models.Tag"/> that this booru can process for each request.
             </summary>
         </member>
         <member name="P:BooruDex.Booru.Booru.IsSafe">
@@ -1053,6 +1059,11 @@
             	Represents a Artist object.
             </summary>
         </member>
+        <member name="M:BooruDex.Models.Artist.#ctor">
+            <summary>
+            	Initialize <see cref="T:BooruDex.Models.Artist"/> instance.
+            </summary>
+        </member>
         <member name="M:BooruDex.Models.Artist.#ctor(System.UInt32,System.String,System.Collections.Generic.IList{System.String})">
             <summary>
             	Initialize <see cref="T:BooruDex.Models.Artist"/> instance.
@@ -1087,7 +1098,7 @@
         </member>
         <member name="T:BooruDex.Models.Pool">
             <summary>
-            	Represents a Artist object.
+            	Represents a Pool object.
             </summary>
         </member>
         <member name="M:BooruDex.Models.Pool.#ctor(System.UInt32,System.String,System.UInt32,System.String)">
