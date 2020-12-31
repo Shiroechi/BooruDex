@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Text.Json;
 
@@ -81,65 +82,77 @@ namespace BooruDex.Booru.Template
 				}
 			}
 
-			return new Artist(
-				json.GetProperty("id").GetUInt32(),
-				json.GetProperty("name").GetString(),
-				urls);
+			return new Artist
+			{
+				ID = json.GetProperty("id").GetUInt32(),
+				Name = json.GetProperty("name").GetString(),
+				Urls = new ReadOnlyCollection<string>(urls)
+			};
 		}
 
 		/// <inheritdoc/>
 		protected override Pool ReadPool(JsonElement json)
 		{
-			return new Pool(
-				json.GetProperty("id").GetUInt32(),
-				json.GetProperty("name").GetString(),
-				json.GetProperty("post_count").GetUInt32(),
-				json.GetProperty("description").GetString());
+			return new Pool
+			{
+				ID = json.GetProperty("id").GetUInt32(),
+				Name = json.GetProperty("name").GetString(),
+				PostCount = json.GetProperty("post_count").GetUInt32(),
+				Description = json.GetProperty("description").GetString()
+			};
 		}
 
 		/// <inheritdoc/>
 		protected override Post ReadPost(JsonElement json)
 		{
-			return new Post(
-				json.GetProperty("id").GetUInt32(),
-				this._BaseUrl + "post/show/",
-				json.GetProperty("file_url").GetString(),
-				json.GetProperty("preview_url").GetString(),
-				this.ConvertRating(json.GetProperty("rating").GetString()),
-				json.GetProperty("tags").GetString(),
-				json.GetProperty("file_size").GetUInt32(),
-				json.GetProperty("height").GetInt32(),
-				json.GetProperty("width").GetInt32(),
-				json.GetProperty("preview_height").GetInt32(),
-				json.GetProperty("preview_width").GetInt32(),
-				json.GetProperty("source").GetString());
+			return new Post
+			{
+				ID = json.GetProperty("id").GetUInt32(),
+				PostUrl = this._BaseUrl + "post/show/",
+				FileUrl = json.GetProperty("file_url").GetString(),
+				PreviewUrl = json.GetProperty("preview_url").GetString(),
+				Rating = this.ConvertRating(json.GetProperty("rating").GetString()),
+				Tags = json.GetProperty("tags").GetString(),
+				Size = json.GetProperty("file_size").GetUInt32(),
+				Height = json.GetProperty("height").GetInt32(),
+				Width = json.GetProperty("width").GetInt32(),
+				PreviewHeight = json.GetProperty("preview_height").GetInt32(),
+				PreviewWidth = json.GetProperty("preview_width").GetInt32(),
+				Source = json.GetProperty("source").GetString()
+			};
 		}
 
 		/// <inheritdoc/>
 		protected override Tag ReadTag(JsonElement json)
 		{
-			return new Tag(
-				json.GetProperty("id").GetUInt32(),
-				json.GetProperty("name").GetString(),
-				(TagType)json.GetProperty("type").GetInt32(),
-				json.GetProperty("count").GetUInt32());
+			return new Tag
+			{
+				ID = json.GetProperty("id").GetUInt32(),
+				Name = json.GetProperty("name").GetString(),
+				Type = (TagType)json.GetProperty("type").GetInt32(),
+				Count = json.GetProperty("count").GetUInt32()
+			};
 		}
 
 		/// <inheritdoc/>
 		protected override TagRelated ReadTagRelated(JsonElement json)
 		{
-			return new TagRelated(
-				json[0].GetString(),
-				json[1].GetUInt32());
+			return new TagRelated
+			{
+				Name = json[0].GetString(),
+				Count = json[1].GetUInt32()
+			};
 		}
 
 		/// <inheritdoc/>
 		protected override Wiki ReadWiki(JsonElement json)
 		{
-			return new Wiki(
-				json.GetProperty("id").GetUInt32(),
-				json.GetProperty("title").GetString(),
-				json.GetProperty("body").GetString());
+			return new Wiki
+			{
+				ID = json.GetProperty("id").GetUInt32(),
+				Title = json.GetProperty("title").GetString(),
+				Body = json.GetProperty("body").GetString()
+			};
 		}
 
 		#endregion Protected Overrride Method
