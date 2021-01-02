@@ -54,11 +54,13 @@ namespace BooruDex.Booru.Client
 		/// <inheritdoc/>
 		protected override Pool ReadPool(JsonElement json)
 		{
-			return new Pool(
-				uint.Parse(json.GetProperty("id").GetString()),
-				json.GetProperty("name").GetString(),
-				uint.Parse(json.GetProperty("post_count").GetString()),
-				json.GetProperty("description").GetString());
+			return new Pool
+			{
+				ID = uint.Parse(json.GetProperty("id").GetString()),
+				Name = json.GetProperty("name").GetString(),
+				PostCount = uint.Parse(json.GetProperty("post_count").GetString()),
+				Description = json.GetProperty("description").GetString()
+			};
 		}
 
 		/// <inheritdoc/>
