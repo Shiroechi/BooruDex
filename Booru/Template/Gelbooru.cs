@@ -59,8 +59,7 @@ namespace BooruDex.Booru.Template
 		/// <inheritdoc/>
 		protected override Post ReadPost(JsonElement json)
 		{
-			return new Post
-			(
+			return new Post(
 				id: json.GetProperty("id").GetUInt32(),
 				postUrl: this._BaseUrl + "index.php?page=post&s=view&id=",
 				fileUrl: json.GetProperty("file_url").GetString(),
@@ -72,8 +71,7 @@ namespace BooruDex.Booru.Template
 				width: json.GetProperty("width").GetInt32(),
 				previewHeight: 0,
 				previewWidth: 0,
-				source: json.GetProperty("source").GetString()
-			);
+				source: json.GetProperty("source").GetString());
 		}
 
 		/// <inheritdoc/>
