@@ -42,12 +42,14 @@ namespace BooruDex.Booru.Client
 					urls.Add(item.GetString());
 				}
 			}
+
 			return new Artist
 			{
 				ID = json.GetProperty("id").GetUInt32(),
 				Name = json.GetProperty("name").GetString(),
 				Urls = new ReadOnlyCollection<string>(urls)
 			};
+		}
 
 		/// <inheritdoc/>
 		protected override Pool ReadPool(JsonElement json)
