@@ -892,6 +892,28 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
+		///		Check the availability of booru website.
+		/// </summary>
+		/// <returns>
+		///		<see langword="true"/> if the website is available or reachable; <see langword="false"/> otherwise.
+		/// </returns>
+		public virtual bool IsOnline()
+		{
+			try
+			{
+				using (var request = new HttpRequestMessage(HttpMethod.Get, this._BaseUrl.AbsoluteUri))
+				using (var response = this.HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+				{
+					return response.GetAwaiter().GetResult().IsSuccessStatusCode;
+				}
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		/// <summary>
 		///		Get all <see cref="Post"/> inside the <see cref="Pool"/>.
 		/// </summary>
 		/// <param name="poolId">
