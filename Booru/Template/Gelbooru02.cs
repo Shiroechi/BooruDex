@@ -60,21 +60,19 @@ namespace BooruDex.Booru.Template
 
 			var directory = json.GetProperty("directory").GetString();
 
-			return new Post
-			{
-				ID = json.GetProperty("id").GetUInt32(),
-				PostUrl = this._BaseUrl + "index.php?page=post&s=view&id=",
-				FileUrl = this._BaseUrl + "images/" + directory + "/" + imageName,
-				PreviewUrl = this._BaseUrl + "thumbnails/" + directory + "/thumbnail_" + imageName.Substring(0, imageName.IndexOf(".")) + ".jpg",
-				Rating = this.ConvertRating(json.GetProperty("rating").GetString()),
-				Tags = json.GetProperty("tags").GetString(),
-				Size = 0,
-				Height = json.GetProperty("height").GetInt32(),
-				Width = json.GetProperty("width").GetInt32(),
-				PreviewHeight = 0,
-				PreviewWidth = 0,
-				Source = string.Empty
-			};
+			return new Post(
+				id: json.GetProperty("id").GetUInt32(),
+				postUrl: this._BaseUrl + "index.php?page=post&s=view&id=",
+				fileUrl: this._BaseUrl + "images/" + directory + "/" + imageName,
+				previewUrl: this._BaseUrl + "thumbnails/" + directory + "/thumbnail_" + imageName.Substring(0, imageName.IndexOf(".")) + ".jpg",
+				rating: this.ConvertRating(json.GetProperty("rating").GetString()),
+				tags: json.GetProperty("tags").GetString(),
+				size: 0,
+				height: json.GetProperty("height").GetInt32(),
+				width: json.GetProperty("width").GetInt32(),
+				previewHeight: 0,
+				previewWidth: 0,
+				source: string.Empty);
 		}
 
 		#endregion Protected Overrride Method
