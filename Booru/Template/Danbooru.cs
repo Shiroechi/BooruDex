@@ -117,20 +117,20 @@ namespace BooruDex.Booru.Template
 		protected override Post ReadPost(JsonElement json)
 		{
 			return new Post
-			{
-				ID = this.PropertyExist(json, "id") ? json.GetProperty("id").GetUInt32() : 0,
-				PostUrl = this._BaseUrl + "posts/",
-				FileUrl = this.PropertyExist(json, "file_url") ? json.GetProperty("file_url").GetString() : null,
-				PreviewUrl = this.PropertyExist(json, "preview_file_url") ? json.GetProperty("preview_file_url").GetString() : null,
-				Rating = this.ConvertRating(json.GetProperty("rating").GetString()),
-				Tags = json.GetProperty("tag_string").GetString(),
-				Size = json.GetProperty("file_size").GetUInt32(),
-				Height = json.GetProperty("image_height").GetInt32(),
-				Width = json.GetProperty("image_width").GetInt32(),
-				PreviewHeight = 0,
-				PreviewWidth = 0,
-				Source = json.GetProperty("source").GetString()
-			};
+			(
+				id: this.PropertyExist(json, "id") ? json.GetProperty("id").GetUInt32() : 0,
+				postUrl: this._BaseUrl + "posts/",
+				fileUrl: this.PropertyExist(json, "file_url") ? json.GetProperty("file_url").GetString() : null,
+				previewUrl: this.PropertyExist(json, "preview_file_url") ? json.GetProperty("preview_file_url").GetString() : null,
+				rating: this.ConvertRating(json.GetProperty("rating").GetString()),
+				tags: json.GetProperty("tag_string").GetString(),
+				size: json.GetProperty("file_size").GetUInt32(),
+				height: json.GetProperty("image_height").GetInt32(),
+				width: json.GetProperty("image_width").GetInt32(),
+				previewHeight: 0,
+				previewWidth: 0,
+				source: json.GetProperty("source").GetString()
+			);
 		}
 
 		/// <inheritdoc/>
