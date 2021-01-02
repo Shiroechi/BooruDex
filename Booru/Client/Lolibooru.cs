@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Text.Json;
 
@@ -41,12 +42,12 @@ namespace BooruDex.Booru.Client
 					urls.Add(item.GetString());
 				}
 			}
-
-			return new Artist(
-				uint.Parse(json.GetProperty("id").GetString()),
-				json.GetProperty("name").GetString(),
-				urls);
-		}
+			return new Artist
+			{
+				ID = json.GetProperty("id").GetUInt32(),
+				Name = json.GetProperty("name").GetString(),
+				Urls = new ReadOnlyCollection<string>(urls)
+			};
 
 		/// <inheritdoc/>
 		protected override Pool ReadPool(JsonElement json)
