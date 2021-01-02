@@ -116,8 +116,7 @@ namespace BooruDex.Booru.Template
 		/// <inheritdoc/>
 		protected override Post ReadPost(JsonElement json)
 		{
-			return new Post
-			(
+			return new Post(
 				id: this.PropertyExist(json, "id") ? json.GetProperty("id").GetUInt32() : 0,
 				postUrl: this._BaseUrl + "posts/",
 				fileUrl: this.PropertyExist(json, "file_url") ? json.GetProperty("file_url").GetString() : null,
@@ -129,8 +128,7 @@ namespace BooruDex.Booru.Template
 				width: json.GetProperty("image_width").GetInt32(),
 				previewHeight: 0,
 				previewWidth: 0,
-				source: json.GetProperty("source").GetString()
-			);
+				source: json.GetProperty("source").GetString());
 		}
 
 		/// <inheritdoc/>
