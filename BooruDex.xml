@@ -385,6 +385,14 @@
             	User Agrnt value.
             </param>
         </member>
+        <member name="M:BooruDex.Booru.Booru.IsOnline">
+            <summary>
+            	Check the availability of booru website.
+            </summary>
+            <returns>
+            	<see langword="true"/> if the website is available or reachable; <see langword="false"/> otherwise.
+            </returns>
+        </member>
         <member name="M:BooruDex.Booru.Booru.Authenticate(System.String,System.String)">
             <summary>
             Login with booru username and password.
