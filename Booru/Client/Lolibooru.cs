@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Text.Json;
 
@@ -42,47 +43,57 @@ namespace BooruDex.Booru.Client
 				}
 			}
 
-			return new Artist(
-				uint.Parse(json.GetProperty("id").GetString()),
-				json.GetProperty("name").GetString(),
-				urls);
+			return new Artist
+			{
+				ID = json.GetProperty("id").GetUInt32(),
+				Name = json.GetProperty("name").GetString(),
+				Urls = new ReadOnlyCollection<string>(urls)
+			};
 		}
 
 		/// <inheritdoc/>
 		protected override Pool ReadPool(JsonElement json)
 		{
-			return new Pool(
-				uint.Parse(json.GetProperty("id").GetString()),
-				json.GetProperty("name").GetString(),
-				uint.Parse(json.GetProperty("post_count").GetString()),
-				json.GetProperty("description").GetString());
+			return new Pool
+			{
+				ID = uint.Parse(json.GetProperty("id").GetString()),
+				Name = json.GetProperty("name").GetString(),
+				PostCount = uint.Parse(json.GetProperty("post_count").GetString()),
+				Description = json.GetProperty("description").GetString()
+			};
 		}
 
 		/// <inheritdoc/>
 		protected override Tag ReadTag(JsonElement json)
 		{
-			return new Tag(
-				uint.Parse(json.GetProperty("id").GetString()),
-				json.GetProperty("name").GetString(),
-				(TagType)json.GetProperty("tag_type").GetInt32(),
-				uint.Parse(json.GetProperty("post_count").GetString()));
+			return new Tag
+			{
+				ID = uint.Parse(json.GetProperty("id").GetString()),
+				Name = json.GetProperty("name").GetString(),
+				Type = (TagType)json.GetProperty("tag_type").GetInt32(),
+				Count = uint.Parse(json.GetProperty("post_count").GetString())
+			};
 		}
 
 		/// <inheritdoc/>
 		protected override TagRelated ReadTagRelated(JsonElement json)
 		{
-			return new TagRelated(
-				json[0].GetString(),
-				uint.Parse(json[1].GetString()));
+			return new TagRelated
+			{
+				Name = json[0].GetString(),
+				Count = uint.Parse(json[1].GetString())
+			};
 		}
 
 		/// <inheritdoc/>
 		protected override Wiki ReadWiki(JsonElement json)
 		{
-			return new Wiki(
-				uint.Parse(json.GetProperty("id").GetString()),
-				json.GetProperty("title").GetString(),
-				json.GetProperty("body").GetString());
+			return new Wiki
+			{
+				ID = uint.Parse(json.GetProperty("id").GetString()),
+				Title = json.GetProperty("title").GetString(),
+				Body = json.GetProperty("body").GetString()
+			};
 		}
 
 		#endregion Protected Override Method

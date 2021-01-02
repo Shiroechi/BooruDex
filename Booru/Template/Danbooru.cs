@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -61,10 +62,12 @@ namespace BooruDex.Booru.Template
 		/// <inheritdoc/>
 		protected override Artist ReadArtist(JsonElement json)
 		{
-			return new Artist(
-				json.GetProperty("id").GetUInt32(),
-				json.GetProperty("name").GetString(),
-				new string[] { "" }); // no artist urls in JSON API response.
+			return new Artist
+			{
+				ID = json.GetProperty("id").GetUInt32(),
+				Name = json.GetProperty("name").GetString(),
+				Urls = null // no artist urls in JSON API response.
+			};
 		}
 
 		/// <summary>
@@ -90,65 +93,75 @@ namespace BooruDex.Booru.Template
 				}
 			}
 
-			return new Artist(
-				json.GetProperty("artist_id").GetUInt32(),
-				json.GetProperty("name").GetString(),
-				urls);
+			return new Artist
+			{
+				ID = json.GetProperty("artist_id").GetUInt32(),
+				Name = json.GetProperty("name").GetString(),
+				Urls = new ReadOnlyCollection<string>(urls)
+			};
 		}
 
 		/// <inheritdoc/>
 		protected override Pool ReadPool(JsonElement json)
 		{
-			return new Pool(
-				json.GetProperty("id").GetUInt32(),
-				json.GetProperty("name").GetString(),
-				json.GetProperty("post_count").GetUInt32(),
-				json.GetProperty("description").GetString());
+			return new Pool
+			{
+				ID = json.GetProperty("id").GetUInt32(),
+				Name = json.GetProperty("name").GetString(),
+				PostCount = json.GetProperty("post_count").GetUInt32(),
+				Description = json.GetProperty("description").GetString()
+			};
 		}
 
 		/// <inheritdoc/>
 		protected override Post ReadPost(JsonElement json)
 		{
 			return new Post(
-				this.PropertyExist(json, "id") ? json.GetProperty("id").GetUInt32() : 0,
-				this._BaseUrl + "posts/",
-				this.PropertyExist(json, "file_url") ? json.GetProperty("file_url").GetString() : null,
-				this.PropertyExist(json, "preview_file_url") ? json.GetProperty("preview_file_url").GetString() : null,
-				this.ConvertRating(json.GetProperty("rating").GetString()),
-				json.GetProperty("tag_string").GetString(),
-				json.GetProperty("file_size").GetUInt32(),
-				json.GetProperty("image_height").GetInt32(),
-				json.GetProperty("image_width").GetInt32(),
-				0,
-				0,
-				json.GetProperty("source").GetString());
+				id: this.PropertyExist(json, "id") ? json.GetProperty("id").GetUInt32() : 0,
+				postUrl: this._BaseUrl + "posts/",
+				fileUrl: this.PropertyExist(json, "file_url") ? json.GetProperty("file_url").GetString() : null,
+				previewUrl: this.PropertyExist(json, "preview_file_url") ? json.GetProperty("preview_file_url").GetString() : null,
+				rating: this.ConvertRating(json.GetProperty("rating").GetString()),
+				tags: json.GetProperty("tag_string").GetString(),
+				size: json.GetProperty("file_size").GetUInt32(),
+				height: json.GetProperty("image_height").GetInt32(),
+				width: json.GetProperty("image_width").GetInt32(),
+				previewHeight: 0,
+				previewWidth: 0,
+				source: json.GetProperty("source").GetString());
 		}
 
 		/// <inheritdoc/>
 		protected override Tag ReadTag(JsonElement json)
 		{
-			return new Tag(
-				json.GetProperty("id").GetUInt32(),
-				json.GetProperty("name").GetString(),
-				(TagType)json.GetProperty("category").GetInt32(),
-				json.GetProperty("post_count").GetUInt32());
+			return new Tag
+			{
+				ID = json.GetProperty("id").GetUInt32(),
+				Name = json.GetProperty("name").GetString(),
+				Type = (TagType)json.GetProperty("category").GetInt32(),
+				Count = json.GetProperty("post_count").GetUInt32()
+			};
 		}
 
 		/// <inheritdoc/>
 		protected override TagRelated ReadTagRelated(JsonElement json)
 		{
-			return new TagRelated(
-				json[0].GetString(),
-				json[1].GetUInt32());
+			return new TagRelated
+			{
+				Name = json[0].GetString(),
+				Count = json[1].GetUInt32()
+			};
 		}
 
 		/// <inheritdoc/>
 		protected override Wiki ReadWiki(JsonElement json)
 		{
-			return new Wiki(
-				json.GetProperty("id").GetUInt32(),
-				json.GetProperty("title").GetString(),
-				json.GetProperty("body").GetString());
+			return new Wiki
+			{
+				ID = json.GetProperty("id").GetUInt32(),
+				Title = json.GetProperty("title").GetString(),
+				Body = json.GetProperty("body").GetString()
+			};
 		}
 
 		#endregion Protected Overrride Method

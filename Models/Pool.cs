@@ -1,9 +1,9 @@
 ﻿namespace BooruDex.Models
 {
 	/// <summary>
-	///		Represents a Artist object.
+	///		Represents a Pool object.
 	/// </summary>
-	readonly public struct Pool
+	public class Pool
 	{
 		/// <summary>
 		///		Initialize <see cref="Pool"/> instance.
@@ -20,7 +20,7 @@
 		/// <param name="description">
 		///		Description of the <see cref="Pool"/>.
 		/// </param>
-		public Pool(uint id, string name, uint postCount, string description)
+		public Pool(uint id = 0, string name = "", uint postCount = 0, string description = "")
 		{
 			this.ID = id;
 			this.Name = name;
@@ -31,22 +31,22 @@
 		/// <summary>
 		///		Gets the ID of the <see cref="Pool"/>.
 		/// </summary>
-		public uint ID { get; }
+		public uint ID { internal set; get; }
 
 		/// <summary>
 		///		Gets the name of the <see cref="Pool"/>.
 		/// </summary>
-		public string Name { get; }
+		public string Name { internal set; get; }
 
 		/// <summary>
 		///		Gets the number of <see cref="Post"/> in the <see cref="Pool"/>.
 		/// </summary>
-		public uint PostCount { get; }
+		public uint PostCount { internal set; get; }
 
 		/// <summary>
 		///		Gets the description of the <see cref="Pool"/>.
 		/// </summary>
-		public string Description { get; }
+		public string Description { internal set; get; }
 
 		/// <inheritdoc/>
 		public override string ToString()

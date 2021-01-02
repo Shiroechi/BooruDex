@@ -24,65 +24,65 @@ namespace BooruDex.Booru
 		#region Member
 
 		/// <summary>
-		/// Http client to send request and receive response.
+		///		Http client to send request and receive response.
 		/// </summary>
 		private HttpClient _HttpClient;
 
 		/// <summary>
-		/// <see langword="true"/> if <see cref="HttpClient"/> is supplied by user; <see langword="false"/> otherwise.
+		///		<see langword="true"/> if <see cref="HttpClient"/> is supplied by user; <see langword="false"/> otherwise.
 		/// </summary>
 		private bool _HttpClientSupplied;
 
 		/// <summary>
-		/// Base API request URL.
+		///		Base API request URL.
 		/// </summary>
 		protected Uri _BaseUrl;
 
 		/// <summary>
-		/// Default retrieved post for each request.
+		///		Default retrieved post for each request.
 		/// </summary>
 		protected byte _DefaultPostLimit;
 
 		/// <summary>
-		/// Max allowed <see cref="Tag"/>s to use for search a <see cref="Post"/>. 
+		///		Max allowed <see cref="Tag"/> to use for search a <see cref="Post"/>. 
 		/// </summary>
 		protected byte _TagsLimit;
 
 		/// <summary>
-		/// Max page number.
+		///		Max page number.
 		/// </summary>
 		protected uint _PageLimit;
 
 		/// <summary>
-		/// Random generator.
+		///		Random generator.
 		/// </summary>
 		protected IRNG _RNG;
 
 		/// <summary>
-		/// Your username of the site (Required only for 
-		/// functions that modify the content).
+		///		Your username of the site (Required only for 
+		///		functions that modify the content).
 		/// </summary>
 		protected string _Username;
 
 		/// <summary>
-		///  Your user password in plain text (Required only 
-		///  for functions that modify the content).
+		///		Your user password in plain text (Required only 
+		///		for functions that modify the content).
 		/// </summary>
 		protected string _Password;
 
 		/// <summary>
-		/// String that is append to password (required to login). 
-		/// (See the API documentation of the site for more information).
+		///		String that is append to password (required to login). 
+		///		(See the API documentation of the site for more information).
 		/// </summary>
 		protected string _PasswordSalt;
 
 		/// <summary>
-		/// Version of Booru API.
+		///		Version of Booru API.
 		/// </summary>
 		protected string _ApiVersion;
 
 		/// <summary>
-		/// Authentication check.
+		///		Authentication check.
 		/// </summary>
 		protected bool _Authentication;
 
@@ -91,22 +91,28 @@ namespace BooruDex.Booru
 		#region Constructor & Destructor
 
 		/// <summary>
-		/// Create base object for booru client.
+		///		Create base object for booru client.
 		/// </summary>
-		/// <param name="domain">URL of booru based sites.</param>
-		/// <param name="httpClient">Client for sending and receive http response.</param>
-		/// <param name="rng">Random generator for random post.</param>
+		/// <param name="domain">
+		///		URL of booru based sites.
+		///	</param>
+		/// <param name="httpClient">
+		///		Client for sending and receive http response.
+		///	</param>
+		/// <param name="rng">
+		///		Random generator for determine random <see cref="Post"/>.
+		///	</param>
 		public Booru(string domain, HttpClient httpClient = null, IRNG rng = null)
 		{
 			this._BaseUrl = new Uri(domain, UriKind.Absolute);
 			this.HttpClient = httpClient;
-			this._RNG = rng == null ? new SplitMix64() : rng;
+			this._RNG = rng ?? new SplitMix64();
 			this.DefaultApiSettings();
 			this._Authentication = false;
 		}
 
 		/// <summary>
-		/// Release all resource that this object hold.
+		///		Release all resource that this object hold.
 		/// </summary>
 		~Booru()
 		{
@@ -172,7 +178,7 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		///		Gets or sets how many <see cref="Tag"/> this booru can process for each request..
+		///		Gets maximum <see cref="Tag"/> that this booru can process for each request.
 		/// </summary>
 		public byte TagsLimit
 		{
@@ -704,6 +710,28 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
+		///		Check the availability of booru website.
+		/// </summary>
+		/// <returns>
+		///		<see langword="true"/> if the website is available or reachable; <see langword="false"/> otherwise.
+		/// </returns>
+		public virtual bool IsOnline()
+		{
+			try
+			{
+				using (var request = new HttpRequestMessage(HttpMethod.Get, this._BaseUrl.AbsoluteUri))
+				using (var response = this.HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead))
+				{
+					return response.GetAwaiter().GetResult().IsSuccessStatusCode;
+				}
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		/// <summary>
 		/// Login with booru username and password.
 		/// </summary>
 		/// <param name="username">Your username.</param>
@@ -1150,7 +1178,7 @@ namespace BooruDex.Booru
 				throw new SearchNotFoundException($"No post found with tags { string.Join(" ", tags) }.");
 			}
 
-			// get post with random the page number, each page 
+			// get random post with random the page number, each page 
 			// limited only with 1 post.
 
 			// there's a limit for page number

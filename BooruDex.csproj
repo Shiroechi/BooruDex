@@ -10,8 +10,10 @@
     <PackageTags>Imageboard Image Booru Danbooru Gelbooru Gelbooru02 Moebooru Yandere Konachan Safebooru Lolibooru Rule34 Behoimi Realbooru</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <Description>Library to access the booru website using public API. This library only support GET method, it means only listing and searching only.</Description>
-    <PackageReleaseNotes>- Add new method to check tag is exist or not.</PackageReleaseNotes>
-    <Version>2.1.3</Version>
+    <PackageReleaseNotes>- Change object model from struct to class.
+- Fix some documentation.
+- New method to check availability of booru website, IsOnline().</PackageReleaseNotes>
+    <Version>2.2.0</Version>
     <AssemblyName>BooruDex</AssemblyName>
     <RootNamespace>BooruDex</RootNamespace>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
