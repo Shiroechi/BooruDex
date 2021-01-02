@@ -105,21 +105,19 @@ namespace BooruDex.Booru.Template
 		/// <inheritdoc/>
 		protected override Post ReadPost(JsonElement json)
 		{
-			return new Post
-			{
-				ID = json.GetProperty("id").GetUInt32(),
-				PostUrl = this._BaseUrl + "post/show/",
-				FileUrl = json.GetProperty("file_url").GetString(),
-				PreviewUrl = json.GetProperty("preview_url").GetString(),
-				Rating = this.ConvertRating(json.GetProperty("rating").GetString()),
-				Tags = json.GetProperty("tags").GetString(),
-				Size = json.GetProperty("file_size").GetUInt32(),
-				Height = json.GetProperty("height").GetInt32(),
-				Width = json.GetProperty("width").GetInt32(),
-				PreviewHeight = json.GetProperty("preview_height").GetInt32(),
-				PreviewWidth = json.GetProperty("preview_width").GetInt32(),
-				Source = json.GetProperty("source").GetString()
-			};
+			return new Post(
+				id: json.GetProperty("id").GetUInt32(),
+				postUrl: this._BaseUrl + "post/show/",
+				fileUrl: json.GetProperty("file_url").GetString(),
+				previewUrl: json.GetProperty("preview_url").GetString(),
+				rating: this.ConvertRating(json.GetProperty("rating").GetString()),
+				tags: json.GetProperty("tags").GetString(),
+				size: json.GetProperty("file_size").GetUInt32(),
+				height: json.GetProperty("height").GetInt32(),
+				width: json.GetProperty("width").GetInt32(),
+				previewHeight: json.GetProperty("preview_height").GetInt32(),
+				previewWidth: json.GetProperty("preview_width").GetInt32(),
+				source: json.GetProperty("source").GetString());
 		}
 
 		/// <inheritdoc/>
