@@ -78,9 +78,11 @@ namespace BooruDex.Booru.Client
 		/// <inheritdoc/>
 		protected override TagRelated ReadTagRelated(JsonElement json)
 		{
-			return new TagRelated(
-				json[0].GetString(),
-				uint.Parse(json[1].GetString()));
+			return new TagRelated
+			{
+				Name = json[0].GetString(),
+				Count = uint.Parse(json[1].GetString())
+			};
 		}
 
 		/// <inheritdoc/>
