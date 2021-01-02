@@ -60,20 +60,20 @@ namespace BooruDex.Booru.Template
 		protected override Post ReadPost(JsonElement json)
 		{
 			return new Post
-			{
-				ID = json.GetProperty("id").GetUInt32(),
-				PostUrl = this._BaseUrl + "index.php?page=post&s=view&id=",
-				FileUrl = json.GetProperty("file_url").GetString(),
-				PreviewUrl = this._BaseUrl + "thumbnails/" + json.GetProperty("directory").GetString() + "/thumbnail_" + json.GetProperty("hash").GetString() + ".jpg",
-				Rating = this.ConvertRating(json.GetProperty("rating").GetString()),
-				Tags = json.GetProperty("tags").GetString(),
-				Size = 0,
-				Height = json.GetProperty("height").GetInt32(),
-				Width = json.GetProperty("width").GetInt32(),
-				PreviewHeight = 0,
-				PreviewWidth = 0,
-				Source = json.GetProperty("source").GetString()
-			};
+			(
+				id: json.GetProperty("id").GetUInt32(),
+				postUrl: this._BaseUrl + "index.php?page=post&s=view&id=",
+				fileUrl: json.GetProperty("file_url").GetString(),
+				previewUrl: this._BaseUrl + "thumbnails/" + json.GetProperty("directory").GetString() + "/thumbnail_" + json.GetProperty("hash").GetString() + ".jpg",
+				rating: this.ConvertRating(json.GetProperty("rating").GetString()),
+				tags: json.GetProperty("tags").GetString(),
+				size: 0,
+				height: json.GetProperty("height").GetInt32(),
+				width: json.GetProperty("width").GetInt32(),
+				previewHeight: 0,
+				previewWidth: 0,
+				source: json.GetProperty("source").GetString()
+			);
 		}
 
 		/// <inheritdoc/>
