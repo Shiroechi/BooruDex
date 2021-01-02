@@ -88,10 +88,12 @@ namespace BooruDex.Booru.Client
 		/// <inheritdoc/>
 		protected override Wiki ReadWiki(JsonElement json)
 		{
-			return new Wiki(
-				uint.Parse(json.GetProperty("id").GetString()),
-				json.GetProperty("title").GetString(),
-				json.GetProperty("body").GetString());
+			return new Wiki
+			{
+				ID = uint.Parse(json.GetProperty("id").GetString()),
+				Title = json.GetProperty("title").GetString(),
+				Body = json.GetProperty("body").GetString()
+			};
 		}
 
 		#endregion Protected Override Method
