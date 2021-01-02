@@ -66,11 +66,13 @@ namespace BooruDex.Booru.Client
 		/// <inheritdoc/>
 		protected override Tag ReadTag(JsonElement json)
 		{
-			return new Tag(
-				uint.Parse(json.GetProperty("id").GetString()),
-				json.GetProperty("name").GetString(),
-				(TagType)json.GetProperty("tag_type").GetInt32(),
-				uint.Parse(json.GetProperty("post_count").GetString()));
+			return new Tag
+			{
+				ID = uint.Parse(json.GetProperty("id").GetString()),
+				Name = json.GetProperty("name").GetString(),
+				Type = (TagType)json.GetProperty("tag_type").GetInt32(),
+				Count = uint.Parse(json.GetProperty("post_count").GetString())
+			};
 		}
 
 		/// <inheritdoc/>
