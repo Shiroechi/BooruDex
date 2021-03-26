@@ -10,10 +10,9 @@
     <PackageTags>Imageboard Image Booru Danbooru Gelbooru Gelbooru02 Moebooru Yandere Konachan Safebooru Lolibooru Rule34 Behoimi Realbooru</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <Description>Library to access the booru website using public API. This library only support GET method, it means only listing and searching only.</Description>
-    <PackageReleaseNotes>- Change object model from struct to class.
-- Fix some documentation.
-- New method to check availability of booru website, IsOnline().</PackageReleaseNotes>
-    <Version>2.2.0</Version>
+    <PackageReleaseNotes>- Update dependencies
+- Update User Agent</PackageReleaseNotes>
+    <Version>2.2.1</Version>
     <AssemblyName>BooruDex</AssemblyName>
     <RootNamespace>BooruDex</RootNamespace>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -35,8 +34,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Litdex.Security.RNG" Version="2.3.0" />
-    <PackageReference Include="System.Text.Json" Version="5.0.0" />
+    <PackageReference Include="Litdex.Security.RNG" Version="2.4.0" />
+    <PackageReference Include="System.Text.Json" Version="5.0.1" />
   </ItemGroup>
 
   <ItemGroup>
