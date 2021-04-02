@@ -707,6 +707,13 @@ namespace BooruDex.Booru
 					userAgent);
 				}
 			}
+			else
+			{
+				this._HttpClient.DefaultRequestHeaders.UserAgent.Clear();
+				this.HttpClient.DefaultRequestHeaders.Add(
+					"User-Agent",
+					userAgent);
+			}
 		}
 
 		/// <summary>
@@ -732,11 +739,17 @@ namespace BooruDex.Booru
 		}
 
 		/// <summary>
-		/// Login with booru username and password.
+		///		Login with booru username and password.
 		/// </summary>
-		/// <param name="username">Your username.</param>
-		/// <param name="password">Your password.</param>
-		/// <returns></returns>
+		/// <param name="username">
+		///		Your username.
+		///	</param>
+		/// <param name="password">
+		///		Your password.
+		///	</param>
+		/// <returns>
+		/// 
+		/// </returns>
 		protected bool Authenticate(string username, string password)
 		{
 			throw new NotImplementedException($"Method { nameof(Authenticate) } is not implemented yet.");

@@ -395,11 +395,17 @@
         </member>
         <member name="M:BooruDex.Booru.Booru.Authenticate(System.String,System.String)">
             <summary>
-            Login with booru username and password.
+            	Login with booru username and password.
             </summary>
-            <param name="username">Your username.</param>
-            <param name="password">Your password.</param>
-            <returns></returns>
+            <param name="username">
+            	Your username.
+            </param>
+            <param name="password">
+            	Your password.
+            </param>
+            <returns>
+            
+            </returns>
         </member>
         <member name="M:BooruDex.Booru.Booru.ArtistListAsync(System.String,System.UInt16,System.Boolean)">
             <summary>

@@ -10,9 +10,8 @@
     <PackageTags>Imageboard Image Booru Danbooru Gelbooru Gelbooru02 Moebooru Yandere Konachan Safebooru Lolibooru Rule34 Behoimi Realbooru</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <Description>Library to access the booru website using public API. This library only support GET method, it means only listing and searching only.</Description>
-    <PackageReleaseNotes>- Update dependencies
-- Update User Agent</PackageReleaseNotes>
-    <Version>2.2.1</Version>
+    <PackageReleaseNotes>- Patch for add custom user agent</PackageReleaseNotes>
+    <Version>2.2.2</Version>
     <AssemblyName>BooruDex</AssemblyName>
     <RootNamespace>BooruDex</RootNamespace>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
