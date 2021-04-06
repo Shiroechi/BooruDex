@@ -35,7 +35,7 @@
 
   <ItemGroup>
     <PackageReference Include="Litdex.Security.RNG" Version="2.4.0" />
-    <PackageReference Include="System.Text.Json" Version="5.0.1" />
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>
