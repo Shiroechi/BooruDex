@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>Shiroechi</Authors>
     <PackageProjectUrl>https://github.com/Shiroechi/BooruDex</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Shiroechi/BooruDex</RepositoryUrl>
@@ -10,9 +10,8 @@
     <PackageTags>Imageboard Image Booru Danbooru Gelbooru Gelbooru02 Moebooru Yandere Konachan Safebooru Lolibooru Rule34 Behoimi Realbooru</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <Description>Library to access the booru website using public API. This library only support GET method, it means only listing and searching only.</Description>
-    <PackageReleaseNotes>- Update dependencies
-- Update User Agent</PackageReleaseNotes>
-    <Version>2.2.1</Version>
+    <PackageReleaseNotes>- Update depedencies</PackageReleaseNotes>
+    <Version>2.2.3</Version>
     <AssemblyName>BooruDex</AssemblyName>
     <RootNamespace>BooruDex</RootNamespace>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -23,7 +22,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>true</Optimize>
-    <DocumentationFile>D:\Project\C#\API\BooruDex\BooruDex.xml</DocumentationFile>
+    <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -34,8 +33,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Litdex.Security.RNG" Version="2.4.0" />
-    <PackageReference Include="System.Text.Json" Version="5.0.1" />
+    <PackageReference Include="Litdex.Security.RNG" Version="2.5.1" />
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>
