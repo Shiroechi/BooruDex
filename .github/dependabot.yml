@@ -1,0 +1,15 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "22:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: Litdex.Security.RNG
+    versions:
+    - 2.5.0
+  - dependency-name: System.Text.Json
+    versions:
+    - 5.0.1
