@@ -86,6 +86,11 @@ namespace BooruDex.Booru
 		/// </summary>
 		protected bool _Authentication;
 
+		/// <summary>
+		///		Default user agent value.
+		/// </summary>
+		protected string _DefaultUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36";
+
 		#endregion Member
 
 		#region Constructor & Destructor
@@ -680,10 +685,10 @@ namespace BooruDex.Booru
 		///		Add http user agent if not exist.
 		/// </summary>
 		/// <remarks>
-		///		by default using browser user agent.
+		///		by default using google chrome browser user agent.
 		/// </remarks>
 		/// <param name="userAgent">
-		///		User Agrnt value.
+		///		User Agent value.
 		///	</param>
 		public void AddHttpUserAgent(string userAgent = "")
 		{
@@ -692,20 +697,16 @@ namespace BooruDex.Booru
 				return;
 			}
 
+			if (userAgent == null || userAgent.Trim() == "")
+			{
+				userAgent = this._DefaultUserAgent;
+			}
+
 			if (this._HttpClient.DefaultRequestHeaders.UserAgent.Count == 0)
 			{
-				if (userAgent == null | userAgent.Trim() == "")
-				{
-					this.HttpClient.DefaultRequestHeaders.Add(
-					"User-Agent",
-					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36");
-				}
-				else
-				{
-					this.HttpClient.DefaultRequestHeaders.Add(
+				this.HttpClient.DefaultRequestHeaders.Add(
 					"User-Agent",
 					userAgent);
-				}
 			}
 			else
 			{
