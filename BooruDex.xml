@@ -72,6 +72,11 @@
             	Authentication check.
             </summary>
         </member>
+        <member name="F:BooruDex.Booru.Booru._DefaultUserAgent">
+            <summary>
+            	Default user agent value.
+            </summary>
+        </member>
         <member name="M:BooruDex.Booru.Booru.#ctor(System.String,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
             <summary>
             	Create base object for booru client.
@@ -379,10 +384,10 @@
             	Add http user agent if not exist.
             </summary>
             <remarks>
-            	by default using browser user agent.
+            	by default using google chrome browser user agent.
             </remarks>
             <param name="userAgent">
-            	User Agrnt value.
+            	User Agent value.
             </param>
         </member>
         <member name="M:BooruDex.Booru.Booru.IsOnline">
