@@ -21,27 +21,29 @@ namespace BooruDex.Booru.Template
 		/// <param name="domain">
 		///		URL of booru based sites.
 		///	</param>
+		/// <param name="useHttps">
+		///		Using HTTPS protocol or not.
+		/// </param>
 		/// <param name="httpClient">
 		///		Client for sending and receive http response.
 		///	</param>
 		/// <param name="rng">
 		///		Random generator for random <see cref="Post"/>.
 		/// </param>
-		public Gelbooru02(string domain, HttpClient httpClient = null, IRNG rng = null) : base(domain, httpClient, rng)
+		public Gelbooru02(string domain, bool useHttps = true, HttpClient httpClient = null, IRNG rng = null) : base(domain, useHttps: useHttps, httpClient: httpClient, rng: rng)
 		{
 			this._DefaultPostLimit = 100;
 			this._TagsLimit = 0; // no tag limit
 			this.IsSafe = false;
 			this._ApiVersion = "";
-			this._PasswordSalt = "";
 		}
 
 		#endregion Constructor & Destructor
 
-		#region Protected Overrride Method
+		#region Create API url
 
 		/// <inheritdoc/>
-		protected override string CreateBaseApiCall(string query, bool json = true)
+		protected override string CreateBaseApiUrl(string query, bool json = true)
 		{
 			var sb = new StringBuilder($"{ this._BaseUrl.AbsoluteUri }index.php?page=dapi&s={ query }&q=index");
 
@@ -52,6 +54,23 @@ namespace BooruDex.Booru.Template
 
 			return sb.ToString();
 		}
+
+		/// <inheritdoc/>
+		protected override string CreatePostListUrl(byte limit, uint page = 0)
+		{
+			return this.CreateBaseApiUrl("post") +
+				$"&limit={ limit }&pid={ page }";
+		}
+
+		/// <inheritdoc/>
+		protected override string CreatePostCountUrl()
+		{
+			return this.CreateBaseApiUrl("post", false) + "&limit=0";
+		}
+
+		#endregion Create API url
+
+		#region Read JSON to convert it into object
 
 		/// <inheritdoc/>
 		protected override Post ReadPost(JsonElement json)
@@ -75,6 +94,6 @@ namespace BooruDex.Booru.Template
 				source: string.Empty);
 		}
 
-		#endregion Protected Overrride Method
+		#endregion Read JSON to convert it into object
 	}
 }

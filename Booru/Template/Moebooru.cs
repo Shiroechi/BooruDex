@@ -22,13 +22,16 @@ namespace BooruDex.Booru.Template
 		/// <param name="domain">
 		///		URL of booru based sites.
 		///	</param>
+		/// <param name="useHttps">
+		///		Using HTTPS protocol or not.
+		/// </param>
 		/// <param name="httpClient">
 		///		Client for sending and receive http response.
 		///	</param>
 		/// <param name="rng">
 		///		Random generator for random <see cref="Post"/>.
 		/// </param>
-		public Moebooru(string domain, HttpClient httpClient = null, IRNG rng = null) : base(domain, httpClient, rng)
+		public Moebooru(string domain, bool useHttps = true, HttpClient httpClient = null, IRNG rng = null) : base(domain, useHttps: useHttps, httpClient: httpClient, rng: rng)
 		{
 			this.IsSafe = false;
 			this.HasArtistApi =
@@ -44,10 +47,10 @@ namespace BooruDex.Booru.Template
 
 		#endregion Constructor & Destructor
 
-		#region Protected Overrride Method
+		#region Create API url
 
 		/// <inheritdoc/>
-		protected override string CreateBaseApiCall(string query, bool json = true)
+		protected override string CreateBaseApiUrl(string query, bool json = true)
 		{
 			if (query.Contains("/"))
 			{
@@ -66,6 +69,72 @@ namespace BooruDex.Booru.Template
 				return $"{ this._BaseUrl.AbsoluteUri }{ query }/index.xml?";
 			}
 		}
+
+		/// <inheritdoc/>
+		protected override string CreateArtistListUrl(string name, ushort page = 0, bool sort = false)
+		{
+			var url = this.CreateBaseApiUrl("artist") +
+				$"page={ page }&name={ name }";
+
+			if (sort)
+			{
+				url += "&order=name";
+			}
+
+			return url;
+		}
+
+		/// <inheritdoc/>
+		protected override string CreatePostListUrl(byte limit, uint page = 0)
+		{
+			return this.CreateBaseApiUrl("post") +
+				$"limit={ limit }&page={ page }";
+		}
+
+		/// <inheritdoc/>
+		protected override string CreatePoolPostListUrl(uint poolId)
+		{
+			return this.CreateBaseApiUrl("pool/show") +
+				$"id={ poolId }";
+		}
+
+		/// <inheritdoc/>
+		protected override string CreatePoolListUrl(string title, uint page)
+		{
+			return this.CreateBaseApiUrl("pool") +
+				$"page={ page }&query={ title }";
+		}
+
+		/// <inheritdoc/>
+		protected override string CreateTagListUrl(string name)
+		{
+			return this.CreateBaseApiUrl("tag") +
+				$"limit=0&order=name&name={ name }";
+		}
+
+		/// <inheritdoc/>
+		protected override string CreateTagRelatedUrl(string name, TagType type = TagType.General)
+		{
+			return this.CreateBaseApiUrl("tag/related") +
+				$"tags={ name }&type={ type }";
+		}
+
+		/// <inheritdoc/>
+		protected override string CreateWikiListUrl(string title)
+		{
+			return this.CreateBaseApiUrl("wiki") +
+				$"order=title&query={ title }";
+		}
+
+		/// <inheritdoc/>
+		protected override string CreatePostCountUrl()
+		{
+			return this.CreateBaseApiUrl("post", false) + "limit=1";
+		}
+
+		#endregion Create API url
+
+		#region Read JSON to convert it into object
 
 		/// <inheritdoc/>
 		protected override Artist ReadArtist(JsonElement json)
@@ -127,8 +196,8 @@ namespace BooruDex.Booru.Template
 			{
 				ID = json.GetProperty("id").GetUInt32(),
 				Name = json.GetProperty("name").GetString(),
-				Type = (TagType)json.GetProperty("type").GetInt32(),
-				Count = json.GetProperty("count").GetUInt32()
+				Type = (TagType)json.GetProperty("type").GetByte(),
+				Count = json.GetProperty("count").GetInt32()
 			};
 		}
 
@@ -153,6 +222,6 @@ namespace BooruDex.Booru.Template
 			};
 		}
 
-		#endregion Protected Overrride Method
+		#endregion Read JSON to convert it into object
 	}
 }

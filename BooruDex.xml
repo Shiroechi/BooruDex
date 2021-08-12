@@ -44,32 +44,9 @@
             	Random generator.
             </summary>
         </member>
-        <member name="F:BooruDex.Booru.Booru._Username">
-            <summary>
-            	Your username of the site (Required only for 
-            	functions that modify the content).
-            </summary>
-        </member>
-        <member name="F:BooruDex.Booru.Booru._Password">
-            <summary>
-            	Your user password in plain text (Required only 
-            	for functions that modify the content).
-            </summary>
-        </member>
-        <member name="F:BooruDex.Booru.Booru._PasswordSalt">
-            <summary>
-            	String that is append to password (required to login). 
-            	(See the API documentation of the site for more information).
-            </summary>
-        </member>
         <member name="F:BooruDex.Booru.Booru._ApiVersion">
             <summary>
             	Version of Booru API.
-            </summary>
-        </member>
-        <member name="F:BooruDex.Booru.Booru._Authentication">
-            <summary>
-            	Authentication check.
             </summary>
         </member>
         <member name="F:BooruDex.Booru.Booru._DefaultUserAgent">
@@ -77,12 +54,15 @@
             	Default user agent value.
             </summary>
         </member>
-        <member name="M:BooruDex.Booru.Booru.#ctor(System.String,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
+        <member name="M:BooruDex.Booru.Booru.#ctor(System.String,System.Boolean,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
             <summary>
             	Create base object for booru client.
             </summary>
             <param name="domain">
             	URL of booru based sites.
+            </param>
+            <param name="useHttps">
+            	Using HTTPS protocol or not.
             </param>
             <param name="httpClient">
             	Client for sending and receive http response.
@@ -94,21 +74,6 @@
         <member name="M:BooruDex.Booru.Booru.Finalize">
             <summary>
             	Release all resource that this object hold.
-            </summary>
-        </member>
-        <member name="P:BooruDex.Booru.Booru.HttpClient">
-            <summary>
-            	Client for sending HTTP requests and receiving HTTP responses.
-            </summary>
-        </member>
-        <member name="P:BooruDex.Booru.Booru.ApiVersion">
-            <summary>
-            	Gets or sets Booru API version.
-            </summary>
-        </member>
-        <member name="P:BooruDex.Booru.Booru.TagsLimit">
-            <summary>
-            	Gets maximum <see cref="T:BooruDex.Models.Tag"/> that this booru can process for each request.
             </summary>
         </member>
         <member name="P:BooruDex.Booru.Booru.IsSafe">
@@ -146,19 +111,20 @@
             	Detemine whether this booru has <see cref="T:BooruDex.Models.Wiki"/> API or not.
             </summary>
         </member>
-        <member name="M:BooruDex.Booru.Booru.CreateBaseApiCall(System.String,System.Boolean)">
+        <member name="P:BooruDex.Booru.Booru.HttpClient">
             <summary>
-            	Create base API call url. 
+            	Client for sending HTTP requests and receiving HTTP responses.
             </summary>
-            <param name="query">
-            	Categories.
-            </param>
-            <param name="json">
-            	Create JSON API or not. <see langword="true"/> for JSON.
-            </param>
-            <returns>
-            	URL of API request.
-            </returns>
+        </member>
+        <member name="P:BooruDex.Booru.Booru.ApiVersion">
+            <summary>
+            	Gets or sets Booru API version.
+            </summary>
+        </member>
+        <member name="P:BooruDex.Booru.Booru.TagsLimit">
+            <summary>
+            	Gets maximum <see cref="T:BooruDex.Models.Tag"/> that this booru can process for each request.
+            </summary>
         </member>
         <member name="M:BooruDex.Booru.Booru.GetJsonResponseAsync``1(System.String)">
             <summary>
@@ -219,23 +185,122 @@
             	<see cref="T:System.String"/> content.
             </returns>
         </member>
-        <member name="M:BooruDex.Booru.Booru.GetPostCountAsync(System.String[])">
+        <member name="M:BooruDex.Booru.Booru.CreateBaseApiUrl(System.String,System.Boolean)">
             <summary>
-            	Get max number of <see cref="T:BooruDex.Models.Post"/> with 
-            	the given <see cref="T:BooruDex.Models.Tag"/> the site have.
+            	Create base API call url. 
             </summary>
-            <param name="tags">
-            	<see cref="T:BooruDex.Models.Tag"/> of the requested <see cref="T:BooruDex.Models.Post"/>.
+            <param name="query">
+            	Categories.
+            </param>
+            <param name="json">
+            	Create JSON API or not. <see langword="true"/> for JSON.
             </param>
             <returns>
-            	Number of <see cref="T:BooruDex.Models.Post"/>.
+            	URL of API request.
             </returns>
-            <exception cref="T:System.Xml.XmlException">
-            	There is a load or parse error in the XML.
-            </exception>
-            <exception cref="T:System.FormatException">
-            	Can't convert to <see cref="T:System.UInt32"/>.
-            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.CreateArtistListUrl(System.String,System.UInt16,System.Boolean)">
+            <summary>
+            	Create API url for search <see cref="T:BooruDex.Models.Artist"/>.
+            </summary>
+            <param name="name">
+            	The name (or a fragment of the name) of the artist.
+            </param>
+            <param name="page">
+            	The page number.
+            </param>
+            <param name="sort">
+            	Sort the search result by <see cref="T:BooruDex.Models.Artist"/> name. Default <see langword="false"/>.
+            </param>
+            <returns>
+            	string that contain API url.
+            </returns>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.CreatePoolListUrl(System.String,System.UInt32)">
+            <summary>
+            	Create API url for search <see cref="T:BooruDex.Models.Pool"/> by title.
+            </summary>
+            <param name="title">
+            	The title of <see cref="T:BooruDex.Models.Pool"/>.
+            </param>
+            <param name="page">
+            	The page number.
+            </param>
+            <returns>
+            	String that contain API url.
+            </returns>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.CreatePoolPostListUrl(System.UInt32)">
+            <summary>
+            	Create API url to get all <see cref="T:BooruDex.Models.Post"/> inside the <see cref="T:BooruDex.Models.Pool"/>.
+            </summary>
+            <param name="poolId">
+            	The <see cref="T:BooruDex.Models.Pool"/> id.
+            </param>
+            <returns>
+            	String that contain API url.
+            </returns>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.CreatePostListUrl(System.Byte,System.UInt32)">
+            <summary>
+            	Create API url to get a list of the latest <see cref="T:BooruDex.Models.Post"/>.
+            </summary>
+            <param name="limit">
+            	How many <see cref="T:BooruDex.Models.Post"/> to retrieve.
+            </param>
+            <param name="page">
+            	The page number.
+            </param>
+            <param name="tags">
+            	The tags to search for.
+            </param>
+            <returns>
+            	String taht contain API url.
+            </returns>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.CreateTagListUrl(System.String)">
+            <summary>
+            	Create API url to search for <see cref="T:BooruDex.Models.Tag"/> with the name is similiar or alike.
+            </summary>
+            <param name="name">
+            	The <see cref="T:BooruDex.Models.Tag"/> name.
+            </param>
+            <returns>
+            	String that contain API url.
+            </returns>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.CreateTagRelatedUrl(System.String,BooruDex.Models.TagType)">
+            <summary>
+            	Create API url to search for <see cref="T:BooruDex.Models.Tag"/> that related with other <see cref="T:BooruDex.Models.Tag"/>.	
+            </summary>
+            <param name="name">
+            	The <see cref="T:BooruDex.Models.Tag"/> name.
+            </param>
+            <param name="type">
+            	Restrict results to search by <see cref="T:BooruDex.Models.TagType"/> (can be general, artist, copyright, or character).
+            </param>
+            <returns>
+            	String that contain API url.
+            </returns>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.CreateWikiListUrl(System.String)">
+            <summary>
+            	Search for <see cref="T:BooruDex.Models.Wiki"/> by title.
+            </summary>
+            <param name="title">
+            	<see cref="T:BooruDex.Models.Wiki"/> title.
+            </param>
+            <returns>
+            	String that contain API url.
+            </returns>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.CreatePostCountUrl">
+            <summary>
+            	Create API url to get number of post with the specific tags.
+            </summary>
+            <returns>
+            	String that contain API url.
+            </returns>
         </member>
         <member name="M:BooruDex.Booru.Booru.ReadArtist(System.Text.Json.JsonElement)">
             <summary>
@@ -379,6 +444,32 @@
             	A valid number of retrieved <see cref="T:BooruDex.Models.Post"/> that not lower or greater than required.
             </returns>
         </member>
+        <member name="M:BooruDex.Booru.Booru.GetPostCountAsync(System.String[])">
+            <summary>
+            	Get max number of <see cref="T:BooruDex.Models.Post"/> with 
+            	the given <see cref="T:BooruDex.Models.Tag"/> the site have.
+            </summary>
+            <param name="tags">
+            	<see cref="T:BooruDex.Models.Tag"/> of the requested <see cref="T:BooruDex.Models.Post"/>.
+            </param>
+            <returns>
+            	Number of <see cref="T:BooruDex.Models.Post"/>.
+            </returns>
+            <exception cref="T:System.Xml.XmlException">
+            	There is a load or parse error in the XML.
+            </exception>
+            <exception cref="T:System.FormatException">
+            	Can't convert to <see cref="T:System.UInt32"/>.
+            </exception>
+        </member>
+        <member name="M:BooruDex.Booru.Booru.GetDomain">
+            <summary>
+            	Get the current booru domain.
+            </summary>
+            <returns>
+            	Booru domain.
+            </returns>
+        </member>
         <member name="M:BooruDex.Booru.Booru.AddHttpUserAgent(System.String)">
             <summary>
             	Add http user agent if not exist.
@@ -396,20 +487,6 @@
             </summary>
             <returns>
             	<see langword="true"/> if the website is available or reachable; <see langword="false"/> otherwise.
-            </returns>
-        </member>
-        <member name="M:BooruDex.Booru.Booru.Authenticate(System.String,System.String)">
-            <summary>
-            	Login with booru username and password.
-            </summary>
-            <param name="username">
-            	Your username.
-            </param>
-            <param name="password">
-            	Your password.
-            </param>
-            <returns>
-            
             </returns>
         </member>
         <member name="M:BooruDex.Booru.Booru.ArtistListAsync(System.String,System.UInt16,System.Boolean)">
@@ -799,6 +876,9 @@
             	Http client for sending request and recieving response.
             </param>
         </member>
+        <member name="M:BooruDex.Booru.Client.Rule34.ReadPost(System.Text.Json.JsonElement)">
+            <inheritdoc/>
+        </member>
         <member name="M:BooruDex.Booru.Client.Safebooru.#ctor(System.Net.Http.HttpClient)">
             <summary>
             	Create <see cref="T:BooruDex.Booru.Client.Safebooru"/> client object.
@@ -836,12 +916,15 @@
             	Danbooru, A taggable image board.
             </summary>
         </member>
-        <member name="M:BooruDex.Booru.Template.Danbooru.#ctor(System.String,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
+        <member name="M:BooruDex.Booru.Template.Danbooru.#ctor(System.String,System.Boolean,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
             <summary>
             	<see cref="T:BooruDex.Booru.Template.Danbooru"/> template for booru client.
             </summary>
             <param name="domain">
             	URL of booru based sites.
+            </param>
+            <param name="useHttps">
+            	Using HTTPS protocol or not.
             </param>
             <param name="httpClient">
             	Client for sending and receive http response.
@@ -850,7 +933,28 @@
             	Random generator for random <see cref="T:BooruDex.Models.Post"/>.
             </param>
         </member>
-        <member name="M:BooruDex.Booru.Template.Danbooru.CreateBaseApiCall(System.String,System.Boolean)">
+        <member name="M:BooruDex.Booru.Template.Danbooru.CreateBaseApiUrl(System.String,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.CreateArtistListUrl(System.String,System.UInt16,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.CreatePoolListUrl(System.String,System.UInt32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.CreatePoolPostListUrl(System.UInt32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.CreateTagListUrl(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.CreateTagRelatedUrl(System.String,BooruDex.Models.TagType)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.CreateWikiListUrl(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Danbooru.CreatePostListUrl(System.Byte,System.UInt32)">
             <inheritdoc/>
         </member>
         <member name="M:BooruDex.Booru.Template.Danbooru.ReadArtist(System.Text.Json.JsonElement)">
@@ -944,12 +1048,15 @@
             	Gelbooru.
             </summary>
         </member>
-        <member name="M:BooruDex.Booru.Template.Gelbooru.#ctor(System.String,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
+        <member name="M:BooruDex.Booru.Template.Gelbooru.#ctor(System.String,System.Boolean,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
             <summary>
             	<see cref="T:BooruDex.Booru.Template.Gelbooru"/> template for booru client.
             </summary>
-            <param name="domain">	
+            <param name="domain">
             	URL of booru based sites.
+            </param>
+            <param name="useHttps">
+            	Using HTTPS protocol or not.
             </param>
             <param name="httpClient">
             	Client for sending and receive http response.
@@ -958,7 +1065,16 @@
             	Random generator for random <see cref="T:BooruDex.Models.Post"/>.
             </param>
         </member>
-        <member name="M:BooruDex.Booru.Template.Gelbooru.CreateBaseApiCall(System.String,System.Boolean)">
+        <member name="M:BooruDex.Booru.Template.Gelbooru.CreateBaseApiUrl(System.String,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru.CreatePostListUrl(System.Byte,System.UInt32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru.CreateTagListUrl(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru.CreatePostCountUrl">
             <inheritdoc/>
         </member>
         <member name="M:BooruDex.Booru.Template.Gelbooru.ReadPost(System.Text.Json.JsonElement)">
@@ -984,12 +1100,15 @@
             	Gelbooru beta version 0.2.0.
             </summary>
         </member>
-        <member name="M:BooruDex.Booru.Template.Gelbooru02.#ctor(System.String,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
+        <member name="M:BooruDex.Booru.Template.Gelbooru02.#ctor(System.String,System.Boolean,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
             <summary>
             	<see cref="T:BooruDex.Booru.Template.Gelbooru02"/> template for booru client.
             </summary>
             <param name="domain">
             	URL of booru based sites.
+            </param>
+            <param name="useHttps">
+            	Using HTTPS protocol or not.
             </param>
             <param name="httpClient">
             	Client for sending and receive http response.
@@ -998,7 +1117,13 @@
             	Random generator for random <see cref="T:BooruDex.Models.Post"/>.
             </param>
         </member>
-        <member name="M:BooruDex.Booru.Template.Gelbooru02.CreateBaseApiCall(System.String,System.Boolean)">
+        <member name="M:BooruDex.Booru.Template.Gelbooru02.CreateBaseApiUrl(System.String,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru02.CreatePostListUrl(System.Byte,System.UInt32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Gelbooru02.CreatePostCountUrl">
             <inheritdoc/>
         </member>
         <member name="M:BooruDex.Booru.Template.Gelbooru02.ReadPost(System.Text.Json.JsonElement)">
@@ -1009,12 +1134,15 @@
             	Moebooru, a fork of Danbooru1 that has been heavily modified.
             </summary>
         </member>
-        <member name="M:BooruDex.Booru.Template.Moebooru.#ctor(System.String,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
+        <member name="M:BooruDex.Booru.Template.Moebooru.#ctor(System.String,System.Boolean,System.Net.Http.HttpClient,Litdex.Security.RNG.IRNG)">
             <summary>
             	<see cref="T:BooruDex.Booru.Template.Moebooru"/> template for booru client.
             </summary>
             <param name="domain">
             	URL of booru based sites.
+            </param>
+            <param name="useHttps">
+            	Using HTTPS protocol or not.
             </param>
             <param name="httpClient">
             	Client for sending and receive http response.
@@ -1023,7 +1151,31 @@
             	Random generator for random <see cref="T:BooruDex.Models.Post"/>.
             </param>
         </member>
-        <member name="M:BooruDex.Booru.Template.Moebooru.CreateBaseApiCall(System.String,System.Boolean)">
+        <member name="M:BooruDex.Booru.Template.Moebooru.CreateBaseApiUrl(System.String,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.CreateArtistListUrl(System.String,System.UInt16,System.Boolean)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.CreatePostListUrl(System.Byte,System.UInt32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.CreatePoolPostListUrl(System.UInt32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.CreatePoolListUrl(System.String,System.UInt32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.CreateTagListUrl(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.CreateTagRelatedUrl(System.String,BooruDex.Models.TagType)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.CreateWikiListUrl(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:BooruDex.Booru.Template.Moebooru.CreatePostCountUrl">
             <inheritdoc/>
         </member>
         <member name="M:BooruDex.Booru.Template.Moebooru.ReadArtist(System.Text.Json.JsonElement)">
@@ -1307,7 +1459,7 @@
             	Represent a Tag object.
             </summary>
         </member>
-        <member name="M:BooruDex.Models.Tag.#ctor(System.UInt32,System.String,BooruDex.Models.TagType,System.UInt32)">
+        <member name="M:BooruDex.Models.Tag.#ctor(System.UInt32,System.String,BooruDex.Models.TagType,System.Int32)">
             <summary>
             	Initialize <see cref="T:BooruDex.Models.Tag"/> instance
             </summary>

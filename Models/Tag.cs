@@ -20,7 +20,7 @@
 		/// <param name="count">
 		///		The number of occurences of the <see cref="Tag"/>.
 		/// </param>
-		public Tag(uint id = 0, string name = "", TagType type = TagType.Undefined, uint count = 0)
+		public Tag(uint id = 0, string name = "", TagType type = TagType.Undefined, int count = 0)
 		{
 			this.ID = id;
 			this.Name = name;
@@ -46,7 +46,7 @@
 		/// <summary>
 		///		Gets the number of occurences of the <see cref="Tag"/>.
 		/// </summary>
-		public uint Count { internal set; get; }
+		public int Count { internal set; get; }
 
 		/// <inheritdoc/>
 		public override string ToString()

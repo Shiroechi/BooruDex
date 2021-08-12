@@ -18,15 +18,15 @@ namespace BooruDex.Booru.Client
 		/// <param name="httpClient">
 		///		Http client for sending request and recieving response.
 		///	</param>
-		public Lolibooru(HttpClient httpClient = null) : base("https://lolibooru.moe/", httpClient)
+		public Lolibooru(HttpClient httpClient = null) : base("lolibooru.moe", true, httpClient)
 		{
 			this._TagsLimit = 0; // not tag limit
-			this._PasswordSalt = "--{}--";
+								 //this._PasswordSalt = "--{}--";
 		}
 
 		#endregion Constructor & Destructor
 
-		#region Protected Override Method
+		#region Read JSON to convert it into object
 
 		/// <inheritdoc/>
 		protected override Artist ReadArtist(JsonElement json)
@@ -45,7 +45,7 @@ namespace BooruDex.Booru.Client
 
 			return new Artist
 			{
-				ID = json.GetProperty("id").GetUInt32(),
+				ID = uint.Parse(json.GetProperty("id").GetString()),
 				Name = json.GetProperty("name").GetString(),
 				Urls = new ReadOnlyCollection<string>(urls)
 			};
@@ -71,7 +71,7 @@ namespace BooruDex.Booru.Client
 				ID = uint.Parse(json.GetProperty("id").GetString()),
 				Name = json.GetProperty("name").GetString(),
 				Type = (TagType)json.GetProperty("tag_type").GetInt32(),
-				Count = uint.Parse(json.GetProperty("post_count").GetString())
+				Count = int.Parse(json.GetProperty("post_count").GetString())
 			};
 		}
 
@@ -96,6 +96,6 @@ namespace BooruDex.Booru.Client
 			};
 		}
 
-		#endregion Protected Override Method
+		#endregion Read JSON to convert it into object
 	}
 }

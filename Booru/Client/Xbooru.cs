@@ -14,7 +14,7 @@ namespace BooruDex.Booru.Client
 		/// <param name="httpClient">
 		///		Http client for sending request and recieving response.
 		///	</param>
-		public Xbooru(HttpClient httpClient = null) : base("https://xbooru.com/", httpClient)
+		public Xbooru(HttpClient httpClient = null) : base("xbooru.com", true, httpClient)
 		{
 			this._PageLimit = 0; // no page limit
 		}

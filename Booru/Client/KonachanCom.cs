@@ -14,9 +14,9 @@ namespace BooruDex.Booru.Client
 		/// <param name="httpClient">
 		///		Http client for sending request and recieving response.
 		///	</param>
-		public KonachanCom(HttpClient httpClient = null) : base("https://konachan.com/", httpClient)
+		public KonachanCom(HttpClient httpClient = null) : base("konachan.com", true, httpClient)
 		{
-			this._PasswordSalt = "So-I-Heard-You-Like-Mupkids-?--{}--";
+			//this._PasswordSalt = "So-I-Heard-You-Like-Mupkids-?--{}--";
 		}
 
 		#endregion Constructor & Destructor

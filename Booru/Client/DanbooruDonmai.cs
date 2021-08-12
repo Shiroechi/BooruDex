@@ -12,7 +12,7 @@ namespace BooruDex.Booru.Client
 		/// <param name="httpClient">
 		///		Http client for sending request and recieving response.
 		///	</param>
-		public DanbooruDonmai(HttpClient httpClient = null) : base("https://danbooru.donmai.us/", httpClient)
+		public DanbooruDonmai(HttpClient httpClient = null) : base("danbooru.donmai.us", true, httpClient)
 		{
 
 		}

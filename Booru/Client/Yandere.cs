@@ -14,9 +14,9 @@ namespace BooruDex.Booru.Client
 		/// <param name="httpClient">
 		///		Http client for sending request and recieving response.
 		///	</param>
-		public Yandere(HttpClient httpClient = null) : base("https://yande.re/", httpClient)
+		public Yandere(HttpClient httpClient = null) : base("yande.re", true, httpClient)
 		{
-			this._PasswordSalt = "choujin-steiner--{}--";
+			//this._PasswordSalt = "choujin-steiner--{}--";
 		}
 
 		#endregion Constructor & Destructor
