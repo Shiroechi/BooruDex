@@ -16,14 +16,14 @@ namespace BooruDex.Booru.Client
 		/// <param name="httpClient">
 		///		Http client for sending request and recieving response.
 		///	</param>
-		public Realbooru(HttpClient httpClient = null) : base("https://realbooru.com/", httpClient)
+		public Realbooru(HttpClient httpClient = null) : base("realbooru.com", true, httpClient)
 		{
 			this._PageLimit = 200000;
 		}
 
 		#endregion Constructor & Destructor
 
-		#region Protected Override Method
+		#region Read JSON to convert it into object
 
 		/// <inheritdoc/>
 		protected override Post ReadPost(JsonElement json)
@@ -47,6 +47,6 @@ namespace BooruDex.Booru.Client
 				source: string.Empty);
 		}
 
-		#endregion Protected Override Method
+		#endregion Read JSON to convert it into object
 	}
 }

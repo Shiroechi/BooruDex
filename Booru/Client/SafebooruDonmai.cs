@@ -12,7 +12,7 @@ namespace BooruDex.Booru.Client
 		/// <param name="httpClient">
 		///		Http client for sending request and recieving response.
 		///	</param>
-		public SafebooruDonmai(HttpClient httpClient = null) : base("https://safebooru.donmai.us/", httpClient)
+		public SafebooruDonmai(HttpClient httpClient = null) : base("safebooru.donmai.us", true, httpClient)
 		{
 			this.IsSafe = true;
 		}

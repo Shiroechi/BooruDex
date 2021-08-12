@@ -14,7 +14,7 @@ namespace BooruDex.Booru.Client
 		/// <param name="httpClient">
 		///		Http client for sending request and recieving response.
 		///	</param>
-		public Safebooru(HttpClient httpClient = null) : base("https://safebooru.org/", httpClient)
+		public Safebooru(HttpClient httpClient = null) : base("safebooru.org", true, httpClient)
 		{
 			this.IsSafe = true;
 			this._PageLimit = 0; // no page limit

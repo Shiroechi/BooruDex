@@ -17,9 +17,9 @@ namespace BooruDex.Booru.Client
 		/// <param name="httpClient">
 		///		Http client for sending request and recieving response.
 		///	</param>
-		public Behoimi(HttpClient httpClient = null) : base("http://behoimi.org/", httpClient)
+		public Behoimi(HttpClient httpClient = null) : base("behoimi.org", false, httpClient)
 		{
-			this._PasswordSalt = "meganekko-heaven--{}--";
+			//this._PasswordSalt = "meganekko-heaven--{}--";
 			this._PageLimit = 1000;
 		}
 
