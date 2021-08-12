@@ -25,20 +25,23 @@ namespace BooruDex.Booru.Template
 		/// <param name="domain">
 		///		URL of booru based sites.
 		///	</param>
+		/// <param name="useHttps">
+		///		Using HTTPS protocol or not.
+		/// </param>
 		/// <param name="httpClient">
 		///		Client for sending and receive http response.
 		///	</param>
 		/// <param name="rng">
 		///		Random generator for random <see cref="Post"/>.
 		///	</param>
-		public Danbooru(string domain, HttpClient httpClient = null, IRNG rng = null) : base(domain, httpClient, rng)
+		public Danbooru(string domain, bool useHttps = true, HttpClient httpClient = null, IRNG rng = null) : base(domain, useHttps: useHttps, httpClient: httpClient, rng: rng)
 		{
 			this.IsSafe = false;
 			this.HasArtistApi =
-				this.HasPoolApi =
-				this.HasTagApi =
-				this.HasTagRelatedApi =
-				this.HasWikiApi = true;
+			this.HasPoolApi =
+			this.HasTagApi =
+			this.HasTagRelatedApi =
+			this.HasWikiApi = true;
 			this._DefaultPostLimit = 200;
 			this._TagsLimit = 2;
 			this._PageLimit = 1000;
@@ -47,10 +50,10 @@ namespace BooruDex.Booru.Template
 
 		#endregion Constructor & Destructor
 
-		#region Protected Overrride Method
+		#region Create API url
 
 		/// <inheritdoc/>
-		protected override string CreateBaseApiCall(string query, bool json = true)
+		protected override string CreateBaseApiUrl(string query, bool json = true)
 		{
 			if (json)
 			{
@@ -58,6 +61,65 @@ namespace BooruDex.Booru.Template
 			}
 			return $"{ this._BaseUrl.AbsoluteUri }{ query }.xml?";
 		}
+
+		/// <inheritdoc/>
+		protected override string CreateArtistListUrl(string name, ushort page = 0, bool sort = false)
+		{
+			var url = this.CreateBaseApiUrl("artists") +
+				$"limit={ this._DefaultPostLimit }&page={ page }&search[any_name_matches]={ name }";
+
+			if (sort)
+			{
+				url += "&search[order]=name";
+			}
+
+			return url;
+		}
+
+		/// <inheritdoc/>
+		protected override string CreatePoolListUrl(string title, uint page)
+		{
+			return this.CreateBaseApiUrl("pools") +
+				$"limit={ this._DefaultPostLimit }&page={ page }&search[name_matches]={ title }";
+		}
+
+		/// <inheritdoc/>
+		protected override string CreatePoolPostListUrl(uint poolId)
+		{
+			return this.CreateBaseApiUrl($"pools/{ poolId }");
+		}
+
+		/// <inheritdoc/>
+		protected override string CreateTagListUrl(string name)
+		{
+			return this.CreateBaseApiUrl("tags") +
+				$"limit={ this._DefaultPostLimit }&order=name&search[name_matches]={ name }";
+		}
+
+		/// <inheritdoc/>
+		protected override string CreateTagRelatedUrl(string name, TagType type = TagType.General)
+		{
+			return this.CreateBaseApiUrl("related_tag") +
+				$"query={ name }&category={ type }";
+		}
+
+		/// <inheritdoc/>
+		protected override string CreateWikiListUrl(string title)
+		{
+			return this.CreateBaseApiUrl("wiki_pages") +
+				$"search[order]=title&search[title]={ title }";
+		}
+
+		/// <inheritdoc/>
+		protected override string CreatePostListUrl(byte limit, uint page = 0)
+		{
+			return this.CreateBaseApiUrl("posts") +
+				$"limit={ limit }&page={ page }";
+		}
+
+		#endregion Create API url
+
+		#region Read JSON to convert it into object
 
 		/// <inheritdoc/>
 		protected override Artist ReadArtist(JsonElement json)
@@ -139,7 +201,7 @@ namespace BooruDex.Booru.Template
 				ID = json.GetProperty("id").GetUInt32(),
 				Name = json.GetProperty("name").GetString(),
 				Type = (TagType)json.GetProperty("category").GetInt32(),
-				Count = json.GetProperty("post_count").GetUInt32()
+				Count = json.GetProperty("post_count").GetInt32()
 			};
 		}
 
@@ -164,9 +226,7 @@ namespace BooruDex.Booru.Template
 			};
 		}
 
-		#endregion Protected Overrride Method
-
-		#region Public Method
+		#endregion Read JSON to convert it into object
 
 		#region Artist
 
@@ -202,7 +262,7 @@ namespace BooruDex.Booru.Template
 				throw new ArgumentNullException(nameof(name), "Artist name can't null or empty.");
 			}
 
-			var url = this.CreateBaseApiCall("artist_versions") +
+			var url = this.CreateBaseApiUrl("artist_versions") +
 				$"limit=1&only=artist_id,name,urls&search[name]={ name }";
 
 			var jsonArray = await this.GetJsonResponseAsync<JsonElement>(url);
@@ -248,7 +308,7 @@ namespace BooruDex.Booru.Template
 		/// </exception>
 		public virtual async Task<Post> PostShowAsync(uint postId)
 		{
-			var url = this.CreateBaseApiCall($"posts/{ postId }");
+			var url = this.CreateBaseApiUrl($"posts/{ postId }");
 
 			using (var doc = await this.GetJsonResponseAsync<JsonDocument>(url))
 			{
@@ -284,7 +344,7 @@ namespace BooruDex.Booru.Template
 				limit = this._DefaultPostLimit;
 			}
 
-			var url = this.CreateBaseApiCall("posts") +
+			var url = this.CreateBaseApiUrl("posts") +
 					$"limit={ limit }&random=true";
 
 			if (tags != null)
@@ -317,7 +377,5 @@ namespace BooruDex.Booru.Template
 		}
 
 		#endregion Post
-
-		#endregion Public Method
 	}
 }

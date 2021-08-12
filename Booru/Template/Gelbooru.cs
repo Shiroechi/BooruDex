@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 
 using BooruDex.Models;
@@ -19,16 +18,19 @@ namespace BooruDex.Booru.Template
 		/// <summary>
 		///		<see cref="Gelbooru"/> template for booru client.
 		/// </summary>
-		/// <param name="domain">	
+		/// <param name="domain">
 		///		URL of booru based sites.
 		///	</param>
+		/// <param name="useHttps">
+		///		Using HTTPS protocol or not.
+		/// </param>
 		/// <param name="httpClient">
 		///		Client for sending and receive http response.
 		///	</param>
 		/// <param name="rng">
 		///		Random generator for random <see cref="Post"/>.
 		///	</param>
-		public Gelbooru(string domain, HttpClient httpClient = null, IRNG rng = null) : base(domain, httpClient, rng)
+		public Gelbooru(string domain, bool useHttps = true, HttpClient httpClient = null, IRNG rng = null) : base(domain, useHttps: useHttps, httpClient: httpClient, rng: rng)
 		{
 			this.IsSafe = false;
 			this.HasTagApi = true;
@@ -36,25 +38,48 @@ namespace BooruDex.Booru.Template
 			this._TagsLimit = 0; // no tag limit
 			this._PageLimit = 20000;
 			this._ApiVersion = "";
-			this._PasswordSalt = "";
 		}
 
 		#endregion Constructor & Destructor
 
-		#region Protected Overrride Method
+		#region Create API url
 
 		/// <inheritdoc/>
-		protected override string CreateBaseApiCall(string query, bool json = true)
+		protected override string CreateBaseApiUrl(string query, bool json = true)
 		{
-			var sb = new StringBuilder($"{ this._BaseUrl.AbsoluteUri }index.php?page=dapi&s={ query }&q=index");
+			var url = $"{ this._BaseUrl.AbsoluteUri }index.php?page=dapi&s={ query }&q=index";
 
 			if (json)
 			{
-				sb.Append("&json=1");
+				url += "&json=1";
 			}
 
-			return sb.ToString();
+			return url;
 		}
+
+		/// <inheritdoc/>
+		protected override string CreatePostListUrl(byte limit, uint page = 0)
+		{
+			return this.CreateBaseApiUrl("post") +
+				$"&limit={ limit }&pid={ page }";
+		}
+
+		/// <inheritdoc/>
+		protected override string CreateTagListUrl(string name)
+		{
+			return this.CreateBaseApiUrl("tag") +
+				$"&limit={ this._DefaultPostLimit }&orderby=name&name_pattern={ name }";
+		}
+
+		/// <inheritdoc/>
+		protected override string CreatePostCountUrl()
+		{
+			return this.CreateBaseApiUrl("post", false) + "&limit=0";
+		}
+
+		#endregion Create API url
+
+		#region Read JSON to convert it into object
 
 		/// <inheritdoc/>
 		protected override Post ReadPost(JsonElement json)
@@ -82,7 +107,7 @@ namespace BooruDex.Booru.Template
 				ID = uint.Parse(json.GetProperty("id").GetString()),
 				Name = json.GetProperty("tag").GetString(),
 				Type = this.ToTagType(json.GetProperty("type").GetString()),
-				Count = uint.Parse(json.GetProperty("count").GetString())
+				Count = int.Parse(json.GetProperty("count").GetString())
 			};
 		}
 
@@ -116,6 +141,6 @@ namespace BooruDex.Booru.Template
 			return TagType.Undefined;
 		}
 
-		#endregion Protected Overrride Method
+		#endregion Read JSON to convert it into object
 	}
 }
